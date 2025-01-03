@@ -1,0 +1,141 @@
+package com.google.ar.core.examples.java.cloudanchor;
+
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.drawable.ColorDrawable;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+
+import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+
+import com.google.ar.core.examples.java.common.helpers.DisplayRotationHelper;
+
+public class SelectActivity extends AppCompatActivity {
+
+    private DisplayRotationHelper displayRotationHelper;
+    private AlertDialog alertDialogue;
+    private static final String PASSWORD_CODE = "PASSWORD";
+
+
+    static Intent newIntent(Context packageContext) {
+        return new Intent(packageContext, SelectActivity.class);
+    }
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_select);
+
+        Button placeB, viewB;
+
+        //Assign the rotation helper
+        displayRotationHelper = new DisplayRotationHelper(this);
+
+        placeB = findViewById(R.id.selectPlaceB);
+        viewB = findViewById(R.id.selectBeginViewingB);
+
+        placeB.setOnClickListener(v -> {
+            showAlertDialogue();
+        });
+
+        viewB.setOnClickListener(v -> {
+            Intent intent = ResolveAnchorsLobbyActivity.newIntent(SelectActivity.this);
+            startActivity(intent);
+        });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        displayRotationHelper.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        displayRotationHelper.onPause();
+    }
+
+    /**
+     * showAlertDialogue, Shows the success of adding the alert dialogue
+     */
+    private void showAlertDialogue() {
+        //Initialise the layouts and views
+        View view = LayoutInflater.from(SelectActivity.this).inflate(R.layout.alert_dialogue, null, false);
+
+        StringBuilder enteredCode = new StringBuilder();
+        EditText enterPasswordET = view.findViewById(R.id.alertPasswordET);
+
+        Button[] keyPadButtons = new Button[10];
+
+        keyPadButtons[0] = view.findViewById(R.id.alertZeroB);
+        keyPadButtons[1] = view.findViewById(R.id.alertOneB);
+        keyPadButtons[2] = view.findViewById(R.id.alertTwoB);
+        keyPadButtons[3] = view.findViewById(R.id.alertThreeB);
+        keyPadButtons[4] = view.findViewById(R.id.alertFourB);
+        keyPadButtons[5] = view.findViewById(R.id.alertFiveB);
+        keyPadButtons[6] = view.findViewById(R.id.alertSixB);
+        keyPadButtons[7] = view.findViewById(R.id.alertSevenB);
+        keyPadButtons[8] = view.findViewById(R.id.alertEightB);
+        keyPadButtons[9] = view.findViewById(R.id.alertNineB);
+
+        Button enterB = view.findViewById(R.id.alertEnterB);
+        Button deleteB = view.findViewById(R.id.alertDeleteB);
+
+        for(int i=0;i<keyPadButtons.length;i++){
+            int finalI = i;
+            keyPadButtons[finalI].setOnClickListener(v -> {
+                if(enteredCode.length()<4){
+                    String number = String.valueOf(finalI);
+                    enteredCode.append(number);
+                    enterPasswordET.setText(enteredCode.toString());
+                }
+            });
+        }
+
+        deleteB.setOnClickListener(v -> {
+            if(enteredCode.length()>0){
+                enteredCode.deleteCharAt(enteredCode.length() - 1);
+                enterPasswordET.setText(enteredCode.toString());
+            }
+        });
+
+        //Initialise the builder and the alertDialog
+        AlertDialog.Builder builder = new AlertDialog.Builder(SelectActivity.this);
+        builder.setView(view);
+        alertDialogue = builder.create();
+
+        enterB.setOnClickListener(view1 -> {
+            SharedPreferences sharedPreferences = getSharedPreferences("SHARED_PREFERENCES",
+                    Context.MODE_PRIVATE);
+            String passwordAnswer = sharedPreferences.getString(PASSWORD_CODE,"1234");
+            String passwordEntered = enterPasswordET.getText().toString();
+
+            if(passwordEntered.equals(passwordAnswer)){
+                alertDialogue.dismiss();
+                Intent intent = CloudAnchorActivity.newIntent(SelectActivity.this);
+                intent.putExtra("PLACING_ANCHOR", true);
+                startActivity(intent);
+            }else{
+                alertDialogue.dismiss();
+            }
+        });
+
+        if (alertDialogue.getWindow() != null) {
+            alertDialogue.getWindow().setBackgroundDrawable(new ColorDrawable(0));
+        }
+        //Show the actual alert
+        alertDialogue.show();
+    }
+}
