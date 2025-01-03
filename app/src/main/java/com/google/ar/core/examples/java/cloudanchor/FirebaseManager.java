@@ -163,4 +163,28 @@ class FirebaseManager {
       currentRoomRef = null;
     }
   }
+
+
+  void removeAllData(){
+    if(app == null){
+      Log.e("COMP3018", "Firebase App is null");
+    }
+
+    hotspotListRef.removeValue()
+            .addOnSuccessListener(aVoid -> {
+              Log.d(TAG, "All hotspot data removed successfully.");
+            })
+            .addOnFailureListener(e -> {
+              Log.e(TAG, "Error removing hotspot data: " + e.getMessage());
+            });
+
+    // Remove data from the "last_room_code" node
+    roomCodeRef.removeValue()
+            .addOnSuccessListener(aVoid -> {
+              Log.d(TAG, "Last room code removed successfully.");
+            })
+            .addOnFailureListener(e -> {
+              Log.e(TAG, "Error removing last room code: " + e.getMessage());
+            });
+  }
 }
