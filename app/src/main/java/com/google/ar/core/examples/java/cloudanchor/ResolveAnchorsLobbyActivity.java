@@ -42,8 +42,6 @@ public class ResolveAnchorsLobbyActivity extends AppCompatActivity {
         });
 
 
-
-
         firebaseManager = new FirebaseManager(this);
 
         firebaseManager.getHotspotList(new FirebaseManager.HotspotListListener() {
@@ -73,7 +71,12 @@ public class ResolveAnchorsLobbyActivity extends AppCompatActivity {
 
     private void resolveAnchor(){
         String selectedItem = (String) spinner.getSelectedItem();
+
         Log.d("COMP3018",selectedItem);
+
+        Intent intent = CloudAnchorActivity.newIntent(ResolveAnchorsLobbyActivity.this);
+        intent.putExtra("PLACING_ANCHOR", false);
+        startActivity(intent);
 
     }
 }
