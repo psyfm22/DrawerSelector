@@ -2,6 +2,9 @@ package com.google.ar.core.examples.java.cloudanchor;
 
 
 import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -72,14 +75,40 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         viewHolder(View itemView, final RecyclerViewAdapter adapter) {
             super(itemView);
 
+            FirebaseManager firebaseManager = new FirebaseManager(adapter.context);
+
             messageTV = itemView.findViewById(R.id.viewMessageTV);
             deleteIV = itemView.findViewById(R.id.viewDeleteIV);
+
+            deleteIV.setOnClickListener(view -> {
+                int position = getAdapterPosition();
+                if (position != RecyclerView.NO_POSITION) {
+                    Hotspot hotspot = adapter.hotspotList.get(position);
+                    long key = hotspot.getCode();
+
+                    firebaseManager.removeHotspot(key, new FirebaseManager.DeleteCallback() {
+                        @Override
+                        public void onSuccess() {
+                            new Handler(Looper.getMainLooper()).post(() -> {
+                                adapter.hotspotList.remove(position);
+                                // Notify the adapter that the item has been removed
+                                adapter.notifyItemRemoved(position);
+                                Log.d("COMP3018", "Successfully deleted: " + key);
+                            });
+                        }
+
+                        @Override
+                        public void onFailure(String errorMessage) {
+                            Log.d("COMP3018","Failed to delete");
+                        }
+                    });
+                }
+            });
         }
 
         void bind(final Hotspot hotspot, final RecyclerViewAdapter adapter) {
-            // For each image stored in the collage card
+            // Set the name for each hotspot item
             messageTV.setText(hotspot.getName());
-
         }
     }
 }

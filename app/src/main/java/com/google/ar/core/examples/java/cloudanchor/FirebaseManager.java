@@ -170,7 +170,7 @@ class FirebaseManager {
 
 
   /* Need to test this sufficiently */
-  void removeHotspot(int key){
+  void removeHotspot(long key, final DeleteCallback deleteCallback){
     if(app == null){
       Log.e("COMP3018", "Firebase App is null");
     }
@@ -178,8 +178,14 @@ class FirebaseManager {
 
     // Remove the specific hotspot
     hotspotRef.removeValue()
-            .addOnSuccessListener(aVoid -> Log.d(TAG, "Hotspot with key " + key + " removed successfully."))
-            .addOnFailureListener(e -> Log.e(TAG, "Error removing hotspot with key " + key + ": " + e.getMessage()));
+            .addOnSuccessListener(aVoid -> {
+              Log.d(TAG, "Hotspot with key " + key + " removed successfully.");
+              deleteCallback.onSuccess();
+            })
+            .addOnFailureListener(e ->{
+              Log.e(TAG, "Error removing hotspot with key " + key + ": " + e.getMessage());
+              deleteCallback.onFailure(e.getMessage());
+            });
   }
 
   void removeAllData(){
@@ -236,6 +242,11 @@ class FirebaseManager {
     void onHotspotListFetched(List<Hotspot> displayNames);
 
     void onError(DatabaseError error);
+  }
+
+  interface DeleteCallback {
+    void onSuccess();
+    void onFailure(String errorMessage);
   }
 
 }
