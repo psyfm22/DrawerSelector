@@ -135,7 +135,7 @@
         app:layout_constraintTop_toBottomOf="@+id/selectResolveDescriptionTV" />
 
     <EditText
-        android:id="@+id/nameET"
+        android:id="@+id/selectNameET"
         android:layout_width="302dp"
         android:layout_height="53dp"
         android:background="@drawable/edittext_background"

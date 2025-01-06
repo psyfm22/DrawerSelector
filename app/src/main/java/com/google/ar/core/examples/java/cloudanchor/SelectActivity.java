@@ -24,6 +24,7 @@ public class SelectActivity extends AppCompatActivity {
 
     private DisplayRotationHelper displayRotationHelper;
     private AlertDialog alertDialogue;
+    private EditText nameET;
     private static final String PASSWORD_CODE = "PASSWORD";
 
 
@@ -44,6 +45,7 @@ public class SelectActivity extends AppCompatActivity {
 
         placeB = findViewById(R.id.selectPlaceB);
         viewB = findViewById(R.id.selectBeginViewingB);
+        nameET = findViewById(R.id.selectNameET);
 
         placeB.setOnClickListener(v -> {
             showAlertDialogue();
@@ -124,8 +126,10 @@ public class SelectActivity extends AppCompatActivity {
 
             if(passwordEntered.equals(passwordAnswer)){
                 alertDialogue.dismiss();
+                String name = nameET.getText().toString();
                 Intent intent = CloudAnchorActivity.newIntent(SelectActivity.this);
                 intent.putExtra("PLACING_ANCHOR", true);
+                intent.putExtra("ANCHOR_NAME", name);
                 startActivity(intent);
             }else{
                 alertDialogue.dismiss();

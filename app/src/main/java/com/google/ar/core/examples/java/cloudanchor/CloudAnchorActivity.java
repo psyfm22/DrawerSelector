@@ -140,6 +140,7 @@ public class CloudAnchorActivity extends AppCompatActivity
   private RoomCodeAndCloudAnchorIdListener hostListener;
 
   private boolean isHosting;
+  private String anchorName = "DEFAULT";
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -151,6 +152,8 @@ public class CloudAnchorActivity extends AppCompatActivity
 
     Intent intent = getIntent();
     isHosting = intent.getBooleanExtra("PLACING_ANCHOR", true);
+    anchorName = intent.getStringExtra("ANCHOR_NAME");
+
 
 
 
@@ -646,7 +649,7 @@ public class CloudAnchorActivity extends AppCompatActivity
       if (roomCode == null || cloudAnchorId == null) {
         return;
       }
-      firebaseManager.storeAnchorIdInRoom(roomCode, cloudAnchorId, "DisplayName is Here");
+      firebaseManager.storeAnchorIdInRoom(roomCode, cloudAnchorId, anchorName);
       snackbarHelper.showMessageWithDismiss(
           CloudAnchorActivity.this, getString(R.string.snackbar_cloud_id_shared));
     }
