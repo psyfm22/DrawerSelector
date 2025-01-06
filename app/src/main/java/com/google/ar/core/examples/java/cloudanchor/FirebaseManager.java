@@ -169,6 +169,19 @@ class FirebaseManager {
   }
 
 
+  /* Need to test this sufficiently */
+  void removeHotspot(int key){
+    if(app == null){
+      Log.e("COMP3018", "Firebase App is null");
+    }
+    DatabaseReference hotspotRef = hotspotListRef.child(String.valueOf(key));
+
+    // Remove the specific hotspot
+    hotspotRef.removeValue()
+            .addOnSuccessListener(aVoid -> Log.d(TAG, "Hotspot with key " + key + " removed successfully."))
+            .addOnFailureListener(e -> Log.e(TAG, "Error removing hotspot with key " + key + ": " + e.getMessage()));
+  }
+
   void removeAllData(){
     if(app == null){
       Log.e("COMP3018", "Firebase App is null");

@@ -14,6 +14,8 @@ import android.widget.Spinner;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.database.DatabaseError;
 
@@ -25,6 +27,8 @@ public class ResolveAnchorsLobbyActivity extends AppCompatActivity {
     private FirebaseManager firebaseManager;
     private Spinner spinner;
     private List<Hotspot> hotspotList;
+    private RecyclerView recyclerView;
+    private RecyclerViewAdapter recyclerViewAdapter;
 
     static Intent newIntent(Context packageContext) {
         return new Intent(packageContext, ResolveAnchorsLobbyActivity.class);
@@ -40,10 +44,13 @@ public class ResolveAnchorsLobbyActivity extends AppCompatActivity {
         Button clearB = findViewById(R.id.clearAnchorsB);
         spinner = findViewById(R.id.select_anchors_spinner);
         ImageButton returnIB = findViewById(R.id.anchorLobbyReturnIB);
+        recyclerView = findViewById(R.id.recyclerView);
 
         clearB.setOnClickListener(view -> deleteAllAnchors());
         resolveB.setOnClickListener(view -> resolveAnchor());
         returnIB.setOnClickListener(view -> finish());
+
+
 
         firebaseManager = new FirebaseManager(this);
 
@@ -66,6 +73,11 @@ public class ResolveAnchorsLobbyActivity extends AppCompatActivity {
 
                 adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 spinner.setAdapter(adapter);
+
+
+                recyclerView.setLayoutManager(new LinearLayoutManager(ResolveAnchorsLobbyActivity.this));
+                recyclerViewAdapter = new RecyclerViewAdapter(ResolveAnchorsLobbyActivity.this, hotspotList);
+                recyclerView.setAdapter(recyclerViewAdapter);
             }
 
             @Override
@@ -96,7 +108,6 @@ public class ResolveAnchorsLobbyActivity extends AppCompatActivity {
         }else{
             showAlertDialogue();
         }
-
     }
 
 
