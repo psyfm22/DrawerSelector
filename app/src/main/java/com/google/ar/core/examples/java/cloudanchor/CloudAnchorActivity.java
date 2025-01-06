@@ -151,6 +151,7 @@ public class CloudAnchorActivity extends AppCompatActivity
 
     Intent intent = getIntent();
     isHosting = intent.getBooleanExtra("PLACING_ANCHOR", true);
+    anchorName = intent.getStringExtra("ANCHOR_NAME");
     roomCode = intent.getLongExtra("HOTSPOT_CODE", 1);
 
 
