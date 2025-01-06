@@ -44,7 +44,7 @@ public class ResolveAnchorsLobbyActivity extends AppCompatActivity {
         Button clearB = findViewById(R.id.clearAnchorsB);
         spinner = findViewById(R.id.select_anchors_spinner);
         ImageButton returnIB = findViewById(R.id.anchorLobbyReturnIB);
-        recyclerView = findViewById(R.id.recyclerView);
+//        recyclerView = findViewById(R.id.recyclerView);
 
         clearB.setOnClickListener(view -> deleteAllAnchors());
         resolveB.setOnClickListener(view -> resolveAnchor());
@@ -75,9 +75,9 @@ public class ResolveAnchorsLobbyActivity extends AppCompatActivity {
                 spinner.setAdapter(adapter);
 
 
-                recyclerView.setLayoutManager(new LinearLayoutManager(ResolveAnchorsLobbyActivity.this));
-                recyclerViewAdapter = new RecyclerViewAdapter(ResolveAnchorsLobbyActivity.this, hotspotList);
-                recyclerView.setAdapter(recyclerViewAdapter);
+//                recyclerView.setLayoutManager(new LinearLayoutManager(ResolveAnchorsLobbyActivity.this));
+//                recyclerViewAdapter = new RecyclerViewAdapter(ResolveAnchorsLobbyActivity.this, hotspotList);
+//                recyclerView.setAdapter(recyclerViewAdapter);
             }
 
             @Override
