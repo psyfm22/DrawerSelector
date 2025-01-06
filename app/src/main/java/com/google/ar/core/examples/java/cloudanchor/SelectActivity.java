@@ -127,6 +127,11 @@ public class SelectActivity extends AppCompatActivity {
             if(passwordEntered.equals(passwordAnswer)){
                 alertDialogue.dismiss();
                 String name = nameET.getText().toString();
+
+                if(name.trim().isEmpty()){
+                    name = "DEFAULT";
+                }
+
                 Intent intent = CloudAnchorActivity.newIntent(SelectActivity.this);
                 intent.putExtra("PLACING_ANCHOR", true);
                 intent.putExtra("ANCHOR_NAME", name);
