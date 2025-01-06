@@ -9,8 +9,8 @@
 
     <ImageView
         android:id="@+id/viewDeleteIV"
-        android:layout_width="91dp"
-        android:layout_height="61dp"
+        android:layout_width="56dp"
+        android:layout_height="37dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         app:layout_constraintStart_toStartOf="parent"
@@ -19,13 +19,13 @@
 
     <TextView
         android:id="@+id/viewMessageTV"
-        android:layout_width="146dp"
-        android:layout_height="48dp"
+        android:layout_width="88dp"
+        android:layout_height="28dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="22dp"
+        android:layout_marginTop="20dp"
         android:text="TextView"
         android:textColor="@color/black"
-        android:textSize="35sp"
+        android:textSize="20sp"
         app:layout_constraintStart_toEndOf="@+id/viewDeleteIV"
         app:layout_constraintTop_toTopOf="parent" />
 
