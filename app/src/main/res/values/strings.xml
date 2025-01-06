@@ -15,7 +15,7 @@
 -->
 <resources>
     <!-- Strings in the main activity -->
-    <string name="app_name">Cloud Anchor Example</string>
+    <string name="app_name">Draw Locator</string>
     <string name="close">Close</string>
     <string name="cancel">Cancel</string>
     <string name="confirm_location_title">Please Confirm Location</string>
@@ -34,7 +34,7 @@
     <string name="resolve_dialog_text_hint">Enter Room Code</string>
 
     <!-- Strings used in Snackbar messages -->
-    <string name="snackbar_anchor_placed">Now hosting anchor...</string>
+    <string name="snackbar_anchor_placed">Now hosting anchor…</string>
     <string name="snackbar_arcore_unavailable">Please install ARCore.</string>
     <string name="snackbar_arcore_too_old">Please update ARCore.</string>
     <string name="snackbar_arcore_sdk_too_old">Please update the app with a newer version of the ARCore SDK.</string>
