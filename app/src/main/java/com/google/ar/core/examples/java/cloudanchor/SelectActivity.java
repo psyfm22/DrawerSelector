@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AlertDialog;
@@ -32,20 +33,18 @@ public class SelectActivity extends AppCompatActivity {
         return new Intent(packageContext, SelectActivity.class);
     }
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select);
 
-        Button placeB, viewB;
-
         //Assign the rotation helper
         displayRotationHelper = new DisplayRotationHelper(this);
 
-        placeB = findViewById(R.id.selectPlaceB);
-        viewB = findViewById(R.id.selectBeginViewingB);
+        Button placeB = findViewById(R.id.selectPlaceB);
+        Button viewB = findViewById(R.id.selectBeginViewingB);
         nameET = findViewById(R.id.selectNameET);
+        ImageButton backIB = findViewById(R.id.selectReturnIB);
 
         placeB.setOnClickListener(v -> {
             showAlertDialogue();
@@ -54,6 +53,10 @@ public class SelectActivity extends AppCompatActivity {
         viewB.setOnClickListener(v -> {
             Intent intent = ResolveAnchorsLobbyActivity.newIntent(SelectActivity.this);
             startActivity(intent);
+        });
+
+        backIB.setOnClickListener(v -> {
+            finish();
         });
     }
 

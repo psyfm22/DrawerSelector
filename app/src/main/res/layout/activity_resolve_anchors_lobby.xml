@@ -21,6 +21,19 @@
     android:layout_height="match_parent"
     tools:context="com.google.ar.core.examples.java.persistentcloudanchor.MainActivity">
 
+    <ImageButton
+        android:id="@+id/anchorLobbyReturnIB"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="6dp"
+        android:layout_marginTop="6dp"
+        android:background="@android:color/transparent"
+        android:backgroundTint="@color/red"
+        android:padding="10dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/arrow" />
+
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline_select"
         android:layout_width="wrap_content"

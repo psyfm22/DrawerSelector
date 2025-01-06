@@ -2,11 +2,13 @@ package com.google.ar.core.examples.java.cloudanchor;
 
 import android.content.Context;
 import android.content.Intent;
+import android.media.Image;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.Spinner;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -35,14 +37,18 @@ public class ResolveAnchorsLobbyActivity extends AppCompatActivity {
         Button resolveB = findViewById(R.id.resolve_button);
         Button clearB = findViewById(R.id.clearAnchorsB);
         spinner = findViewById(R.id.select_anchors_spinner);
+        ImageButton returnIB = findViewById(R.id.anchorLobbyReturnIB);
 
         clearB.setOnClickListener(view -> {
             deleteAllAnchors();
         });
-        resolveB.setOnClickListener(view ->{
+        resolveB.setOnClickListener(view -> {
             resolveAnchor();
         });
 
+        returnIB.setOnClickListener(view -> {
+            finish();
+        });
 
         firebaseManager = new FirebaseManager(this);
 
