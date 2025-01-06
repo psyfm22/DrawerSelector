@@ -197,16 +197,22 @@ class FirebaseManager {
     if(app == null){
       Log.e("COMP3018", "Firebase App is null");
     }
-    List<String> displayNames = new ArrayList<>();
+    List<Hotspot> hotspotList = new ArrayList<>();
 
     hotspotListRef.addValueEventListener(new ValueEventListener() {
       @Override
       public void onDataChange(DataSnapshot dataSnapshot) {
         for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+          String keyString = snapshot.getKey();
+          long keyLong = 1;
+          if(keyString != null){
+            keyLong = Long.parseLong(keyString);
+          }
           String displayName = snapshot.child("display_name").getValue(String.class);
-          displayNames.add(displayName);
+          Hotspot hotspot = new Hotspot(displayName, keyLong);
+          hotspotList.add(hotspot);
         }
-        listener.onHotspotListFetched(displayNames);
+        listener.onHotspotListFetched(hotspotList);
       }
 
       @Override
@@ -221,7 +227,7 @@ class FirebaseManager {
 
 
   interface HotspotListListener {
-    void onHotspotListFetched(List<String> displayNames);
+    void onHotspotListFetched(List<Hotspot> displayNames);
 
     void onError(DatabaseError error);
   }

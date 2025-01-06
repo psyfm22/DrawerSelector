@@ -139,6 +139,7 @@ public class CloudAnchorActivity extends AppCompatActivity
 
   private boolean isHosting;
   private String anchorName = "DEFAULT";
+  private Long roomCode = 0L;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -150,7 +151,7 @@ public class CloudAnchorActivity extends AppCompatActivity
 
     Intent intent = getIntent();
     isHosting = intent.getBooleanExtra("PLACING_ANCHOR", true);
-    anchorName = intent.getStringExtra("ANCHOR_NAME");
+    roomCode = intent.getLongExtra("HOTSPOT_CODE", 1);
 
 
     // Set up touch listener.
@@ -541,11 +542,11 @@ public class CloudAnchorActivity extends AppCompatActivity
     }
 
     if (!sharedPreferences.getBoolean(ALLOW_SHARE_IMAGES_KEY, false)) {
-      showNoticeDialog(()->onRoomCodeEntered(0L));
+      showNoticeDialog(()->onRoomCodeEntered(roomCode));
     } else {
       //onPrivacyAcceptedForResolve();
       // We no longer need to call this as we get the room code earlier now
-      onRoomCodeEntered(0L);
+      onRoomCodeEntered(roomCode);
     }
   }
 

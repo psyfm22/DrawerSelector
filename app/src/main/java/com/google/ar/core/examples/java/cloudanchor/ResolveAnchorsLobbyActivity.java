@@ -13,12 +13,14 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.database.DatabaseError;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ResolveAnchorsLobbyActivity extends AppCompatActivity {
 
     private FirebaseManager firebaseManager;
     private Spinner spinner;
+    private List<Hotspot> hotspotList;
 
     static Intent newIntent(Context packageContext) {
         return new Intent(packageContext, ResolveAnchorsLobbyActivity.class);
@@ -46,11 +48,20 @@ public class ResolveAnchorsLobbyActivity extends AppCompatActivity {
 
         firebaseManager.getHotspotList(new FirebaseManager.HotspotListListener() {
             @Override
-            public void onHotspotListFetched(List<String> displayNames) {
+            public void onHotspotListFetched(List<Hotspot> hotspots) {
+
+                hotspotList = hotspots;
+
+                List<String> nameList = new ArrayList<>();
+
+                for (Hotspot hotspot : hotspotList) {
+                    nameList.add(hotspot.getName());
+                }
+
                 ArrayAdapter<String> adapter = new ArrayAdapter<>(
                         ResolveAnchorsLobbyActivity.this,
                         android.R.layout.simple_spinner_item,
-                        displayNames);
+                        nameList);
 
                 adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 spinner.setAdapter(adapter);
@@ -70,12 +81,14 @@ public class ResolveAnchorsLobbyActivity extends AppCompatActivity {
     }
 
     private void resolveAnchor(){
-        String selectedItem = (String) spinner.getSelectedItem();
+        int selectedPosition = spinner.getSelectedItemPosition();
+        Hotspot selectedHotspot = hotspotList.get(selectedPosition);
 
-        Log.d("COMP3018",selectedItem);
+        Log.d("COMP3018",selectedHotspot.getName());
 
         Intent intent = CloudAnchorActivity.newIntent(ResolveAnchorsLobbyActivity.this);
         intent.putExtra("PLACING_ANCHOR", false);
+        intent.putExtra("HOTSPOT_CODE", selectedHotspot.getCode());
         startActivity(intent);
 
     }
