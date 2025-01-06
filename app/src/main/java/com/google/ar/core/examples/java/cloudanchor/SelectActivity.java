@@ -5,19 +5,14 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import com.google.ar.core.examples.java.common.helpers.DisplayRotationHelper;
 
@@ -77,26 +72,26 @@ public class SelectActivity extends AppCompatActivity {
      */
     private void showAlertDialogue() {
         //Initialise the layouts and views
-        View view = LayoutInflater.from(SelectActivity.this).inflate(R.layout.alert_dialogue, null, false);
+        View view = LayoutInflater.from(SelectActivity.this).inflate(R.layout.password_alert_dialogue, null, false);
 
         StringBuilder enteredCode = new StringBuilder();
-        EditText enterPasswordET = view.findViewById(R.id.alertPasswordET);
+        EditText enterPasswordET = view.findViewById(R.id.passwordAlertET);
 
         Button[] keyPadButtons = new Button[10];
 
-        keyPadButtons[0] = view.findViewById(R.id.alertZeroB);
-        keyPadButtons[1] = view.findViewById(R.id.alertOneB);
-        keyPadButtons[2] = view.findViewById(R.id.alertTwoB);
-        keyPadButtons[3] = view.findViewById(R.id.alertThreeB);
-        keyPadButtons[4] = view.findViewById(R.id.alertFourB);
-        keyPadButtons[5] = view.findViewById(R.id.alertFiveB);
-        keyPadButtons[6] = view.findViewById(R.id.alertSixB);
-        keyPadButtons[7] = view.findViewById(R.id.alertSevenB);
-        keyPadButtons[8] = view.findViewById(R.id.alertEightB);
-        keyPadButtons[9] = view.findViewById(R.id.alertNineB);
+        keyPadButtons[0] = view.findViewById(R.id.passwordAlertZeroB);
+        keyPadButtons[1] = view.findViewById(R.id.passwordAlertOneB);
+        keyPadButtons[2] = view.findViewById(R.id.passwordAlertTwoB);
+        keyPadButtons[3] = view.findViewById(R.id.passwordAlertThreeB);
+        keyPadButtons[4] = view.findViewById(R.id.passwordAlertFourB);
+        keyPadButtons[5] = view.findViewById(R.id.passwordAlertFiveB);
+        keyPadButtons[6] = view.findViewById(R.id.passwordAlertSixB);
+        keyPadButtons[7] = view.findViewById(R.id.passwordAlertSevenB);
+        keyPadButtons[8] = view.findViewById(R.id.passwordAlertEightB);
+        keyPadButtons[9] = view.findViewById(R.id.passwordAlertNineB);
 
-        Button enterB = view.findViewById(R.id.alertEnterB);
-        Button deleteB = view.findViewById(R.id.alertDeleteB);
+        Button enterB = view.findViewById(R.id.passwordAlertEnterB);
+        Button deleteB = view.findViewById(R.id.passwordAlertDeleteB);
 
         for(int i=0;i<keyPadButtons.length;i++){
             int finalI = i;

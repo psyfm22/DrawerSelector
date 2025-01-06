@@ -2,15 +2,19 @@ package com.google.ar.core.examples.java.cloudanchor;
 
 import android.content.Context;
 import android.content.Intent;
-import android.media.Image;
+import android.content.SharedPreferences;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Spinner;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.database.DatabaseError;
@@ -88,14 +92,46 @@ public class ResolveAnchorsLobbyActivity extends AppCompatActivity {
 
     private void resolveAnchor(){
         int selectedPosition = spinner.getSelectedItemPosition();
-        Hotspot selectedHotspot = hotspotList.get(selectedPosition);
 
-        Log.d("COMP3018",selectedHotspot.getName());
+        if(selectedPosition > 0){
+            Hotspot selectedHotspot = hotspotList.get(selectedPosition);
 
-        Intent intent = CloudAnchorActivity.newIntent(ResolveAnchorsLobbyActivity.this);
-        intent.putExtra("PLACING_ANCHOR", false);
-        intent.putExtra("HOTSPOT_CODE", selectedHotspot.getCode());
-        startActivity(intent);
+            Log.d("COMP3018",selectedHotspot.getName());
 
+            Intent intent = CloudAnchorActivity.newIntent(ResolveAnchorsLobbyActivity.this);
+            intent.putExtra("PLACING_ANCHOR", false);
+            intent.putExtra("HOTSPOT_CODE", selectedHotspot.getCode());
+            startActivity(intent);
+        }else{
+            showAlertDialogue();
+        }
+
+    }
+
+
+    /**
+     * showAlertDialogue, Shows the failure of opening resolve
+     */
+    private void showAlertDialogue() {
+        //Initialise the layouts and views
+        View view = LayoutInflater.from(ResolveAnchorsLobbyActivity.this).inflate(R.layout.alert_dialogue, null, false);
+        AlertDialog alertDialogue;
+        Button okayB = view.findViewById(R.id.alertDoneB);
+
+        //Initialise the builder and the alertDialog
+        AlertDialog.Builder builder = new AlertDialog.Builder(ResolveAnchorsLobbyActivity.this);
+        builder.setView(view);
+        alertDialogue = builder.create();
+
+        okayB.setOnClickListener(view1 -> {
+                alertDialogue.dismiss();
+        });
+
+        if (alertDialogue.getWindow() != null) {
+            alertDialogue.getWindow().setBackgroundDrawable(new ColorDrawable(0));
+        }
+
+        //Show the actual alert
+        alertDialogue.show();
     }
 }

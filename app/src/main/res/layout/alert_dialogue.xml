@@ -8,8 +8,8 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/alertDialogueCL"
-        android:layout_width="354dp"
-        android:layout_height="525dp"
+        android:layout_width="281dp"
+        android:layout_height="300dp"
         android:background="@drawable/alert_background"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -20,168 +20,58 @@
             android:id="@+id/alertTitleTV"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:gravity="center"
+            android:layout_marginTop="32dp"
+            android:gravity="center_horizontal"
             android:paddingTop="28dp"
-            android:text="Enter Password: "
+            android:text="Error"
             android:textColor="@color/black"
-            android:textSize="40sp"
+            android:textSize="55sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/alertDialogueCL" />
 
-        <EditText
-            android:id="@+id/alertPasswordET"
-            android:layout_width="281dp"
-            android:layout_height="71dp"
-            android:layout_marginTop="32dp"
-            android:ems="10"
-            android:enabled="false"
-            android:gravity="center"
-            android:background="@drawable/edittext_background"
-            android:hint="Password..."
-            android:inputType="numberPassword"
+        <TextView
+            android:id="@+id/alertDescriptionTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:gravity="center_horizontal"
+            android:padding="8dp"
+            android:text="No Anchor Selected"
             android:textColor="@color/black"
-            android:maxLength="4"
-            android:padding="10dp"
-            android:textSize="20sp"
+            android:textSize="25sp"
+            app:layout_constraintBottom_toTopOf="@+id/alertDoneB"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/alertTitleTV" />
 
-        <androidx.gridlayout.widget.GridLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:layout_marginBottom="52dp"
-            app:columnCount="3"
-            app:layout_constraintBottom_toBottomOf="parent"
+        <Button
+            android:id="@+id/alertDoneB"
+            android:layout_width="113dp"
+            android:layout_height="71dp"
+            android:layout_marginStart="40dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="40dp"
+            android:text="Okay"
+            android:textSize="30sp"
+            app:cornerRadius="15dp"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.503"
             app:layout_constraintStart_toStartOf="parent"
-            app:orientation="horizontal"
-            app:rowCount="4">
+            app:layout_constraintTop_toBottomOf="@+id/alertDescriptionTV" />
 
-            <Button
-                android:id="@+id/alertOneB"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="4dp"
-                android:theme="@style/AppButtonTheme"
-                android:text="1"
-                android:textColor="@color/black"
-                android:textSize="30sp" />
-
-            <Button
-                android:id="@+id/alertTwoB"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="4dp"
-                android:theme="@style/AppButtonTheme"
-                android:text="2"
-                android:textColor="@color/black"
-                android:textSize="30sp" />
-
-            <Button
-                android:id="@+id/alertThreeB"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="4dp"
-                android:theme="@style/AppButtonTheme"
-                android:text="3"
-                android:textColor="@color/black"
-                android:textSize="30sp" />
-
-            <Button
-                android:id="@+id/alertFourB"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="4dp"
-                android:theme="@style/AppButtonTheme"
-                android:text="4"
-                android:textColor="@color/black"
-                android:textSize="30sp" />
-
-            <Button
-                android:id="@+id/alertFiveB"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="4dp"
-                android:theme="@style/AppButtonTheme"
-                android:text="5"
-                android:textColor="@color/black"
-                android:textSize="30sp" />
-
-            <Button
-                android:id="@+id/alertSixB"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="4dp"
-                android:theme="@style/AppButtonTheme"
-                android:text="6"
-                android:textColor="@color/black"
-                android:textSize="30sp" />
-
-            <Button
-                android:id="@+id/alertSevenB"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="4dp"
-                android:theme="@style/AppButtonTheme"
-                android:text="7"
-                android:textColor="@color/black"
-                android:textSize="30sp" />
-
-            <Button
-                android:id="@+id/alertEightB"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="4dp"
-                android:theme="@style/AppButtonTheme"
-                android:text="8"
-                android:textColor="@color/black"
-                android:textSize="30sp" />
-
-            <Button
-                android:id="@+id/alertNineB"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="4dp"
-                android:theme="@style/AppButtonTheme"
-                android:text="9"
-                android:textColor="@color/black"
-                android:textSize="30sp" />
-
-            <Button
-                android:id="@+id/alertDeleteB"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="4dp"
-                android:theme="@style/AppButtonTheme"
-                android:text="X"
-                android:textColor="@color/black"
-                android:textSize="30sp" />
-
-            <Button
-                android:id="@+id/alertZeroB"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="4dp"
-                android:theme="@style/AppButtonTheme"
-                android:text="0"
-                android:textColor="@color/black"
-                android:textSize="30sp" />
-
-            <Button
-                android:id="@+id/alertEnterB"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="4dp"
-                android:theme="@style/AppButtonTheme"
-                android:text=">"
-                android:textColor="@color/black"
-                android:textSize="30sp" />
-
-        </androidx.gridlayout.widget.GridLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <ImageView
+        android:id="@+id/alertLogoIV"
+        android:layout_width="135dp"
+        android:layout_height="110dp"
+        android:src="@drawable/error"
+        app:layout_constraintBottom_toTopOf="@+id/alertDialogueCL"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/alertDialogueCL"
+        app:layout_constraintVertical_bias="0.597" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
