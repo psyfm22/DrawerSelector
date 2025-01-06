@@ -41,18 +41,14 @@ public class SelectActivity extends AppCompatActivity {
         nameET = findViewById(R.id.selectNameET);
         ImageButton backIB = findViewById(R.id.selectReturnIB);
 
-        placeB.setOnClickListener(v -> {
-            showAlertDialogue();
-        });
+        placeB.setOnClickListener(v -> showAlertDialogue());
 
         viewB.setOnClickListener(v -> {
             Intent intent = ResolveAnchorsLobbyActivity.newIntent(SelectActivity.this);
             startActivity(intent);
         });
 
-        backIB.setOnClickListener(v -> {
-            finish();
-        });
+        backIB.setOnClickListener(v -> finish());
     }
 
     @Override

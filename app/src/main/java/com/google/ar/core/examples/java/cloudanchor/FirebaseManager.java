@@ -18,6 +18,9 @@ package com.google.ar.core.examples.java.cloudanchor;
 
 import android.content.Context;
 import android.util.Log;
+
+import androidx.annotation.NonNull;
+
 import com.google.common.base.Preconditions;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.database.DataSnapshot;
@@ -56,9 +59,7 @@ class FirebaseManager {
   // Names of the nodes used in the Firebase Database
   private static final String ROOT_FIREBASE_HOTSPOTS = "hotspot_list",
           ROOT_LAST_ROOM_CODE = "last_room_code", KEY_DISPLAY_NAME = "display_name",
-          KEY_ANCHOR_ID = "hosted_anchor_id", KEY_TIMESTAMP = "updated_at_timestamp",
-          DISPLAY_NAME_VALUE = "Android EAP Sample";
-
+          KEY_ANCHOR_ID = "hosted_anchor_id", KEY_TIMESTAMP = "updated_at_timestamp";
   private final FirebaseApp app;
   private final DatabaseReference hotspotListRef, roomCodeRef;
   private DatabaseReference currentRoomRef = null;
@@ -174,21 +175,13 @@ class FirebaseManager {
     }
 
     hotspotListRef.removeValue()
-            .addOnSuccessListener(aVoid -> {
-              Log.d(TAG, "All hotspot data removed successfully.");
-            })
-            .addOnFailureListener(e -> {
-              Log.e(TAG, "Error removing hotspot data: " + e.getMessage());
-            });
+            .addOnSuccessListener(aVoid -> Log.d(TAG, "All hotspot data removed successfully."))
+            .addOnFailureListener(e -> Log.e(TAG, "Error removing hotspot data: " + e.getMessage()));
 
     // Remove data from the "last_room_code" node
     roomCodeRef.removeValue()
-            .addOnSuccessListener(aVoid -> {
-              Log.d(TAG, "Last room code removed successfully.");
-            })
-            .addOnFailureListener(e -> {
-              Log.e(TAG, "Error removing last room code: " + e.getMessage());
-            });
+            .addOnSuccessListener(aVoid -> Log.d(TAG, "Last room code removed successfully."))
+            .addOnFailureListener(e -> Log.e(TAG, "Error removing last room code: " + e.getMessage()));
   }
 
 
@@ -201,7 +194,7 @@ class FirebaseManager {
 
     hotspotListRef.addValueEventListener(new ValueEventListener() {
       @Override
-      public void onDataChange(DataSnapshot dataSnapshot) {
+      public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
         for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
           String keyString = snapshot.getKey();
           long keyLong = 1;
@@ -216,7 +209,7 @@ class FirebaseManager {
       }
 
       @Override
-      public void onCancelled(DatabaseError error) {
+      public void onCancelled(@NonNull DatabaseError error) {
         Log.d("Hotspot", "Failed to read value.", error.toException());
         listener.onError(error);
       }

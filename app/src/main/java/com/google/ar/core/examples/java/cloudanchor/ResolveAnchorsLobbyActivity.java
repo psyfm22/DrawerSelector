@@ -2,7 +2,6 @@ package com.google.ar.core.examples.java.cloudanchor;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.Log;
@@ -10,7 +9,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Spinner;
 
@@ -43,16 +41,9 @@ public class ResolveAnchorsLobbyActivity extends AppCompatActivity {
         spinner = findViewById(R.id.select_anchors_spinner);
         ImageButton returnIB = findViewById(R.id.anchorLobbyReturnIB);
 
-        clearB.setOnClickListener(view -> {
-            deleteAllAnchors();
-        });
-        resolveB.setOnClickListener(view -> {
-            resolveAnchor();
-        });
-
-        returnIB.setOnClickListener(view -> {
-            finish();
-        });
+        clearB.setOnClickListener(view -> deleteAllAnchors());
+        resolveB.setOnClickListener(view -> resolveAnchor());
+        returnIB.setOnClickListener(view -> finish());
 
         firebaseManager = new FirebaseManager(this);
 
@@ -123,9 +114,7 @@ public class ResolveAnchorsLobbyActivity extends AppCompatActivity {
         builder.setView(view);
         alertDialogue = builder.create();
 
-        okayB.setOnClickListener(view1 -> {
-                alertDialogue.dismiss();
-        });
+        okayB.setOnClickListener(view1 -> alertDialogue.dismiss());
 
         if (alertDialogue.getWindow() != null) {
             alertDialogue.getWindow().setBackgroundDrawable(new ColorDrawable(0));
