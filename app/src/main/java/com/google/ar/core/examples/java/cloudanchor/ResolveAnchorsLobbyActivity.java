@@ -18,6 +18,7 @@ import java.util.List;
 public class ResolveAnchorsLobbyActivity extends AppCompatActivity {
 
     private FirebaseManager firebaseManager;
+    private Spinner spinner;
 
     static Intent newIntent(Context packageContext) {
         return new Intent(packageContext, ResolveAnchorsLobbyActivity.class);
@@ -31,6 +32,7 @@ public class ResolveAnchorsLobbyActivity extends AppCompatActivity {
 
         Button resolveB = findViewById(R.id.resolve_button);
         Button clearB = findViewById(R.id.clearAnchorsB);
+        spinner = findViewById(R.id.select_anchors_spinner);
 
         clearB.setOnClickListener(view -> {
             deleteAllAnchors();
@@ -40,7 +42,6 @@ public class ResolveAnchorsLobbyActivity extends AppCompatActivity {
         });
 
 
-        Spinner spinner = findViewById(R.id.select_anchors_spinner);
 
 
         firebaseManager = new FirebaseManager(this);
@@ -71,6 +72,8 @@ public class ResolveAnchorsLobbyActivity extends AppCompatActivity {
     }
 
     private void resolveAnchor(){
+        String selectedItem = (String) spinner.getSelectedItem();
+        Log.d("COMP3018",selectedItem);
 
     }
 }

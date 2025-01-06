@@ -118,10 +118,10 @@ class FirebaseManager {
   }
 
   /** Stores the given anchor ID in the given room code. */
-  void storeAnchorIdInRoom(Long roomCode, String cloudAnchorId) {
+  void storeAnchorIdInRoom(Long roomCode, String cloudAnchorId, String displayName) {
     Preconditions.checkNotNull(app, "Firebase App was null");
     DatabaseReference roomRef = hotspotListRef.child(String.valueOf(roomCode));
-    roomRef.child(KEY_DISPLAY_NAME).setValue(DISPLAY_NAME_VALUE);
+    roomRef.child(KEY_DISPLAY_NAME).setValue(displayName);
     roomRef.child(KEY_ANCHOR_ID).setValue(cloudAnchorId);
     roomRef.child(KEY_TIMESTAMP).setValue(System.currentTimeMillis());
   }

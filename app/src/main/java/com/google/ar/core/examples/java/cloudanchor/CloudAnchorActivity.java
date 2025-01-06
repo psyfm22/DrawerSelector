@@ -646,7 +646,7 @@ public class CloudAnchorActivity extends AppCompatActivity
       if (roomCode == null || cloudAnchorId == null) {
         return;
       }
-      firebaseManager.storeAnchorIdInRoom(roomCode, cloudAnchorId);
+      firebaseManager.storeAnchorIdInRoom(roomCode, cloudAnchorId, "DisplayName is Here");
       snackbarHelper.showMessageWithDismiss(
           CloudAnchorActivity.this, getString(R.string.snackbar_cloud_id_shared));
     }
