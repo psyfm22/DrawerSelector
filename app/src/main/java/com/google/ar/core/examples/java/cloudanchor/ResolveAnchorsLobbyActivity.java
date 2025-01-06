@@ -84,7 +84,7 @@ public class ResolveAnchorsLobbyActivity extends AppCompatActivity {
     private void resolveAnchor(){
         int selectedPosition = spinner.getSelectedItemPosition();
 
-        if(selectedPosition > 0){
+        if(selectedPosition > -1){
             Hotspot selectedHotspot = hotspotList.get(selectedPosition);
 
             Log.d("COMP3018",selectedHotspot.getName());

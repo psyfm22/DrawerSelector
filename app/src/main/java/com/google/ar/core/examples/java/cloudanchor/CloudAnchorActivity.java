@@ -559,11 +559,8 @@ public class CloudAnchorActivity extends AppCompatActivity
 
   /** Resets the mode of the app to its initial state and removes the anchors. */
   private void resetMode() {
-    hostButton.setText(R.string.host_button_text);
-    hostButton.setEnabled(true);
-
-    resolveButton.setText(R.string.resolve_button_text);
-    resolveButton.setEnabled(true);
+    hostButton.setEnabled(false);
+    resolveButton.setEnabled(false);
 
     roomCodeText.setText(R.string.initial_room_code);
 
@@ -574,6 +571,8 @@ public class CloudAnchorActivity extends AppCompatActivity
     setNewAnchor(null);
     snackbarHelper.hide(this);
     cloudManager.clearListeners();
+
+    finish();
   }
 
   /** Callback function invoked when the user presses the OK button in the Resolve Dialog. */
