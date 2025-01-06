@@ -28,6 +28,9 @@ import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /** A helper class to manage all communications with Firebase. */
 class FirebaseManager {
   private static final String TAG =
@@ -187,4 +190,40 @@ class FirebaseManager {
               Log.e(TAG, "Error removing last room code: " + e.getMessage());
             });
   }
+
+
+  void getHotspotList(final HotspotListListener listener) {
+
+    if(app == null){
+      Log.e("COMP3018", "Firebase App is null");
+    }
+    List<String> displayNames = new ArrayList<>();
+
+    hotspotListRef.addValueEventListener(new ValueEventListener() {
+      @Override
+      public void onDataChange(DataSnapshot dataSnapshot) {
+        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+          String displayName = snapshot.child("display_name").getValue(String.class);
+          displayNames.add(displayName);
+        }
+        listener.onHotspotListFetched(displayNames);
+      }
+
+      @Override
+      public void onCancelled(DatabaseError error) {
+        Log.d("Hotspot", "Failed to read value.", error.toException());
+        listener.onError(error);
+      }
+    });
+  }
+
+
+
+
+  interface HotspotListListener {
+    void onHotspotListFetched(List<String> displayNames);
+
+    void onError(DatabaseError error);
+  }
+
 }
