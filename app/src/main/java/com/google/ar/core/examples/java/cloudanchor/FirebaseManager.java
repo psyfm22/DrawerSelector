@@ -209,9 +209,10 @@ class FirebaseManager {
     if(app == null){
       Log.e("COMP3018", "Firebase App is null");
     }
+
     List<Hotspot> hotspotList = new ArrayList<>();
 
-    hotspotListRef.addValueEventListener(new ValueEventListener() {
+    ValueEventListener valueEventListener = new ValueEventListener() {
       @Override
       public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
         for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
@@ -225,6 +226,10 @@ class FirebaseManager {
           hotspotList.add(hotspot);
         }
         listener.onHotspotListFetched(hotspotList);
+
+
+        // Remove the listener after the first data fetch
+        hotspotListRef.removeEventListener(this);
       }
 
       @Override
@@ -232,7 +237,9 @@ class FirebaseManager {
         Log.d("Hotspot", "Failed to read value.", error.toException());
         listener.onError(error);
       }
-    });
+    };
+
+    hotspotListRef.addValueEventListener(valueEventListener);
   }
 
 

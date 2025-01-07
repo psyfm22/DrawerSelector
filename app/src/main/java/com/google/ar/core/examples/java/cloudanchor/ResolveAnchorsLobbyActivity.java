@@ -48,16 +48,15 @@ public class ResolveAnchorsLobbyActivity extends AppCompatActivity implements Sp
         resolveB.setOnClickListener(view -> resolveAnchor());
         returnIB.setOnClickListener(view -> finish());
 
-
+        Log.d("COMP3018", "I am in the oncreate()");
 
         firebaseManager = new FirebaseManager(this);
 
         firebaseManager.getHotspotList(new FirebaseManager.HotspotListListener() {
             @Override
             public void onHotspotListFetched(List<Hotspot> hotspots) {
-
                 hotspotList = hotspots;
-
+                Log.d("COMP3018","Original size of list: "+ hotspots.size());
                 List<String> nameList = new ArrayList<>();
 
                 for (Hotspot hotspot : hotspotList) {
@@ -73,7 +72,6 @@ public class ResolveAnchorsLobbyActivity extends AppCompatActivity implements Sp
                 Log.d("COMP3018", "Error fetching hotspot list", error.toException());
             }
         });
-
     }
 
     @Override
@@ -138,10 +136,15 @@ public class ResolveAnchorsLobbyActivity extends AppCompatActivity implements Sp
     public void onItemDeleted(int position) {
         //First need to find the current item, then delete it from the firebase
         Hotspot hotspot = hotspotList.get(position);
+        Log.d("COMP3018", "Here is the size at start of deletion: "+ hotspotList.size());
+        hotspotList.remove(position);
+        Log.d("COMP3018", "Here is the after removal from list: "+ hotspotList.size());
+
 
         firebaseManager.removeHotspot(hotspot.getCode(), new FirebaseManager.DeleteCallback() {
             @Override
             public void onSuccess() {
+                Log.d("COMP3018", "Here is in the onSuccess: "+ hotspotList.size());
                 Log.d("COMP3018", "Successfully Deleted the firebase item");
             }
 

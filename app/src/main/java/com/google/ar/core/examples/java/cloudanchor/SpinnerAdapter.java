@@ -1,6 +1,7 @@
 package com.google.ar.core.examples.java.cloudanchor;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,7 +24,6 @@ public class SpinnerAdapter extends ArrayAdapter<String> {
         this.items = items;
         this.inflater = LayoutInflater.from(context);
         this.listener = itemDeletedListener;
-
     }
 
     public interface ItemDeletedListener {
@@ -36,6 +36,7 @@ public class SpinnerAdapter extends ArrayAdapter<String> {
         if (view == null) {
             view = inflater.inflate(R.layout.spinner_item, parent, false);
         }
+        Log.d("COMP3018", "In the view");
 
         TextView itemText = view.findViewById(R.id.itemNameTV);
 
@@ -49,6 +50,7 @@ public class SpinnerAdapter extends ArrayAdapter<String> {
         if (view == null) {
             view = inflater.inflate(R.layout.spinner_item, parent, false);
         }
+        Log.d("COMP3018","GetDropDownView");
 
         TextView itemText = view.findViewById(R.id.itemNameTV);
         ImageView deleteButton = view.findViewById(R.id.itemDeleteIV);
@@ -56,6 +58,7 @@ public class SpinnerAdapter extends ArrayAdapter<String> {
         itemText.setText(items.get(position));
 
         deleteButton.setOnClickListener(v -> {
+            Log.d("COMP3018", "In the delete on click");
             items.remove(position);
             notifyDataSetChanged();
 
