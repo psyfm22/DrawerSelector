@@ -16,10 +16,18 @@ public class SpinnerAdapter extends ArrayAdapter<String> {
     private final List<String> items;
     private final LayoutInflater inflater;
 
-    public SpinnerAdapter(Context context, List<String> items) {
+    private ItemDeletedListener listener;
+
+    public SpinnerAdapter(Context context, List<String> items, ItemDeletedListener itemDeletedListener) {
         super(context, R.layout.spinner_item, items);
         this.items = items;
         this.inflater = LayoutInflater.from(context);
+        this.listener = itemDeletedListener;
+
+    }
+
+    public interface ItemDeletedListener {
+        void onItemDeleted(int position);
     }
 
     @NonNull
@@ -50,6 +58,10 @@ public class SpinnerAdapter extends ArrayAdapter<String> {
         deleteButton.setOnClickListener(v -> {
             items.remove(position);
             notifyDataSetChanged();
+
+            if (listener != null) {
+                listener.onItemDeleted(position);
+            }
         });
 
         return view;

@@ -83,6 +83,7 @@
         android:layout_width="340dp"
         android:layout_height="107dp"
         android:spinnerMode="dialog"
+        android:backgroundTint="@color/white"
         app:layout_constraintBottom_toTopOf="@+id/guideline_enter"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
