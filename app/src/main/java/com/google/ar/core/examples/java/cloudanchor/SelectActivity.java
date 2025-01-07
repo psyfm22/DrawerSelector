@@ -24,6 +24,7 @@ public class SelectActivity extends AppCompatActivity {
     private static final String PASSWORD_CODE = "PASSWORD";
 
 
+
     static Intent newIntent(Context packageContext) {
         return new Intent(packageContext, SelectActivity.class);
     }
@@ -61,6 +62,9 @@ public class SelectActivity extends AppCompatActivity {
     public void onPause() {
         super.onPause();
         displayRotationHelper.onPause();
+        if(alertDialogue != null){
+            alertDialogue.dismiss();
+        }
     }
 
     /**
