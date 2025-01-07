@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -22,7 +23,7 @@ public class SelectActivity extends AppCompatActivity {
     private AlertDialog alertDialogue;
     private EditText nameET;
     private static final String PASSWORD_CODE = "PASSWORD";
-
+    private ImageView settingsIV;
 
 
     static Intent newIntent(Context packageContext) {
@@ -41,12 +42,17 @@ public class SelectActivity extends AppCompatActivity {
         Button viewB = findViewById(R.id.selectBeginViewingB);
         nameET = findViewById(R.id.selectNameET);
         ImageButton backIB = findViewById(R.id.selectReturnIB);
+        settingsIV = findViewById(R.id.selectSettingsIV);
 
         placeB.setOnClickListener(v -> showAlertDialogue());
 
         viewB.setOnClickListener(v -> {
             Intent intent = ResolveAnchorsLobbyActivity.newIntent(SelectActivity.this);
             startActivity(intent);
+        });
+
+        settingsIV.setOnClickListener(v -> {
+            showAlertDialogue();
         });
 
         backIB.setOnClickListener(v -> finish());
@@ -124,15 +130,17 @@ public class SelectActivity extends AppCompatActivity {
 
             if(passwordEntered.equals(passwordAnswer)){
                 alertDialogue.dismiss();
-                String name = nameET.getText().toString();
+//                String name = nameET.getText().toString();
+//
+//                if(name.trim().isEmpty()){
+//                    name = "DEFAULT";
+//                }
 
-                if(name.trim().isEmpty()){
-                    name = "DEFAULT";
-                }
+                Intent intent = SettingsActivity.newIntent(SelectActivity.this);
+//                intent.putExtra("PLACING_ANCHOR", true);
+//                intent.putExtra("ANCHOR_NAME", name);
 
-                Intent intent = CloudAnchorActivity.newIntent(SelectActivity.this);
-                intent.putExtra("PLACING_ANCHOR", true);
-                intent.putExtra("ANCHOR_NAME", name);
+
                 startActivity(intent);
             }else{
                 alertDialogue.dismiss();
