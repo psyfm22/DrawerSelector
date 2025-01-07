@@ -243,9 +243,6 @@ class FirebaseManager {
     hotspotListRef.addValueEventListener(valueEventListener);
   }
 
-
-
-
   interface HotspotListListener {
     void onHotspotListFetched(List<Hotspot> displayNames);
 
