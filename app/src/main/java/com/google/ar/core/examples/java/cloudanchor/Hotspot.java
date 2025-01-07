@@ -1,7 +1,7 @@
 package com.google.ar.core.examples.java.cloudanchor;
 
 public class Hotspot {
-    private String name;
+    private final String name;
     private long code;
 
 
@@ -13,10 +13,6 @@ public class Hotspot {
 
     public String getName() {
         return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public long getCode() {

@@ -16,7 +16,7 @@ public class SpinnerAdapter extends ArrayAdapter<String> {
     private final List<String> items;
     private final LayoutInflater inflater;
 
-    private ItemDeletedListener listener;
+    private final ItemDeletedListener listener;
 
     public SpinnerAdapter(Context context, List<String> items, ItemDeletedListener itemDeletedListener) {
         super(context, R.layout.spinner_item, items);

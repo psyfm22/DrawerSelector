@@ -111,8 +111,7 @@ public class CloudAnchorActivity extends AppCompatActivity
   private final SnackbarHelper snackbarHelper = new SnackbarHelper();
   private DisplayRotationHelper displayRotationHelper;
   private final TrackingStateHelper trackingStateHelper = new TrackingStateHelper(this);
-  private Button hostButton;
-  private Button resolveButton;
+  private Button hostButton, resolveButton;
   private TextView roomCodeText;
   private SharedPreferences sharedPreferences;
   private static final String PREFERENCE_FILE_KEY = "allow_sharing_images",

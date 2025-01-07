@@ -13,8 +13,8 @@ import android.widget.Spinner;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.ar.core.examples.java.common.helpers.DisplayRotationHelper;
 import com.google.firebase.database.DatabaseError;
 
 import java.util.ArrayList;
@@ -25,6 +25,8 @@ public class ResolveAnchorsLobbyActivity extends AppCompatActivity implements Sp
     private FirebaseManager firebaseManager;
     private Spinner spinner;
     private List<Hotspot> hotspotList;
+
+    private DisplayRotationHelper displayRotationHelper;
     static Intent newIntent(Context packageContext) {
         return new Intent(packageContext, ResolveAnchorsLobbyActivity.class);
     }
@@ -34,6 +36,8 @@ public class ResolveAnchorsLobbyActivity extends AppCompatActivity implements Sp
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_resolve_anchors_lobby);
+
+        displayRotationHelper = new DisplayRotationHelper(this);
 
         Button resolveB = findViewById(R.id.resolve_button);
         Button clearB = findViewById(R.id.clearAnchorsB);
@@ -72,6 +76,18 @@ public class ResolveAnchorsLobbyActivity extends AppCompatActivity implements Sp
 
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        displayRotationHelper.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        displayRotationHelper.onPause();
+    }
+
     private void deleteAllAnchors(){
         firebaseManager.removeAllData();
         recreate();
@@ -93,7 +109,6 @@ public class ResolveAnchorsLobbyActivity extends AppCompatActivity implements Sp
             showAlertDialogue();
         }
     }
-
 
     /**
      * showAlertDialogue, Shows the failure of opening resolve
