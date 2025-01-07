@@ -3,10 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:padding="10dp">
 
     <ImageView
-        android:id="@+id/imageView"
+        android:id="@+id/itemDeleteIV"
         android:layout_width="52dp"
         android:layout_height="35dp"
         android:layout_marginStart="10dp"
@@ -16,12 +17,12 @@
         app:srcCompat="@drawable/close_app_cross" />
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/itemNameTV"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="12dp"
         android:layout_marginTop="18dp"
         android:text="TextView"
-        app:layout_constraintStart_toEndOf="@+id/imageView"
+        app:layout_constraintStart_toEndOf="@+id/itemDeleteIV"
         app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

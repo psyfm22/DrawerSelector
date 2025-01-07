@@ -80,13 +80,10 @@
     <Spinner
         android:id="@+id/select_anchors_spinner"
         style="@style/Widget.AppCompat.Spinner.Underlined"
-        android:layout_width="322dp"
-        android:layout_height="54dp"
-        android:layout_marginStart="40dp"
-        android:layout_marginEnd="40dp"
+        android:layout_width="340dp"
+        android:layout_height="107dp"
         android:spinnerMode="dialog"
-        android:background="@drawable/edittext_background"
-        app:layout_constraintBottom_toTopOf="@+id/guideline_select"
+        app:layout_constraintBottom_toTopOf="@+id/guideline_enter"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -94,9 +91,11 @@
         android:id="@+id/resolve_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="72dp"
         android:text="@string/resolve_button_text"
         android:theme="@style/AppButtonTheme"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/guideline_enter" />
 
@@ -112,16 +111,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/resolve_button" />
 
-<!--    <androidx.recyclerview.widget.RecyclerView-->
-<!--        android:id="@+id/recyclerView"-->
-<!--        android:layout_width="355dp"-->
-<!--        android:layout_height="99dp"-->
-<!--        android:layout_marginStart="4dp"-->
-<!--        android:layout_marginTop="20dp"-->
-<!--        android:layout_marginEnd="4dp"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toBottomOf="@+id/clearAnchorsB" />-->
+    <!--    <androidx.recyclerview.widget.RecyclerView-->
+    <!--        android:id="@+id/recyclerView"-->
+    <!--        android:layout_width="355dp"-->
+    <!--        android:layout_height="99dp"-->
+    <!--        android:layout_marginStart="4dp"-->
+    <!--        android:layout_marginTop="20dp"-->
+    <!--        android:layout_marginEnd="4dp"-->
+    <!--        app:layout_constraintEnd_toEndOf="parent"-->
+    <!--        app:layout_constraintStart_toStartOf="parent"-->
+    <!--        app:layout_constraintTop_toBottomOf="@+id/clearAnchorsB" />-->
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

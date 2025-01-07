@@ -66,13 +66,17 @@ public class ResolveAnchorsLobbyActivity extends AppCompatActivity {
                     nameList.add(hotspot.getName());
                 }
 
-                ArrayAdapter<String> adapter = new ArrayAdapter<>(
-                        ResolveAnchorsLobbyActivity.this,
-                        android.R.layout.simple_spinner_item,
-                        nameList);
-
-                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                SpinnerAdapter adapter = new SpinnerAdapter(ResolveAnchorsLobbyActivity.this, nameList);
                 spinner.setAdapter(adapter);
+
+
+//                ArrayAdapter<String> adapter = new ArrayAdapter<>(
+//                        ResolveAnchorsLobbyActivity.this,
+//                        android.R.layout.simple_spinner_item,
+//                        nameList);
+//
+//                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//                spinner.setAdapter(adapter);
 
 
 //                recyclerView.setLayoutManager(new LinearLayoutManager(ResolveAnchorsLobbyActivity.this));
