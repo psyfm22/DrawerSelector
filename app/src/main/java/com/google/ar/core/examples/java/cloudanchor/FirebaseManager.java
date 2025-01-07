@@ -228,8 +228,9 @@ class FirebaseManager {
         listener.onHotspotListFetched(hotspotList);
 
 
-        // Remove the listener after the first data fetch
-        hotspotListRef.removeEventListener(this);
+        if (hotspotListRef != null) {
+          hotspotListRef.removeEventListener(this);
+        }
       }
 
       @Override
