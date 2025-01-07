@@ -13,11 +13,19 @@
         android:layout_marginStart="6dp"
         android:layout_marginTop="6dp"
         android:background="@android:color/transparent"
-        android:backgroundTint="@color/red"
         android:padding="10dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/arrow" />
+
+    <ImageView
+        android:id="@+id/selectSettingsIB"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="6dp"
+        app:layout_constraintStart_toEndOf="@+id/selectReturnIB"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/settings" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/selectGuidelineHost"
