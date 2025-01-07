@@ -397,6 +397,7 @@ public class CloudAnchorActivity extends AppCompatActivity
       planeRenderer.createOnGlThread(this, "models/trigrid.png");
       pointCloudRenderer.createOnGlThread(this);
 
+      //I think this is where the object is made
       virtualObject.createOnGlThread(this, "models/andy.obj", "models/andy.png");
       virtualObject.setMaterialProperties(0.0f, 2.0f, 0.5f, 6.0f);
 
