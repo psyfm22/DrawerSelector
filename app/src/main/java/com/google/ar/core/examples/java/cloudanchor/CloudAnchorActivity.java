@@ -394,7 +394,11 @@ public class CloudAnchorActivity extends AppCompatActivity
     try {
       // Create the texture and pass it to ARCore session to be filled during update().
       backgroundRenderer.createOnGlThread(this);
-      planeRenderer.createOnGlThread(this, "models/trigrid.png");
+      if(isHosting){
+        planeRenderer.createOnGlThread(this, "models/trigrid.png");
+      }else{
+        planeRenderer.createOnGlThread(this, "models/trigrid.png");
+      }
       pointCloudRenderer.createOnGlThread(this);
 
       //I think this is where the object is made

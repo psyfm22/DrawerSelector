@@ -44,29 +44,24 @@ public class PlaneRenderer {
   private static final String TAG = PlaneRenderer.class.getSimpleName();
 
   // Shader names.
-  private static final String VERTEX_SHADER_NAME = "shaders/plane.vert";
-  private static final String FRAGMENT_SHADER_NAME = "shaders/plane.frag";
+  private static final String VERTEX_SHADER_NAME = "shaders/plane.vert",
+          FRAGMENT_SHADER_NAME = "shaders/plane.frag";
 
-  private static final int BYTES_PER_FLOAT = Float.SIZE / 8;
-  private static final int BYTES_PER_SHORT = Short.SIZE / 8;
-  private static final int COORDS_PER_VERTEX = 3; // x, z, alpha
+  private static final int BYTES_PER_FLOAT = Float.SIZE / 8, BYTES_PER_SHORT = Short.SIZE / 8,
+          COORDS_PER_VERTEX = 3; // x, z, alpha
 
-  private static final int VERTS_PER_BOUNDARY_VERT = 2;
-  private static final int INDICES_PER_BOUNDARY_VERT = 3;
-  private static final int INITIAL_BUFFER_BOUNDARY_VERTS = 64;
-
-  private static final int INITIAL_VERTEX_BUFFER_SIZE_BYTES =
-      BYTES_PER_FLOAT * COORDS_PER_VERTEX * VERTS_PER_BOUNDARY_VERT * INITIAL_BUFFER_BOUNDARY_VERTS;
-
-  private static final int INITIAL_INDEX_BUFFER_SIZE_BYTES =
+  private static final int VERTS_PER_BOUNDARY_VERT = 2, INDICES_PER_BOUNDARY_VERT = 3,
+          INITIAL_BUFFER_BOUNDARY_VERTS = 64,
+          INITIAL_VERTEX_BUFFER_SIZE_BYTES =
+      BYTES_PER_FLOAT * COORDS_PER_VERTEX * VERTS_PER_BOUNDARY_VERT * INITIAL_BUFFER_BOUNDARY_VERTS,
+          INITIAL_INDEX_BUFFER_SIZE_BYTES =
       BYTES_PER_SHORT
           * INDICES_PER_BOUNDARY_VERT
           * INDICES_PER_BOUNDARY_VERT
           * INITIAL_BUFFER_BOUNDARY_VERTS;
 
-  private static final float FADE_RADIUS_M = 0.25f;
-  private static final float DOTS_PER_METER = 10.0f;
-  private static final float EQUILATERAL_TRIANGLE_SCALE = (float) (1 / Math.sqrt(3));
+  private static final float FADE_RADIUS_M = 0.25f, DOTS_PER_METER = 10.0f,
+          EQUILATERAL_TRIANGLE_SCALE = (float) (1 / Math.sqrt(3));
 
   // Using the "signed distance field" approach to render sharp lines and circles.
   // {dotThreshold, lineThreshold, lineFadeSpeed, occlusionScale}
@@ -78,14 +73,8 @@ public class PlaneRenderer {
   private int planeProgram;
   private final int[] textures = new int[1];
 
-  private int planeXZPositionAlphaAttribute;
-
-  private int planeModelUniform;
-  private int planeNormalUniform;
-  private int planeModelViewProjectionUniform;
-  private int textureUniform;
-  private int gridControlUniform;
-  private int planeUvMatrixUniform;
+  private int planeXZPositionAlphaAttribute, planeModelUniform, planeNormalUniform,
+          planeModelViewProjectionUniform, textureUniform, gridControlUniform, planeUvMatrixUniform;
 
   private FloatBuffer vertexBuffer =
       ByteBuffer.allocateDirect(INITIAL_VERTEX_BUFFER_SIZE_BYTES)
