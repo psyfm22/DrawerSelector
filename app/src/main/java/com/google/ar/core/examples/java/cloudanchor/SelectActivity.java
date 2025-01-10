@@ -147,6 +147,7 @@ public class SelectActivity extends AppCompatActivity {
 
             }
         });
+
         doneB.setOnClickListener(view1 -> {
             alertDialogue.dismiss();
         });
