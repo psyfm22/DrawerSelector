@@ -271,7 +271,8 @@ class FirebaseManager {
             callback.onPasswordsDiffer();
           }
         }else{
-          passcodeRef.setValue(passcode)
+          String hashedPassword = BCrypt.hashpw(passcode, BCrypt.gensalt());
+          passcodeRef.setValue(hashedPassword)
                   .addOnSuccessListener(aVoid -> {
                     callback.onSuccess();
                   })
@@ -281,6 +282,19 @@ class FirebaseManager {
         }
       }
     });
+  }
+
+  void changePasscode(String passcode, final ChangePasscodeCallback callback){
+    Preconditions.checkNotNull(app, "Firebase App was null");
+
+    passcodeRef.setValue(passcode)
+            .addOnSuccessListener(aVoid -> {
+              callback.onSuccess();
+            })
+            .addOnFailureListener(e -> {
+              callback.onFailure(e.getMessage());
+            });
+
   }
 
   interface HotspotListListener {
@@ -298,5 +312,9 @@ class FirebaseManager {
     void onSuccess();
     void onPasswordUploadFailure(String errorMessage);
     void onPasswordsDiffer();
+  }
+  interface ChangePasscodeCallback {
+    void onSuccess();
+    void onFailure(String errorMessage);
   }
 }

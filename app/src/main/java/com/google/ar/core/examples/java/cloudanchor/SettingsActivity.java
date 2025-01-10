@@ -2,7 +2,6 @@ package com.google.ar.core.examples.java.cloudanchor;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.Log;
@@ -19,17 +18,18 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.ar.core.examples.java.common.helpers.DisplayRotationHelper;
 
+import org.mindrot.jbcrypt.BCrypt;
+
 public class SettingsActivity extends AppCompatActivity {
 
     private DisplayRotationHelper displayRotationHelper;
     private TextView changePinTV, addTrayTV;
     private Button changePinB, addTrayB;
+    private ImageButton returnB;
     private EditText enterPin1ET, enterPin2ET, enterNameET;
+    private FirebaseManager firebaseManager;
 
     private final StringBuilder finalPassword = new StringBuilder();
-    private SharedPreferences.Editor editor;
-    private static final String PASSWORD_CODE = "PASSWORD";
-
 
     static Intent newIntent(Context packageContext) {
         return new Intent(packageContext, SettingsActivity.class);
@@ -40,7 +40,7 @@ public class SettingsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
-        ImageButton returnB = findViewById(R.id.settingsReturnIB);
+        returnB = findViewById(R.id.settingsReturnIB);
         changePinTV = findViewById(R.id.settingsChangePinTV);
         addTrayTV = findViewById(R.id.settingsAddDrawTV);
         changePinB = findViewById(R.id.settingsChangePinB);
@@ -51,16 +51,15 @@ public class SettingsActivity extends AppCompatActivity {
 
         enterNameET = findViewById(R.id.settingsEnterNameET);
 
-        SharedPreferences sharedPreferences = getSharedPreferences("SHARED_PREFERENCES",
-                Context.MODE_PRIVATE);
-
-        editor = sharedPreferences.edit();
+        firebaseManager = new FirebaseManager(this);
 
         returnB.setOnClickListener(v -> {
             returnButtonPressed();
         });
 
         changePinB.setOnClickListener(v -> {
+            changePinB.setEnabled(false);
+            returnB.setEnabled(false);
             changeAccessPin();
         });
 
@@ -99,8 +98,25 @@ public class SettingsActivity extends AppCompatActivity {
             if(password1.equals(password2) && password1.length() == 4) {
                 finalPassword.append(password1);
 
-                editor.putString(PASSWORD_CODE, finalPassword.toString());
-                editor.apply();
+                String hashedPassword = BCrypt.hashpw(password1,BCrypt.gensalt());
+
+                firebaseManager.changePasscode(hashedPassword, new FirebaseManager.ChangePasscodeCallback() {
+                    @Override
+                    public void onSuccess() {
+                        showAlertDialogue("Password Changed", "Successfully Changed the Password", true);
+                        changePinB.setEnabled(true);
+                        returnB.setEnabled(true);
+                    }
+
+                    @Override
+                    public void onFailure(String errorMessage) {
+                        showAlertDialogue("Password Issue", "Please Try Again", false);
+                        changePinB.setEnabled(true);
+                        returnB.setEnabled(true);
+                    }
+                });
+
+
                 finalPassword.setLength(0);
 
                 showAlertDialogue("Password Changed", "Successfully Changed the Password", true);

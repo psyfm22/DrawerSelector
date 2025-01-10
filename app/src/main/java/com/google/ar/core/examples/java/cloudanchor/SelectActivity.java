@@ -134,10 +134,9 @@ public class SelectActivity extends AppCompatActivity {
         enterB.setOnClickListener(view1 -> {
                     enterB.setEnabled(false);
                     String passwordEntered = enterPasswordET.getText().toString();
-                    String hashedPassword = BCrypt.hashpw(passwordEntered, BCrypt.gensalt());
 
 
-                    firebaseManager.checkPasscode(hashedPassword, new FirebaseManager.PasscodeCallback() {
+                    firebaseManager.checkPasscode(passwordEntered, new FirebaseManager.PasscodeCallback() {
                         @Override
                         public void onSuccess() {
 
