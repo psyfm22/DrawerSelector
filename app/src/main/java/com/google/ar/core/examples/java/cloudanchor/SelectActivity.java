@@ -11,9 +11,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.gridlayout.widget.GridLayout;
 
 import com.google.ar.core.examples.java.common.helpers.DisplayRotationHelper;
 
@@ -75,6 +77,7 @@ public class SelectActivity extends AppCompatActivity {
 
         StringBuilder enteredCode = new StringBuilder();
         EditText enterPasswordET = view.findViewById(R.id.passwordAlertET);
+        TextView alertTitleTV = view.findViewById(R.id.passwordAlertTitleTV);
 
         Button[] keyPadButtons = new Button[10];
 
@@ -91,6 +94,12 @@ public class SelectActivity extends AppCompatActivity {
 
         Button enterB = view.findViewById(R.id.passwordAlertEnterB);
         Button deleteB = view.findViewById(R.id.passwordAlertDeleteB);
+
+        GridLayout gridLayout = view.findViewById(R.id.passwordAlertGL);
+        Button doneB = view.findViewById(R.id.passwordAlertDoneB);
+        TextView descriptionTV = view.findViewById(R.id.passwordAlertDescriptionTV);
+        ImageView logoIV = view.findViewById(R.id.passwordAlertLogoIV);
+
 
         for(int i=0;i<keyPadButtons.length;i++){
             int finalI = i;
@@ -127,8 +136,19 @@ public class SelectActivity extends AppCompatActivity {
 
                 startActivity(intent);
             }else{
-                alertDialogue.dismiss();
+
+                alertTitleTV.setText("Incorrect Password");
+                enterPasswordET.setVisibility(View.GONE);
+                gridLayout.setVisibility(View.GONE);
+
+                doneB.setVisibility(View.VISIBLE);
+                logoIV.setVisibility(View.VISIBLE);
+                descriptionTV.setVisibility(View.VISIBLE);
+
             }
+        });
+        doneB.setOnClickListener(view1 -> {
+            alertDialogue.dismiss();
         });
 
         if (alertDialogue.getWindow() != null) {

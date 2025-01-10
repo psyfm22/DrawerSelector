@@ -26,7 +26,10 @@ public class MenuActivity extends AppCompatActivity {
         Button confirmLocationB = findViewById(R.id.mainConfirmLocationB),
                 closeB = findViewById(R.id.mainCloseB);
 
-        confirmLocationB.setOnClickListener(view -> startQRCodeScan());
+        confirmLocationB.setOnClickListener(view -> {
+            Intent intent = SelectActivity.newIntent(MenuActivity.this);
+            startActivity(intent);
+        });
 
 
         closeB.setOnClickListener(view -> finish());
