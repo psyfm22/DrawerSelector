@@ -23,6 +23,8 @@ import androidx.annotation.NonNull;
 
 import com.google.common.base.Preconditions;
 import com.google.firebase.FirebaseApp;
+import com.google.firebase.appcheck.FirebaseAppCheck;
+import com.google.firebase.appcheck.debug.DebugAppCheckProviderFactory;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -73,7 +75,12 @@ class FirebaseManager {
   FirebaseManager(Context context) {
     app = FirebaseApp.initializeApp(context);
     if (app != null) {
+
       DatabaseReference rootRef = FirebaseDatabase.getInstance(app).getReference();
+
+      FirebaseAppCheck firebaseAppCheck = FirebaseAppCheck.getInstance();
+      firebaseAppCheck.installAppCheckProviderFactory(DebugAppCheckProviderFactory.getInstance());
+
       hotspotListRef = rootRef.child(ROOT_FIREBASE_HOTSPOTS);
       roomCodeRef = rootRef.child(ROOT_LAST_ROOM_CODE);
 
