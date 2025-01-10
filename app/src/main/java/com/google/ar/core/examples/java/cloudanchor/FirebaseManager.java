@@ -261,9 +261,11 @@ class FirebaseManager {
     passcodeRef.get().addOnCompleteListener(task -> {
       if(task.isSuccessful()){
         String foundPassword = task.getResult().getValue(String.class);
+        Log.d("COMP3018","Here is found password: "+ foundPassword);
         if(foundPassword != null){
-
-          if(BCrypt.checkpw(passcode, foundPassword)){
+          boolean doPasswordsMatch = BCrypt.checkpw(passcode, foundPassword);
+          Log.d("COMP3018","Do match: "+ doPasswordsMatch);
+          if(doPasswordsMatch){
             callback.onSuccess();
           }else {
             callback.onPasswordsDiffer();

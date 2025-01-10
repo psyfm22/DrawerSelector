@@ -136,6 +136,7 @@ public class SelectActivity extends AppCompatActivity {
                     String passwordEntered = enterPasswordET.getText().toString();
                     String hashedPassword = BCrypt.hashpw(passwordEntered, BCrypt.gensalt());
 
+
                     firebaseManager.checkPasscode(hashedPassword, new FirebaseManager.PasscodeCallback() {
                         @Override
                         public void onSuccess() {
