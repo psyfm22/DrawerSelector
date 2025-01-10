@@ -33,6 +33,8 @@ import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 
+import org.mindrot.jbcrypt.BCrypt;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,9 +63,10 @@ class FirebaseManager {
   // Names of the nodes used in the Firebase Database
   private static final String ROOT_FIREBASE_HOTSPOTS = "hotspot_list",
           ROOT_LAST_ROOM_CODE = "last_room_code", KEY_DISPLAY_NAME = "display_name",
-          KEY_ANCHOR_ID = "hosted_anchor_id", KEY_TIMESTAMP = "updated_at_timestamp";
+          KEY_ANCHOR_ID = "hosted_anchor_id", KEY_TIMESTAMP = "updated_at_timestamp",
+          ROOT_PASSCODE = "password_code";
   private final FirebaseApp app;
-  private final DatabaseReference hotspotListRef, roomCodeRef;
+  private final DatabaseReference hotspotListRef, roomCodeRef, passcodeRef;
   private DatabaseReference currentRoomRef = null;
   private ValueEventListener currentRoomListener = null;
 
@@ -83,6 +86,7 @@ class FirebaseManager {
 
       hotspotListRef = rootRef.child(ROOT_FIREBASE_HOTSPOTS);
       roomCodeRef = rootRef.child(ROOT_LAST_ROOM_CODE);
+      passcodeRef = rootRef.child(ROOT_PASSCODE);
 
       DatabaseReference.goOnline();
 
@@ -90,6 +94,7 @@ class FirebaseManager {
       Log.d(TAG, "Could not connect to Firebase Database!");
       hotspotListRef = null;
       roomCodeRef = null;
+      passcodeRef = null;
     }
   }
 
@@ -250,6 +255,32 @@ class FirebaseManager {
     hotspotListRef.addValueEventListener(valueEventListener);
   }
 
+  void checkPasscode(String passcode, final PasscodeCallback callback){
+    Preconditions.checkNotNull(app, "Firebase App was null");
+
+    passcodeRef.get().addOnCompleteListener(task -> {
+      if(task.isSuccessful()){
+        String foundPassword = task.getResult().getValue(String.class);
+        if(foundPassword != null){
+
+          if(BCrypt.checkpw(passcode, foundPassword)){
+            callback.onSuccess();
+          }else {
+            callback.onPasswordsDiffer();
+          }
+        }else{
+          passcodeRef.setValue(passcode)
+                  .addOnSuccessListener(aVoid -> {
+                    callback.onSuccess();
+                  })
+                  .addOnFailureListener(e -> {
+                    callback.onPasswordUploadFailure(e.getMessage());
+                  });
+        }
+      }
+    });
+  }
+
   interface HotspotListListener {
     void onHotspotListFetched(List<Hotspot> displayNames);
 
@@ -261,4 +292,9 @@ class FirebaseManager {
     void onFailure(String errorMessage);
   }
 
+  interface PasscodeCallback {
+    void onSuccess();
+    void onPasswordUploadFailure(String errorMessage);
+    void onPasswordsDiffer();
+  }
 }

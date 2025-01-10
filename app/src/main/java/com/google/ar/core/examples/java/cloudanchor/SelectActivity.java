@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -19,7 +20,11 @@ import androidx.gridlayout.widget.GridLayout;
 
 import com.google.ar.core.examples.java.common.helpers.DisplayRotationHelper;
 
+import org.mindrot.jbcrypt.BCrypt;
+
 public class SelectActivity extends AppCompatActivity {
+
+    private FirebaseManager firebaseManager;
 
     private DisplayRotationHelper displayRotationHelper;
     private AlertDialog alertDialogue;
@@ -41,6 +46,8 @@ public class SelectActivity extends AppCompatActivity {
         Button viewB = findViewById(R.id.selectBeginViewingB);
         ImageButton backIB = findViewById(R.id.selectReturnIB);
         ImageView settingsIV = findViewById(R.id.selectSettingsIV);
+
+        firebaseManager = new FirebaseManager(this);
 
 
         viewB.setOnClickListener(v -> {
@@ -125,28 +132,48 @@ public class SelectActivity extends AppCompatActivity {
         alertDialogue = builder.create();
 
         enterB.setOnClickListener(view1 -> {
-            SharedPreferences sharedPreferences = getSharedPreferences("SHARED_PREFERENCES",
-                    Context.MODE_PRIVATE);
-            String passwordAnswer = sharedPreferences.getString(PASSWORD_CODE,"1234");
-            String passwordEntered = enterPasswordET.getText().toString();
+                    enterB.setEnabled(false);
+                    String passwordEntered = enterPasswordET.getText().toString();
+                    String hashedPassword = BCrypt.hashpw(passwordEntered, BCrypt.gensalt());
 
-            if(passwordEntered.equals(passwordAnswer)){
-                alertDialogue.dismiss();
-                Intent intent = SettingsActivity.newIntent(SelectActivity.this);
+                    firebaseManager.checkPasscode(hashedPassword, new FirebaseManager.PasscodeCallback() {
+                        @Override
+                        public void onSuccess() {
 
-                startActivity(intent);
-            }else{
+                            Log.d("COMP3018", "On Success");
+                            alertDialogue.dismiss();
+                            Intent intent = SettingsActivity.newIntent(SelectActivity.this);
 
-                alertTitleTV.setText("Incorrect Password");
-                enterPasswordET.setVisibility(View.GONE);
-                gridLayout.setVisibility(View.GONE);
+                            startActivity(intent);
+                        }
 
-                doneB.setVisibility(View.VISIBLE);
-                logoIV.setVisibility(View.VISIBLE);
-                descriptionTV.setVisibility(View.VISIBLE);
+                        @Override
+                        public void onPasswordUploadFailure(String errorMessage) {
+                            Log.d("COMP3018", "Upload Failed");
 
-            }
-        });
+                            alertTitleTV.setText("Error Uploading");
+                            enterPasswordET.setVisibility(View.GONE);
+                            gridLayout.setVisibility(View.GONE);
+
+                            doneB.setVisibility(View.VISIBLE);
+                            logoIV.setVisibility(View.VISIBLE);
+                            descriptionTV.setVisibility(View.VISIBLE);
+                        }
+
+                        @Override
+                        public void onPasswordsDiffer() {
+
+                            Log.d("COMP3018", "Passwords Differ");
+                            alertTitleTV.setText("Incorrect Password");
+                            enterPasswordET.setVisibility(View.GONE);
+                            gridLayout.setVisibility(View.GONE);
+
+                            doneB.setVisibility(View.VISIBLE);
+                            logoIV.setVisibility(View.VISIBLE);
+                            descriptionTV.setVisibility(View.VISIBLE);
+                        }
+                    });
+                });
 
         doneB.setOnClickListener(view1 -> {
             alertDialogue.dismiss();
