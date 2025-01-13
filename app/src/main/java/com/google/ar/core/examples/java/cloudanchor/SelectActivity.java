@@ -69,6 +69,7 @@ public class SelectActivity extends AppCompatActivity {
         );
 
 
+
         //Assign the rotation helper
         displayRotationHelper = new DisplayRotationHelper(this);
 
