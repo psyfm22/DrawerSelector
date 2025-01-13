@@ -15,12 +15,16 @@ import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.gridlayout.widget.GridLayout;
 
 import com.google.ar.core.examples.java.common.helpers.DisplayRotationHelper;
 import com.google.firebase.database.DatabaseError;
+import com.journeyapps.barcodescanner.ScanContract;
+import com.journeyapps.barcodescanner.ScanOptions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,8 +39,8 @@ public class SelectActivity extends AppCompatActivity {
 
     private DisplayRotationHelper displayRotationHelper;
     private AlertDialog alertDialogue;
-
-
+    private ActivityResultLauncher<Intent> startActivityForResultLauncher;
+    private String drawName = "";
     static Intent newIntent(Context packageContext) {
         return new Intent(packageContext, SelectActivity.class);
     }
@@ -46,14 +50,32 @@ public class SelectActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select);
 
+        // Initialize the launcher for startActivityForResult
+        startActivityForResultLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == RESULT_OK) {
+                        Log.d("COMP3018", "Scan QR Code successful");
+                            ScanOptions scanOptions = new ScanOptions();
+                            scanOptions.setPrompt("Scan the QR Code");
+                            scanOptions.setBeepEnabled(true);
+                            scanOptions.setOrientationLocked(true);
+                            scanOptions.setCaptureActivity(CustomCaptureActivity.class);
+                            launcher.launch(scanOptions);
+                    } else if (result.getResultCode() == RESULT_CANCELED) {
+                        Log.d("COMP3018", "Scan QR Code was canceled");
+                    }
+                }
+        );
+
+
         //Assign the rotation helper
         displayRotationHelper = new DisplayRotationHelper(this);
 
         Button viewB = findViewById(R.id.selectBeginViewingB);
         ImageButton backIB = findViewById(R.id.selectReturnIB);
         ImageView settingsIV = findViewById(R.id.selectSettingsIV);
-        spinner = findViewById(R.id.select_anchors_spinner
-        );
+        spinner = findViewById(R.id.select_anchors_spinner);
 
         firebaseManager = new FirebaseManager(this);
 
@@ -84,11 +106,12 @@ public class SelectActivity extends AppCompatActivity {
             if(selectedPosition > -1){
                 Hotspot selectedHotspot = hotspotList.get(selectedPosition);
                 Log.d("COMP3018",selectedHotspot.getName());
+                drawName = selectedHotspot.getName();
 
                 Intent intent = CloudAnchorActivity.newIntent(SelectActivity.this);
                 intent.putExtra("PLACING_ANCHOR", false);
                 intent.putExtra("HOTSPOT_CODE", selectedHotspot.getCode());
-                startActivity(intent);
+                startActivityForResultLauncher.launch(intent);
             }else{
                 showErrorAlertDialogue();
             }
@@ -182,7 +205,6 @@ public class SelectActivity extends AppCompatActivity {
                             Log.d("COMP3018", "On Success");
                             alertDialogue.dismiss();
                             Intent intent = SettingsActivity.newIntent(SelectActivity.this);
-
                             startActivity(intent);
                         }
 
@@ -246,4 +268,25 @@ public class SelectActivity extends AppCompatActivity {
         alertDialogue.show();
     }
 
+    ActivityResultLauncher<ScanOptions> launcher = registerForActivityResult(new ScanContract(), result->{
+        if(result.getContents() != null){
+            AlertDialog.Builder builder = new AlertDialog.Builder(SelectActivity.this);
+            if(result.getContents().equals(drawName)){
+                Log.d("COMP3018","Correct Name");
+                builder.setTitle("Correct QR Code");
+                builder.setMessage("Press Okay to return");
+                builder.setPositiveButton("OK", (dialog, which) -> {
+                    dialog.dismiss();
+                });
+                AlertDialog alertDialog = builder.create();
+                alertDialog.show();
+            }else{
+                builder.setTitle("Incorrect QR Code");
+                builder.setMessage("Please Try Locating the Draw Again");
+                builder.setPositiveButton("OK", (dialog, which) -> dialog.dismiss());
+                AlertDialog alertDialog = builder.create();
+                alertDialog.show();
+            }
+        }
+    });
 }

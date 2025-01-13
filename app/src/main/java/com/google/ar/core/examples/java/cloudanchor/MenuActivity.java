@@ -65,7 +65,6 @@ public class MenuActivity extends AppCompatActivity {
                 AlertDialog alertDialog = builder.create();
                 alertDialog.setCanceledOnTouchOutside(false);
                 alertDialog.show();
-
             }else{
                 builder.setTitle("Incorrect QR Code");
                 builder.setMessage("Please Scan the Starting QR Code");

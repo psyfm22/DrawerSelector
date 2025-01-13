@@ -112,7 +112,7 @@ public class CloudAnchorActivity extends AppCompatActivity
   private final SnackbarHelper snackbarHelper = new SnackbarHelper();
   private DisplayRotationHelper displayRotationHelper;
   private final TrackingStateHelper trackingStateHelper = new TrackingStateHelper(this);
-  private Button cancelButton;
+  private Button cancelButton, qrCodeButton;
   private TextView roomCodeText;
   private SharedPreferences sharedPreferences;
   private static final String PREFERENCE_FILE_KEY = "allow_sharing_images",
@@ -193,6 +193,11 @@ public class CloudAnchorActivity extends AppCompatActivity
     cancelButton.setVisibility(View.GONE);
     cancelButton.setOnClickListener((view) -> resetMode());
 
+    qrCodeButton = findViewById(R.id.scan_qr_button);
+    qrCodeButton.setVisibility(View.GONE);
+    qrCodeButton.setOnClickListener((view) -> {resetQRMode();
+    });
+
     roomCodeText = findViewById(R.id.room_code_text);
 
 
@@ -238,6 +243,7 @@ public class CloudAnchorActivity extends AppCompatActivity
         onHostStart();
       }else{
         onResolveStart();
+        qrCodeButton.setVisibility(View.VISIBLE);
       }
     }
   }
@@ -569,7 +575,24 @@ public class CloudAnchorActivity extends AppCompatActivity
     setNewAnchor(null);
     snackbarHelper.hide(this);
     cloudManager.clearListeners();
+    Intent resultIntent = new Intent();
+    setResult(RESULT_CANCELED, resultIntent);
+    finish();
+  }
+  /** Resets the mode of the app to its initial state and removes the anchors. */
+  private void resetQRMode() {
 
+    roomCodeText.setText(R.string.initial_room_code);
+
+    currentMode = HostResolveMode.NONE;
+
+    firebaseManager.clearRoomListener();
+    hostListener = null;
+    setNewAnchor(null);
+    snackbarHelper.hide(this);
+    cloudManager.clearListeners();
+    Intent resultIntent = new Intent();
+    setResult(RESULT_OK, resultIntent);
     finish();
   }
 
