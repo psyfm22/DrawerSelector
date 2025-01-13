@@ -30,7 +30,6 @@ public class MenuActivity extends AppCompatActivity {
             startQRCodeScan();
         });
 
-
         closeB.setOnClickListener(view -> finish());
     }
 

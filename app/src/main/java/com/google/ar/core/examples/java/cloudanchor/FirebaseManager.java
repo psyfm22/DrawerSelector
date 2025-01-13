@@ -91,7 +91,6 @@ class FirebaseManager {
       DatabaseReference.goOnline();
 
     } else {
-      Log.d(TAG, "Could not connect to Firebase Database!");
       hotspotListRef = null;
       roomCodeRef = null;
       passcodeRef = null;
@@ -183,9 +182,8 @@ class FirebaseManager {
 
   /* Need to test this sufficiently */
   void removeHotspot(long key, final DeleteCallback deleteCallback){
-    if(app == null){
-      Log.e("COMP3018", "Firebase App is null");
-    }
+    Preconditions.checkNotNull(app, "Firebase App was null");
+
     DatabaseReference hotspotRef = hotspotListRef.child(String.valueOf(key));
 
     // Remove the specific hotspot
@@ -201,10 +199,9 @@ class FirebaseManager {
   }
 
   void removeAllData(){
-    if(app == null){
-      Log.e("COMP3018", "Firebase App is null");
-    }
+    Preconditions.checkNotNull(app, "Firebase App was null");
 
+    //Remove the value
     hotspotListRef.removeValue()
             .addOnSuccessListener(aVoid -> Log.d(TAG, "All hotspot data removed successfully."))
             .addOnFailureListener(e -> Log.e(TAG, "Error removing hotspot data: " + e.getMessage()));
@@ -217,10 +214,7 @@ class FirebaseManager {
 
 
   void getHotspotList(final HotspotListListener listener) {
-
-    if(app == null){
-      Log.e("COMP3018", "Firebase App is null");
-    }
+    Preconditions.checkNotNull(app, "Firebase App was null");
 
     List<Hotspot> hotspotList = new ArrayList<>();
 
@@ -261,10 +255,8 @@ class FirebaseManager {
     passcodeRef.get().addOnCompleteListener(task -> {
       if(task.isSuccessful()){
         String foundPassword = task.getResult().getValue(String.class);
-        Log.d("COMP3018","Here is found password: "+ foundPassword);
         if(foundPassword != null){
           boolean doPasswordsMatch = BCrypt.checkpw(passcode, foundPassword);
-          Log.d("COMP3018","Do match: "+ doPasswordsMatch);
           if(doPasswordsMatch){
             callback.onSuccess();
           }else {

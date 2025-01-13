@@ -4,7 +4,6 @@ public class Hotspot {
     private final String name;
     private long code;
 
-
     public Hotspot(String name, long code) {
         this.name = name;
         this.code = code;
