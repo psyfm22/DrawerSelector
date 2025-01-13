@@ -47,13 +47,13 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:padding="40dp"
-        android:text="@string/resolve_instructions_text"
+        android:text="Select which anchor you would like to resolve"
         android:textSize="20sp"
         android:visibility="visible"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/selectResolveTitleTV"
-        app:layout_constraintVertical_chainStyle="spread_inside" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/select_anchors_spinner" />
 
     <Button
         android:id="@+id/selectBeginViewingB"
@@ -66,5 +66,17 @@
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/selectResolveDescriptionTV" />
+
+    <Spinner
+        android:id="@+id/select_anchors_spinner"
+        style="@style/Widget.AppCompat.Spinner.Underlined"
+        android:layout_width="340dp"
+        android:layout_height="107dp"
+        android:backgroundTint="@color/white"
+        android:spinnerMode="dialog"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/selectResolveTitleTV" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

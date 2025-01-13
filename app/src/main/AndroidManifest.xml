@@ -35,10 +35,6 @@
             android:exported="false"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
         <activity
-            android:name=".ResolveAnchorsLobbyActivity"
-            android:exported="false"
-            android:theme="@style/Theme.AppCompat.NoActionBar" />
-        <activity
             android:name=".SelectActivity"
             android:exported="false"
             android:theme="@style/Theme.AppCompat.NoActionBar" />

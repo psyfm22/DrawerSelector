@@ -11,6 +11,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.Spinner;
+import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
@@ -18,9 +20,16 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.gridlayout.widget.GridLayout;
 
 import com.google.ar.core.examples.java.common.helpers.DisplayRotationHelper;
+import com.google.firebase.database.DatabaseError;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class SelectActivity extends AppCompatActivity {
+
+    private Spinner spinner;
+    private List<Hotspot> hotspotList;
 
     private FirebaseManager firebaseManager;
 
@@ -43,13 +52,46 @@ public class SelectActivity extends AppCompatActivity {
         Button viewB = findViewById(R.id.selectBeginViewingB);
         ImageButton backIB = findViewById(R.id.selectReturnIB);
         ImageView settingsIV = findViewById(R.id.selectSettingsIV);
+        spinner = findViewById(R.id.select_anchors_spinner
+        );
 
         firebaseManager = new FirebaseManager(this);
 
+        firebaseManager.getHotspotList(new FirebaseManager.HotspotListListener() {
+            @Override
+            public void onHotspotListFetched(List<Hotspot> hotspots) {
+                hotspotList = hotspots;
+                List<String> nameList = new ArrayList<>();
+
+                for (Hotspot hotspot : hotspotList) {
+                    nameList.add(hotspot.getName());
+                }
+
+                SpinnerAdapter adapter = new SpinnerAdapter1(SelectActivity.this, nameList);
+                spinner.setAdapter(adapter);
+            }
+
+            @Override
+            public void onError(DatabaseError error) {
+                Log.d("COMP3018", "Error fetching hotspot list", error.toException());
+            }
+        });
+
 
         viewB.setOnClickListener(v -> {
-            Intent intent = ResolveAnchorsLobbyActivity.newIntent(SelectActivity.this);
-            startActivity(intent);
+            int selectedPosition = spinner.getSelectedItemPosition();
+
+            if(selectedPosition > -1){
+                Hotspot selectedHotspot = hotspotList.get(selectedPosition);
+                Log.d("COMP3018",selectedHotspot.getName());
+
+                Intent intent = CloudAnchorActivity.newIntent(SelectActivity.this);
+                intent.putExtra("PLACING_ANCHOR", false);
+                intent.putExtra("HOTSPOT_CODE", selectedHotspot.getCode());
+                startActivity(intent);
+            }else{
+                showErrorAlertDialogue();
+            }
         });
 
         settingsIV.setOnClickListener(v -> showAlertDialogue());
@@ -180,4 +222,28 @@ public class SelectActivity extends AppCompatActivity {
         //Show the actual alert
         alertDialogue.show();
     }
+    /**
+     * showAlertDialogue, Shows the failure of opening resolve
+     */
+    private void showErrorAlertDialogue() {
+        //Initialise the layouts and views
+        View view = LayoutInflater.from(SelectActivity.this).inflate(R.layout.alert_dialogue, null, false);
+        AlertDialog alertDialogue;
+        Button okayB = view.findViewById(R.id.alertDoneB);
+
+        //Initialise the builder and the alertDialog
+        AlertDialog.Builder builder = new AlertDialog.Builder(SelectActivity.this);
+        builder.setView(view);
+        alertDialogue = builder.create();
+
+        okayB.setOnClickListener(view1 -> alertDialogue.dismiss());
+
+        if (alertDialogue.getWindow() != null) {
+            alertDialogue.getWindow().setBackgroundDrawable(new ColorDrawable(0));
+        }
+
+        //Show the actual alert
+        alertDialogue.show();
+    }
+
 }
