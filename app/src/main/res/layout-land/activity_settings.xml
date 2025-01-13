@@ -32,40 +32,62 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/arrow" />
 
+
     <TextView
         android:id="@+id/settingsChangePinTV"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="44dp"
+        android:layout_marginEnd="30dp"
         android:gravity="center"
         android:padding="20dp"
         android:text="Change the Access Pin"
         android:textSize="20sp"
         android:visibility="visible"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/settingsTitleTV"
-        app:layout_constraintVertical_chainStyle="spread_inside" />
+        app:layout_constraintEnd_toStartOf="@+id/settingsAddDrawTV"
+        app:layout_constraintTop_toBottomOf="@+id/settingsTitleTV" />
 
+    <TextView
+        android:id="@+id/settingsManageDrawersTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="44dp"
+        android:gravity="center"
+        android:padding="20dp"
+        android:text="Manage Drawer Database"
+        android:textSize="20sp"
+        android:visibility="visible"
+        app:layout_constraintStart_toEndOf="@+id/settingsAddDrawTV"
+        app:layout_constraintTop_toBottomOf="@+id/settingsTitleTV" />
 
     <Button
         android:id="@+id/settingsChangePinB"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginEnd="132dp"
         android:text="Change Access Pin"
         android:theme="@style/AppButtonTheme"
         android:visibility="visible"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/settingsAddDrawB"
         app:layout_constraintTop_toBottomOf="@+id/settingsChangePinTV" />
 
+    <Button
+        android:id="@+id/settingsManageDrawersB"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="157dp"
+        android:text="Manage Drawers"
+        android:theme="@style/AppButtonTheme"
+        android:visibility="visible"
+        app:layout_constraintStart_toEndOf="@+id/settingsAddDrawB"
+        app:layout_constraintTop_toBottomOf="@+id/settingsManageDrawersTV" />
 
     <TextView
         android:id="@+id/settingsAddDrawTV"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="144dp"
+        android:layout_marginTop="44dp"
         android:gravity="center"
         android:padding="20dp"
         android:text="Add a New Drawer"
