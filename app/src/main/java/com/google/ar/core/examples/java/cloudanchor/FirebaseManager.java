@@ -265,12 +265,8 @@ class FirebaseManager {
         }else{
           String hashedPassword = BCrypt.hashpw(passcode, BCrypt.gensalt());
           passcodeRef.setValue(hashedPassword)
-                  .addOnSuccessListener(aVoid -> {
-                    callback.onSuccess();
-                  })
-                  .addOnFailureListener(e -> {
-                    callback.onPasswordUploadFailure(e.getMessage());
-                  });
+                  .addOnSuccessListener(aVoid -> callback.onSuccess())
+                  .addOnFailureListener(e -> callback.onPasswordUploadFailure(e.getMessage()));
         }
       }
     });
@@ -280,12 +276,8 @@ class FirebaseManager {
     Preconditions.checkNotNull(app, "Firebase App was null");
 
     passcodeRef.setValue(passcode)
-            .addOnSuccessListener(aVoid -> {
-              callback.onSuccess();
-            })
-            .addOnFailureListener(e -> {
-              callback.onFailure(e.getMessage());
-            });
+            .addOnSuccessListener(aVoid -> callback.onSuccess())
+            .addOnFailureListener(e -> callback.onFailure(e.getMessage()));
 
   }
 

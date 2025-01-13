@@ -299,7 +299,6 @@ public class CloudAnchorActivity extends AppCompatActivity
     } catch (CameraNotAvailableException e) {
       snackbarHelper.showError(this, getString(R.string.snackbar_camera_unavailable));
       session = null;
-      return;
     }
   }
 
@@ -395,9 +394,9 @@ public class CloudAnchorActivity extends AppCompatActivity
       // Create the texture and pass it to ARCore session to be filled during update().
       backgroundRenderer.createOnGlThread(this);
       if(isHosting){
-        planeRenderer.createOnGlThread(this, "models/trigrid.png");
+        planeRenderer.createOnGlThread(this, "models/TriGrid.png");
       }else{
-        planeRenderer.createOnGlThread(this, "models/trigrid.png");
+        planeRenderer.createOnGlThread(this, "models/TriGridEmpty.png");
       }
       pointCloudRenderer.createOnGlThread(this);
 

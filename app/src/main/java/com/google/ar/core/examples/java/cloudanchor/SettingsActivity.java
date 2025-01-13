@@ -53,9 +53,7 @@ public class SettingsActivity extends AppCompatActivity {
 
         firebaseManager = new FirebaseManager(this);
 
-        returnB.setOnClickListener(v -> {
-            returnButtonPressed();
-        });
+        returnB.setOnClickListener(v -> returnButtonPressed());
 
         changePinB.setOnClickListener(v -> {
             changePinB.setEnabled(false);
@@ -63,9 +61,7 @@ public class SettingsActivity extends AppCompatActivity {
             changeAccessPin();
         });
 
-        addTrayB.setOnClickListener(v -> {
-            addNewTray();
-        });
+        addTrayB.setOnClickListener(v -> addNewTray());
 
         displayRotationHelper = new DisplayRotationHelper(this);
     }

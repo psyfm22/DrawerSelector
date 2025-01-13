@@ -2,7 +2,6 @@ package com.google.ar.core.examples.java.cloudanchor;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.Log;
@@ -20,7 +19,6 @@ import androidx.gridlayout.widget.GridLayout;
 
 import com.google.ar.core.examples.java.common.helpers.DisplayRotationHelper;
 
-import org.mindrot.jbcrypt.BCrypt;
 
 public class SelectActivity extends AppCompatActivity {
 
@@ -28,7 +26,6 @@ public class SelectActivity extends AppCompatActivity {
 
     private DisplayRotationHelper displayRotationHelper;
     private AlertDialog alertDialogue;
-    private static final String PASSWORD_CODE = "PASSWORD";
 
 
     static Intent newIntent(Context packageContext) {
@@ -175,9 +172,7 @@ public class SelectActivity extends AppCompatActivity {
                     });
                 });
 
-        doneB.setOnClickListener(view1 -> {
-            alertDialogue.dismiss();
-        });
+        doneB.setOnClickListener(view1 -> alertDialogue.dismiss());
 
         if (alertDialogue.getWindow() != null) {
             alertDialogue.getWindow().setBackgroundDrawable(new ColorDrawable(0));
