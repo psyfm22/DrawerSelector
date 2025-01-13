@@ -83,8 +83,9 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     private void changeAccessPin(){
-
         if (addTrayTV.getVisibility() == View.VISIBLE){
+            changePinB.setEnabled(true);
+            returnB.setEnabled(true);
 
             addTrayTV.setVisibility(View.GONE);
             addTrayB.setVisibility(View.GONE);
@@ -115,17 +116,13 @@ public class SettingsActivity extends AppCompatActivity {
                         returnB.setEnabled(true);
                     }
                 });
-
-
-                finalPassword.setLength(0);
-
-                showAlertDialogue("Password Changed", "Successfully Changed the Password", true);
-                Log.d("COMP3018","Password Successfully Changed");
             }else{
                 showAlertDialogue("Password Issue", "Please Try Again", false);
+                changePinB.setEnabled(true);
+                returnB.setEnabled(true);
                 Log.d("COMP3018","Password Change Failed");
             }
-
+            finalPassword.setLength(0);
             enterPin1ET.setText("");
             enterPin2ET.setText("");
         }
