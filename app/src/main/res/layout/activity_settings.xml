@@ -89,6 +89,7 @@
         android:id="@+id/settingsAddDrawTV"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="136dp"
         android:gravity="center"
         android:padding="20dp"
         android:text="Add a New Drawer"
@@ -96,7 +97,7 @@
         android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/settingsChangePinB" />
+        app:layout_constraintTop_toBottomOf="@+id/settingsTitleTV" />
 
     <Button
         android:id="@+id/settingsAddDrawB"
@@ -162,6 +163,34 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/settingsTitleTV" />
+
+
+    <Spinner
+        android:id="@+id/settings_anchors_spinner"
+        style="@style/Widget.AppCompat.Spinner.Underlined"
+        android:layout_width="340dp"
+        android:layout_height="107dp"
+        android:backgroundTint="@color/white"
+        android:spinnerMode="dialog"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/settingsTitleTV" />
+
+
+    <Button
+        android:id="@+id/settingsClearAllB"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Delete All"
+        android:theme="@style/AppButtonTheme"
+        android:visibility="gone"
+        app:backgroundTint="@android:color/holo_red_light"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/settings_anchors_spinner" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

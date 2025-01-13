@@ -11,23 +11,31 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.ar.core.examples.java.common.helpers.DisplayRotationHelper;
+import com.google.firebase.database.DatabaseError;
 
 import org.mindrot.jbcrypt.BCrypt;
 
-public class SettingsActivity extends AppCompatActivity {
+import java.util.ArrayList;
+import java.util.List;
+
+public class SettingsActivity extends AppCompatActivity implements SpinnerAdapter.ItemDeletedListener{
 
     private DisplayRotationHelper displayRotationHelper;
-    private TextView changePinTV, addTrayTV;
-    private Button changePinB, addTrayB;
+    private TextView changePinTV, addTrayTV, manageDrawerTV;
+    private Button changePinB, addTrayB, manageDrawerB, clearAllB;
     private ImageButton returnB;
     private EditText enterPin1ET, enterPin2ET, enterNameET;
     private FirebaseManager firebaseManager;
+    private Spinner spinner;
+    private List<Hotspot> hotspotList;
+
 
     private final StringBuilder finalPassword = new StringBuilder();
 
@@ -41,17 +49,45 @@ public class SettingsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_settings);
 
         returnB = findViewById(R.id.settingsReturnIB);
+
         changePinTV = findViewById(R.id.settingsChangePinTV);
         addTrayTV = findViewById(R.id.settingsAddDrawTV);
+
         changePinB = findViewById(R.id.settingsChangePinB);
         addTrayB = findViewById(R.id.settingsAddDrawB);
+
+        manageDrawerTV = findViewById(R.id.settingsManageDrawersTV);
+        manageDrawerB = findViewById(R.id.settingsManageDrawersB);
 
         enterPin1ET = findViewById(R.id.settingsEnterPin1ET);
         enterPin2ET = findViewById(R.id.settingsEnterPin2ET);
 
         enterNameET = findViewById(R.id.settingsEnterNameET);
 
+        clearAllB = findViewById(R.id.settingsClearAllB);
+        spinner = findViewById(R.id.settings_anchors_spinner);
+
         firebaseManager = new FirebaseManager(this);
+
+        firebaseManager.getHotspotList(new FirebaseManager.HotspotListListener() {
+            @Override
+            public void onHotspotListFetched(List<Hotspot> hotspots) {
+                hotspotList = hotspots;
+                List<String> nameList = new ArrayList<>();
+
+                for (Hotspot hotspot : hotspotList) {
+                    nameList.add(hotspot.getName());
+                }
+
+                SpinnerAdapter adapter = new SpinnerAdapter(SettingsActivity.this, nameList, SettingsActivity.this);
+                spinner.setAdapter(adapter);
+            }
+
+            @Override
+            public void onError(DatabaseError error) {
+                Log.d("COMP3018", "Error fetching hotspot list", error.toException());
+            }
+        });
 
         returnB.setOnClickListener(v -> returnButtonPressed());
 
@@ -61,7 +97,17 @@ public class SettingsActivity extends AppCompatActivity {
             changeAccessPin();
         });
 
-        addTrayB.setOnClickListener(v -> addNewTray());
+        addTrayB.setOnClickListener(v -> {
+            addNewTray();
+        });
+
+        manageDrawerB.setOnClickListener(v -> {
+            manageDrawerButtonPressed();
+        });
+
+        clearAllB.setOnClickListener(v -> {
+
+        });
 
         displayRotationHelper = new DisplayRotationHelper(this);
     }
@@ -85,6 +131,9 @@ public class SettingsActivity extends AppCompatActivity {
 
             addTrayTV.setVisibility(View.GONE);
             addTrayB.setVisibility(View.GONE);
+
+            manageDrawerB.setVisibility(View.GONE);
+            manageDrawerTV.setVisibility(View.GONE);
 
             enterPin1ET.setVisibility(View.VISIBLE);
             enterPin2ET.setVisibility(View.VISIBLE);
@@ -129,6 +178,9 @@ public class SettingsActivity extends AppCompatActivity {
             changePinTV.setVisibility(View.GONE);
             changePinB.setVisibility(View.GONE);
 
+            manageDrawerB.setVisibility(View.GONE);
+            manageDrawerTV.setVisibility(View.GONE);
+
             addTrayTV.setText(getString(R.string.host_instructions_text));
             enterNameET.setVisibility(View.VISIBLE);
         }else{
@@ -146,6 +198,20 @@ public class SettingsActivity extends AppCompatActivity {
         }
     }
 
+    private void manageDrawerButtonPressed(){
+        manageDrawerB.setVisibility(View.GONE);
+        manageDrawerTV.setVisibility(View.GONE);
+
+        changePinTV.setVisibility(View.GONE);
+        changePinB.setVisibility(View.GONE);
+
+        addTrayTV.setVisibility(View.GONE);
+        addTrayB.setVisibility(View.GONE);
+
+        spinner.setVisibility(View.VISIBLE);
+        clearAllB.setVisibility(View.VISIBLE);
+    }
+
     private void returnButtonPressed(){
         if(enterPin1ET.getVisibility() == View.VISIBLE){
             addTrayTV.setVisibility(View.VISIBLE);
@@ -153,13 +219,32 @@ public class SettingsActivity extends AppCompatActivity {
 
             enterPin1ET.setVisibility(View.GONE);
             enterPin2ET.setVisibility(View.GONE);
+
+            manageDrawerB.setVisibility(View.VISIBLE);
+            manageDrawerTV.setVisibility(View.VISIBLE);
+
         }else if(enterNameET.getVisibility() == View.VISIBLE){
             enterNameET.setVisibility(View.GONE);
 
             changePinTV.setVisibility(View.VISIBLE);
             changePinB.setVisibility(View.VISIBLE);
 
+            manageDrawerB.setVisibility(View.VISIBLE);
+            manageDrawerTV.setVisibility(View.VISIBLE);
+
             addTrayTV.setText("Add a new Drawer");
+        }else if(spinner.getVisibility() == View.VISIBLE) {
+            changePinB.setVisibility(View.VISIBLE);
+            changePinTV.setVisibility(View.VISIBLE);
+
+            addTrayB.setVisibility(View.VISIBLE);
+            addTrayTV.setVisibility(View.VISIBLE);
+
+            manageDrawerB.setVisibility(View.VISIBLE);
+            manageDrawerTV.setVisibility(View.VISIBLE);
+
+            clearAllB.setVisibility(View.GONE);
+            spinner.setVisibility(View.GONE);
         }else{
             finish();
         }
@@ -200,4 +285,23 @@ public class SettingsActivity extends AppCompatActivity {
         alertDialogue.show();
     }
 
+    @Override
+    public void onItemDeleted(int position) {
+        //First need to find the current item, then delete it from the firebase
+        Hotspot hotspot = hotspotList.get(position);
+        hotspotList.remove(position);
+
+        firebaseManager.removeHotspot(hotspot.getCode(), new FirebaseManager.DeleteCallback() {
+            @Override
+            public void onSuccess() {
+                Log.d("COMP3018", "Here is in the onSuccess: "+ hotspotList.size());
+                Log.d("COMP3018", "Successfully Deleted the firebase item");
+            }
+
+            @Override
+            public void onFailure(String errorMessage) {
+                Log.d("COMP3018", errorMessage);
+            }
+        });
+    }
 }

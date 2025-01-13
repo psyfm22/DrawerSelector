@@ -73,12 +73,12 @@
         android:gravity="center"
         android:text="@string/select_anchors_text"
         android:textSize="14sp"
-        app:layout_constraintBottom_toTopOf="@+id/select_anchors_spinner"
+        app:layout_constraintBottom_toTopOf="@+id/settings_anchors_spinner"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
     <Spinner
-        android:id="@+id/select_anchors_spinner"
+        android:id="@+id/settings_anchors_spinner"
         style="@style/Widget.AppCompat.Spinner.Underlined"
         android:layout_width="339dp"
         android:layout_height="83dp"
@@ -98,7 +98,7 @@
         android:theme="@style/AppButtonTheme"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/select_anchors_spinner" />
+        app:layout_constraintTop_toBottomOf="@+id/settings_anchors_spinner" />
 
     <Button
         android:id="@+id/clearAnchorsB"

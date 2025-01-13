@@ -41,7 +41,7 @@ public class ResolveAnchorsLobbyActivity extends AppCompatActivity implements Sp
 
         Button resolveB = findViewById(R.id.resolve_button);
         Button clearB = findViewById(R.id.clearAnchorsB);
-        spinner = findViewById(R.id.select_anchors_spinner);
+        spinner = findViewById(R.id.settings_anchors_spinner);
         ImageButton returnIB = findViewById(R.id.anchorLobbyReturnIB);
 
         clearB.setOnClickListener(view -> deleteAllAnchors());
