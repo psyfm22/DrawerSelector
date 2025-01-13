@@ -26,7 +26,7 @@ public class SpinnerAdapter1 extends ArrayAdapter<String>  {
     @Override
     public View getView(int position, View view, @NonNull ViewGroup parent) {
         if (view == null) {
-            view = inflater.inflate(R.layout.spinner_item, parent, false);
+            view = inflater.inflate(R.layout.spinner_item_without_delete, parent, false);
         }
         Log.d("COMP3018", "In the view");
 
@@ -39,7 +39,7 @@ public class SpinnerAdapter1 extends ArrayAdapter<String>  {
     @Override
     public View getDropDownView(int position, View view, @NonNull ViewGroup parent) {
         if (view == null) {
-            view = inflater.inflate(R.layout.spinner_item, parent, false);
+            view = inflater.inflate(R.layout.spinner_item_without_delete, parent, false);
         }
         Log.d("COMP3018","GetDropDownView");
         TextView itemText = view.findViewById(R.id.itemNameWDTV);
