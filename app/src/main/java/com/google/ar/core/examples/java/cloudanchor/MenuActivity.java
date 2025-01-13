@@ -26,9 +26,7 @@ public class MenuActivity extends AppCompatActivity {
         Button confirmLocationB = findViewById(R.id.mainConfirmLocationB),
                 closeB = findViewById(R.id.mainCloseB);
 
-        confirmLocationB.setOnClickListener(view -> {
-            startQRCodeScan();
-        });
+        confirmLocationB.setOnClickListener(view -> startQRCodeScan());
 
         closeB.setOnClickListener(view -> finish());
     }
@@ -56,7 +54,7 @@ public class MenuActivity extends AppCompatActivity {
     ActivityResultLauncher<ScanOptions> launcher = registerForActivityResult(new ScanContract(), result->{
         if(result.getContents() != null){
             AlertDialog.Builder builder = new AlertDialog.Builder(MenuActivity.this);
-            if(result.getContents().equals("Starting Location")){
+            if(result.getContents().equals("Starting Location wH8f2Bz9pQ")){
                 builder.setTitle("Correct QR Code");
                 builder.setMessage("Press Okay to Start AR activity");
                 builder.setPositiveButton("OK", (dialog, which) -> {

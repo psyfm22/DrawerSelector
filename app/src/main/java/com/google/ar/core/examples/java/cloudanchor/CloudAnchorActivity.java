@@ -67,6 +67,7 @@ import com.google.ar.core.exceptions.UnavailableSdkTooOldException;
 import com.google.common.base.Preconditions;
 import com.google.firebase.database.DatabaseError;
 import java.io.IOException;
+
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
@@ -79,7 +80,7 @@ import javax.microedition.khronos.opengles.GL10;
  */
 public class CloudAnchorActivity extends AppCompatActivity
     implements GLSurfaceView.Renderer, NoticeDialogListener {
-  private static final String TAG = CloudAnchorActivity.class.getSimpleName();
+  private static final String TAG = "COMP3018";
   private static final float[] OBJECT_COLOR = new float[] {139.0f, 195.0f, 74.0f, 255.0f};
 
   private boolean firstPass = true;
@@ -92,8 +93,8 @@ public class CloudAnchorActivity extends AppCompatActivity
   // Rendering. The Renderers are created here, and initialized when the GL surface is created.
   private GLSurfaceView surfaceView;
   private final BackgroundRenderer backgroundRenderer = new BackgroundRenderer();
-  private final ObjectRenderer virtualObject = new ObjectRenderer();
-  private final ObjectRenderer virtualObjectShadow = new ObjectRenderer();
+  private final ObjectRenderer virtualObject = new ObjectRenderer(),
+          virtualObjectShadow = new ObjectRenderer();
   private final PlaneRenderer planeRenderer = new PlaneRenderer();
   private final PointCloudRenderer pointCloudRenderer = new PointCloudRenderer();
 
@@ -111,7 +112,7 @@ public class CloudAnchorActivity extends AppCompatActivity
   private final SnackbarHelper snackbarHelper = new SnackbarHelper();
   private DisplayRotationHelper displayRotationHelper;
   private final TrackingStateHelper trackingStateHelper = new TrackingStateHelper(this);
-  private Button hostButton, resolveButton;
+  private Button cancelButton;
   private TextView roomCodeText;
   private SharedPreferences sharedPreferences;
   private static final String PREFERENCE_FILE_KEY = "allow_sharing_images",
@@ -187,13 +188,10 @@ public class CloudAnchorActivity extends AppCompatActivity
     installRequested = false;
 
     // Initialize UI components.
-    hostButton = findViewById(R.id.host_button);
-    hostButton.setVisibility(View.GONE);
-    hostButton.setOnClickListener((view) -> onHostButtonPress());
 
-    resolveButton = findViewById(R.id.resolve_button);
-    resolveButton.setVisibility(View.GONE);
-    resolveButton.setOnClickListener((view) -> onResolveButtonPress());
+    cancelButton = findViewById(R.id.cancel_button);
+    cancelButton.setVisibility(View.GONE);
+    cancelButton.setOnClickListener((view) -> resetMode());
 
     roomCodeText = findViewById(R.id.room_code_text);
 
@@ -233,14 +231,13 @@ public class CloudAnchorActivity extends AppCompatActivity
     displayRotationHelper.onResume();
 
     if(firstPass){
-      hostButton.setVisibility(View.VISIBLE);
-      resolveButton.setVisibility(View.VISIBLE);
+      cancelButton.setVisibility(View.VISIBLE);
       firstPass = false;
 
       if(isHosting){
-        onHostButtonPress();
+        onHostStart();
       }else{
-        onResolveButtonPress();
+        onResolveStart();
       }
     }
   }
@@ -350,23 +347,24 @@ public class CloudAnchorActivity extends AppCompatActivity
       synchronized (anchorLock) {
         // Only handle a tap if the anchor is currently null, the queued tap is non-null and the
         // camera is currently tracking.
-        if (anchor == null
-            && queuedSingleTap != null
-            && cameraTrackingState == TrackingState.TRACKING) {
-          Preconditions.checkState(
-              currentMode == HostResolveMode.HOSTING,
-              "We should only be creating an anchor in hosting mode.");
-          for (HitResult hit : frame.hitTest(queuedSingleTap)) {
-            if (shouldCreateAnchorWithHit(hit)) {
-              Anchor newAnchor = hit.createAnchor();
-              Preconditions.checkNotNull(hostListener, "The host listener cannot be null.");
-              cloudManager.hostCloudAnchor(newAnchor, hostListener);
-              setNewAnchor(newAnchor);
-              snackbarHelper.showMessage(this, getString(R.string.snackbar_anchor_placed));
-              break; // Only handle the first valid hit.
+          if (anchor == null
+                  && queuedSingleTap != null
+                  && cameraTrackingState == TrackingState.TRACKING) {
+            Preconditions.checkState(
+                    currentMode == HostResolveMode.HOSTING,
+                    "We should only be creating an anchor in hosting mode.");
+            for (HitResult hit : frame.hitTest(queuedSingleTap)) {
+              if (shouldCreateAnchorWithHit(hit)) {
+                Anchor newAnchor = hit.createAnchor();
+                Preconditions.checkNotNull(hostListener, "The host listener cannot be null.");
+                cloudManager.hostCloudAnchor(newAnchor, hostListener);
+                setNewAnchor(newAnchor);
+                snackbarHelper.showMessage(this, getString(R.string.snackbar_anchor_placed));
+                break; // Only handle the first valid hit.
+              }
             }
           }
-        }
+
       }
       queuedSingleTap = null;
     }
@@ -437,6 +435,7 @@ public class CloudAnchorActivity extends AppCompatActivity
       // Obtain the current frame from ARSession. When the configuration is set to
       // UpdateMode.BLOCKING (it is by default), this will throttle the rendering to the
       // camera framerate.
+
       Frame frame = session.update();
       Camera camera = frame.getCamera();
       TrackingState cameraTrackingState = camera.getTrackingState();
@@ -513,7 +512,7 @@ public class CloudAnchorActivity extends AppCompatActivity
   }
 
   /** Callback function invoked when the Host Button is pressed. */
-  private void onHostButtonPress() {
+  private void onHostStart() {
     if (currentMode == HostResolveMode.HOSTING) {
       resetMode();
       return;
@@ -530,8 +529,6 @@ public class CloudAnchorActivity extends AppCompatActivity
     if (hostListener != null) {
       return;
     }
-    resolveButton.setEnabled(false);
-    hostButton.setText(R.string.cancel);
     snackbarHelper.showMessageWithDismiss(this, getString(R.string.snackbar_on_host));
 
     hostListener = new RoomCodeAndCloudAnchorIdListener();
@@ -539,7 +536,7 @@ public class CloudAnchorActivity extends AppCompatActivity
   }
 
   /** Callback function invoked when the Resolve Button is pressed. */
-  private void onResolveButtonPress() {
+  private void onResolveStart() {
     if (currentMode == HostResolveMode.RESOLVING) {
       resetMode();
       return;
@@ -562,8 +559,6 @@ public class CloudAnchorActivity extends AppCompatActivity
 
   /** Resets the mode of the app to its initial state and removes the anchors. */
   private void resetMode() {
-    hostButton.setEnabled(false);
-    resolveButton.setEnabled(false);
 
     roomCodeText.setText(R.string.initial_room_code);
 
@@ -582,8 +577,7 @@ public class CloudAnchorActivity extends AppCompatActivity
   private void onRoomCodeEntered(Long roomCode) {
     Log.d("COMP3018", "In onRoomCodeEntered");
     currentMode = HostResolveMode.RESOLVING;
-    hostButton.setEnabled(false);
-    resolveButton.setText(R.string.cancel);
+
     roomCodeText.setText(String.valueOf(roomCode));
     snackbarHelper.showMessageWithDismiss(this, getString(R.string.snackbar_on_resolve));
 
@@ -713,4 +707,5 @@ public class CloudAnchorActivity extends AppCompatActivity
     }
     createSession();
   }
+
 }
