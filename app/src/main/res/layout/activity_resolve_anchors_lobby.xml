@@ -100,16 +100,5 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/guideline_enter" />
 
-    <Button
-        android:id="@+id/clearAnchorsB"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:text="@string/clear_button_text"
-        android:theme="@style/AppButtonTheme"
-        app:backgroundTint="@android:color/holo_red_light"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/resolve_button" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

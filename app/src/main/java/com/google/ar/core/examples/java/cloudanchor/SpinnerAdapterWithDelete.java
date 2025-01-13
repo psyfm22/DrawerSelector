@@ -13,13 +13,13 @@ import androidx.annotation.NonNull;
 
 import java.util.List;
 
-public class SpinnerAdapter extends ArrayAdapter<String> {
+public class SpinnerAdapterWithDelete extends ArrayAdapter<String> {
     private final List<String> items;
     private final LayoutInflater inflater;
 
     private final ItemDeletedListener listener;
 
-    public SpinnerAdapter(Context context, List<String> items, ItemDeletedListener itemDeletedListener) {
+    public SpinnerAdapterWithDelete(Context context, List<String> items, ItemDeletedListener itemDeletedListener) {
         super(context, R.layout.spinner_item, items);
         this.items = items;
         this.inflater = LayoutInflater.from(context);

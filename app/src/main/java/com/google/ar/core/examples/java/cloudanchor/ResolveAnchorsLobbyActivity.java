@@ -7,9 +7,11 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.Spinner;
+import android.widget.SpinnerAdapter;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,9 +22,8 @@ import com.google.firebase.database.DatabaseError;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ResolveAnchorsLobbyActivity extends AppCompatActivity implements SpinnerAdapter.ItemDeletedListener{
+public class ResolveAnchorsLobbyActivity extends AppCompatActivity{
 
-    private FirebaseManager firebaseManager;
     private Spinner spinner;
     private List<Hotspot> hotspotList;
 
@@ -40,15 +41,13 @@ public class ResolveAnchorsLobbyActivity extends AppCompatActivity implements Sp
         displayRotationHelper = new DisplayRotationHelper(this);
 
         Button resolveB = findViewById(R.id.resolve_button);
-        Button clearB = findViewById(R.id.clearAnchorsB);
         spinner = findViewById(R.id.settings_anchors_spinner);
         ImageButton returnIB = findViewById(R.id.anchorLobbyReturnIB);
 
-        clearB.setOnClickListener(view -> deleteAllAnchors());
         resolveB.setOnClickListener(view -> resolveAnchor());
         returnIB.setOnClickListener(view -> finish());
 
-        firebaseManager = new FirebaseManager(this);
+        FirebaseManager firebaseManager = new FirebaseManager(this);
 
         firebaseManager.getHotspotList(new FirebaseManager.HotspotListListener() {
             @Override
@@ -60,7 +59,7 @@ public class ResolveAnchorsLobbyActivity extends AppCompatActivity implements Sp
                     nameList.add(hotspot.getName());
                 }
 
-                SpinnerAdapter adapter = new SpinnerAdapter(ResolveAnchorsLobbyActivity.this, nameList, ResolveAnchorsLobbyActivity.this);
+                SpinnerAdapter adapter = new SpinnerAdapter1(ResolveAnchorsLobbyActivity.this, nameList);
                 spinner.setAdapter(adapter);
             }
 
@@ -81,11 +80,6 @@ public class ResolveAnchorsLobbyActivity extends AppCompatActivity implements Sp
     public void onPause() {
         super.onPause();
         displayRotationHelper.onPause();
-    }
-
-    private void deleteAllAnchors(){
-        firebaseManager.removeAllData();
-        recreate();
     }
 
     private void resolveAnchor(){
@@ -127,27 +121,5 @@ public class ResolveAnchorsLobbyActivity extends AppCompatActivity implements Sp
 
         //Show the actual alert
         alertDialogue.show();
-    }
-
-    @Override
-    public void onItemDeleted(int position) {
-        //First need to find the current item, then delete it from the firebase
-        Hotspot hotspot = hotspotList.get(position);
-        hotspotList.remove(position);
-
-
-        firebaseManager.removeHotspot(hotspot.getCode(), new FirebaseManager.DeleteCallback() {
-            @Override
-            public void onSuccess() {
-                Log.d("COMP3018", "Here is in the onSuccess: "+ hotspotList.size());
-                Log.d("COMP3018", "Successfully Deleted the firebase item");
-            }
-
-            @Override
-            public void onFailure(String errorMessage) {
-                Log.d("COMP3018", errorMessage);
-            }
-        });
-
     }
 }

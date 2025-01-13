@@ -25,7 +25,7 @@ import org.mindrot.jbcrypt.BCrypt;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SettingsActivity extends AppCompatActivity implements SpinnerAdapter.ItemDeletedListener{
+public class SettingsActivity extends AppCompatActivity implements SpinnerAdapterWithDelete.ItemDeletedListener{
 
     private DisplayRotationHelper displayRotationHelper;
     private TextView changePinTV, addTrayTV, manageDrawerTV;
@@ -79,7 +79,7 @@ public class SettingsActivity extends AppCompatActivity implements SpinnerAdapte
                     nameList.add(hotspot.getName());
                 }
 
-                SpinnerAdapter adapter = new SpinnerAdapter(SettingsActivity.this, nameList, SettingsActivity.this);
+                SpinnerAdapterWithDelete adapter = new SpinnerAdapterWithDelete(SettingsActivity.this, nameList, SettingsActivity.this);
                 spinner.setAdapter(adapter);
             }
 
@@ -106,7 +106,7 @@ public class SettingsActivity extends AppCompatActivity implements SpinnerAdapte
         });
 
         clearAllB.setOnClickListener(v -> {
-
+            deleteAllAnchors();
         });
 
         displayRotationHelper = new DisplayRotationHelper(this);
@@ -303,5 +303,11 @@ public class SettingsActivity extends AppCompatActivity implements SpinnerAdapte
                 Log.d("COMP3018", errorMessage);
             }
         });
+    }
+
+
+    private void deleteAllAnchors(){
+        firebaseManager.removeAllData();
+        recreate();
     }
 }
