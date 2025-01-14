@@ -20,7 +20,7 @@ public class DrawSelectedViewModel extends ViewModel {
 
     public void deleteItem(int index){
         List<String> newList = drawerList.getValue();
-        if(newList != null && newList.isEmpty()){
+        if (newList != null && !newList.isEmpty() && index >= 0 && index < newList.size()) {
             newList.remove(index);
         }
         drawerList.setValue(newList);
