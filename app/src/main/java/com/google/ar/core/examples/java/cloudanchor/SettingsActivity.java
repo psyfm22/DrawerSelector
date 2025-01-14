@@ -68,7 +68,6 @@ public class SettingsActivity extends AppCompatActivity implements SpinnerAdapte
         clearAllB = findViewById(R.id.settingsClearAllB);
         spinner = findViewById(R.id.settings_anchors_spinner);
 
-
         activityStageViewModel = new ViewModelProvider(this).get(ActivityStageViewModel.class);
         activityStageViewModel.getActivityStage().observe(this, activityStage -> {
             Log.d("COMP3018","Current Stage: "+ activityStage);
@@ -78,7 +77,6 @@ public class SettingsActivity extends AppCompatActivity implements SpinnerAdapte
         drawSelectedViewModel = new ViewModelProvider(SettingsActivity.this).get(DrawSelectedViewModel.class);
 
         drawSelectedViewModel.getDrawerList().observe(this, strings -> {
-            Log.d("COMP3018","Why am I in here");
             SpinnerAdapterWithDelete adapter = new SpinnerAdapterWithDelete(SettingsActivity.this, strings, SettingsActivity.this);
             spinner.setAdapter(adapter);
 
@@ -98,7 +96,6 @@ public class SettingsActivity extends AppCompatActivity implements SpinnerAdapte
                 String selectedItem = (String) parentView.getItemAtPosition(position);
                 drawSelectedViewModel.setCurrentSelection(selectedItem);
             }
-
             @Override
             public void onNothingSelected(AdapterView<?> parentView) {
             }
@@ -191,6 +188,9 @@ public class SettingsActivity extends AppCompatActivity implements SpinnerAdapte
                 spinner.getVisibility() == View.VISIBLE){
             activityStageViewModel.setActivityStage(ActivityStage.MENU);
         }else{
+            Intent resultIntent = new Intent();
+            resultIntent.putExtra("ACTIVITY_TYPE", "SETTINGS_ACTIVITY");
+            setResult(RESULT_OK, resultIntent);
             finish();
         }
     }

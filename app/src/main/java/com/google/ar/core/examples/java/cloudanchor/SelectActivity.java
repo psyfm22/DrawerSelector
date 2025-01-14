@@ -7,12 +7,12 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Spinner;
-import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -20,6 +20,7 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.gridlayout.widget.GridLayout;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.google.ar.core.examples.java.common.helpers.DisplayRotationHelper;
 import com.google.firebase.database.DatabaseError;
@@ -42,32 +43,13 @@ public class SelectActivity extends AppCompatActivity {
     static Intent newIntent(Context packageContext) {
         return new Intent(packageContext, SelectActivity.class);
     }
+    private DrawSelectedViewModel drawSelectedViewModel;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select);
-
-        // Initialize the launcher for startActivityForResult
-        startActivityForResultLauncher = registerForActivityResult(
-                new ActivityResultContracts.StartActivityForResult(),
-                result -> {
-                    if (result.getResultCode() == RESULT_OK) {
-                        Log.d("COMP3018", "Scan QR Code successful");
-                            ScanOptions scanOptions = new ScanOptions();
-                            scanOptions.setPrompt("Scan the QR Code");
-                            scanOptions.setBeepEnabled(true);
-                            scanOptions.setOrientationLocked(true);
-                            scanOptions.setCaptureActivity(CustomCaptureActivity.class);
-                            launcher.launch(scanOptions);
-                    } else if (result.getResultCode() == RESULT_CANCELED) {
-                        Log.d("COMP3018", "Scan QR Code was canceled");
-                    }
-                }
-        );
-
-
 
         //Assign the rotation helper
         displayRotationHelper = new DisplayRotationHelper(this);
@@ -77,28 +59,63 @@ public class SelectActivity extends AppCompatActivity {
         ImageView settingsIV = findViewById(R.id.selectSettingsIV);
         spinner = findViewById(R.id.select_anchors_spinner);
 
-        firebaseManager = new FirebaseManager(this);
+        startActivityForResultLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == RESULT_OK) {
+                        Intent data = result.getData();
 
-        firebaseManager.getHotspotList(new FirebaseManager.HotspotListListener() {
-            @Override
-            public void onHotspotListFetched(List<Hotspot> hotspots) {
-                hotspotList = hotspots;
-                List<String> nameList = new ArrayList<>();
+                        if(data != null){
+                            String activityType = data.getStringExtra("ACTIVITY_TYPE");
+                            if(activityType != null && activityType.equals("CLOUD_ANCHOR_ACTIVITY")){
+                                Log.d("COMP3018", "Scan QR Code successful");
+                                ScanOptions scanOptions = new ScanOptions();
+                                scanOptions.setPrompt("Scan the QR Code");
+                                scanOptions.setBeepEnabled(true);
+                                scanOptions.setOrientationLocked(true);
+                                scanOptions.setCaptureActivity(CustomCaptureActivity.class);
+                                launcher.launch(scanOptions);
+                            }else{
+                                viewB.setEnabled(false);
+                                drawSelectedViewModel.deleteAllItems();
+                                loadFromFirebase();
+                            }
+                        }
 
-                for (Hotspot hotspot : hotspotList) {
-                    nameList.add(hotspot.getName());
+                    } else if (result.getResultCode() == RESULT_CANCELED) {
+                        Log.d("COMP3018", "Scan QR Code was canceled");
+                    }
                 }
+        );
 
-                SpinnerAdapter adapter = new SpinnerAdapter1(SelectActivity.this, nameList);
-                spinner.setAdapter(adapter);
-            }
+        drawSelectedViewModel = new ViewModelProvider(SelectActivity.this).get(DrawSelectedViewModel.class);
 
-            @Override
-            public void onError(DatabaseError error) {
-                Log.d("COMP3018", "Error fetching hotspot list", error.toException());
+        drawSelectedViewModel.getDrawerList().observe(this, strings -> {
+            SpinnerAdapter1 adapter = new SpinnerAdapter1(SelectActivity.this, strings);
+            spinner.setAdapter(adapter);
+
+            String selectedItem = drawSelectedViewModel.getCurrentSelection().getValue();
+            if (selectedItem != null) {
+                int position = strings.indexOf(selectedItem);
+                if (position != -1) {
+                    spinner.setSelection(position);
+                }
             }
         });
 
+
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, android.view.View selectedItemView, int position, long id) {
+                String selectedItem = (String) parentView.getItemAtPosition(position);
+                Log.d("COMP3018","Here is Selected: " + selectedItem);
+                drawSelectedViewModel.setCurrentSelection(selectedItem);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {
+            }
+        });
 
         viewB.setOnClickListener(v -> {
             int selectedPosition = spinner.getSelectedItemPosition();
@@ -120,6 +137,8 @@ public class SelectActivity extends AppCompatActivity {
         settingsIV.setOnClickListener(v -> showAlertDialogue());
 
         backIB.setOnClickListener(v -> finish());
+
+        loadFromFirebase();
     }
 
     @Override
@@ -136,6 +155,29 @@ public class SelectActivity extends AppCompatActivity {
             alertDialogue.dismiss();
         }
     }
+
+    private void loadFromFirebase(){
+        firebaseManager = new FirebaseManager(this);
+        firebaseManager.getHotspotList(new FirebaseManager.HotspotListListener() {
+            @Override
+            public void onHotspotListFetched(List<Hotspot> hotspots) {
+                hotspotList = hotspots;
+                List<String> nameList = new ArrayList<>();
+
+                for (Hotspot hotspot : hotspotList) {
+                    nameList.add(hotspot.getName());
+                }
+
+                drawSelectedViewModel.setDrawList(nameList);
+            }
+
+            @Override
+            public void onError(DatabaseError error) {
+                Log.d("COMP3018", "Error fetching hotspot list", error.toException());
+            }
+        });
+    }
+
 
     /**
      * showAlertDialogue, Shows the success of adding the alert dialogue
@@ -194,47 +236,47 @@ public class SelectActivity extends AppCompatActivity {
         alertDialogue = builder.create();
 
         enterB.setOnClickListener(view1 -> {
-                    enterB.setEnabled(false);
-                    String passwordEntered = enterPasswordET.getText().toString();
+            enterB.setEnabled(false);
+            String passwordEntered = enterPasswordET.getText().toString();
 
 
-                    firebaseManager.checkPasscode(passwordEntered, new FirebaseManager.PasscodeCallback() {
-                        @Override
-                        public void onSuccess() {
+            firebaseManager.checkPasscode(passwordEntered, new FirebaseManager.PasscodeCallback() {
+                @Override
+                public void onSuccess() {
 
-                            Log.d("COMP3018", "On Success");
-                            alertDialogue.dismiss();
-                            Intent intent = SettingsActivity.newIntent(SelectActivity.this);
-                            startActivity(intent);
-                        }
+                    Log.d("COMP3018", "On Success");
+                    alertDialogue.dismiss();
+                    Intent intent = SettingsActivity.newIntent(SelectActivity.this);
+                    startActivity(intent);
+                }
 
-                        @Override
-                        public void onPasswordUploadFailure(String errorMessage) {
-                            Log.d("COMP3018", "Upload Failed");
+                @Override
+                public void onPasswordUploadFailure(String errorMessage) {
+                    Log.d("COMP3018", "Upload Failed");
 
-                            alertTitleTV.setText("Error Uploading");
-                            enterPasswordET.setVisibility(View.GONE);
-                            gridLayout.setVisibility(View.GONE);
+                    alertTitleTV.setText("Error Uploading");
+                    enterPasswordET.setVisibility(View.GONE);
+                    gridLayout.setVisibility(View.GONE);
 
-                            doneB.setVisibility(View.VISIBLE);
-                            logoIV.setVisibility(View.VISIBLE);
-                            descriptionTV.setVisibility(View.VISIBLE);
-                        }
+                    doneB.setVisibility(View.VISIBLE);
+                    logoIV.setVisibility(View.VISIBLE);
+                    descriptionTV.setVisibility(View.VISIBLE);
+                }
 
-                        @Override
-                        public void onPasswordsDiffer() {
+                @Override
+                public void onPasswordsDiffer() {
 
-                            Log.d("COMP3018", "Passwords Differ");
-                            alertTitleTV.setText("Incorrect Password");
-                            enterPasswordET.setVisibility(View.GONE);
-                            gridLayout.setVisibility(View.GONE);
+                    Log.d("COMP3018", "Passwords Differ");
+                    alertTitleTV.setText("Incorrect Password");
+                    enterPasswordET.setVisibility(View.GONE);
+                    gridLayout.setVisibility(View.GONE);
 
-                            doneB.setVisibility(View.VISIBLE);
-                            logoIV.setVisibility(View.VISIBLE);
-                            descriptionTV.setVisibility(View.VISIBLE);
-                        }
-                    });
-                });
+                    doneB.setVisibility(View.VISIBLE);
+                    logoIV.setVisibility(View.VISIBLE);
+                    descriptionTV.setVisibility(View.VISIBLE);
+                }
+            });
+        });
 
         doneB.setOnClickListener(view1 -> alertDialogue.dismiss());
 
@@ -275,9 +317,7 @@ public class SelectActivity extends AppCompatActivity {
                 Log.d("COMP3018","Correct Name");
                 builder.setTitle("Correct QR Code");
                 builder.setMessage("Press Okay to return");
-                builder.setPositiveButton("OK", (dialog, which) -> {
-                    dialog.dismiss();
-                });
+                builder.setPositiveButton("OK", (dialog, which) -> dialog.dismiss());
                 AlertDialog alertDialog = builder.create();
                 alertDialog.show();
             }else{

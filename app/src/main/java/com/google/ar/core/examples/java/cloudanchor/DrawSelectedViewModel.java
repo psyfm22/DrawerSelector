@@ -3,6 +3,7 @@ package com.google.ar.core.examples.java.cloudanchor;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class DrawSelectedViewModel extends ViewModel {
@@ -24,6 +25,12 @@ public class DrawSelectedViewModel extends ViewModel {
             newList.remove(index);
         }
         drawerList.setValue(newList);
+    }
+
+    public void deleteAllItems(){
+        List<String> emptyList = new ArrayList<>();
+        drawerList.setValue(emptyList);
+        currentSelection.setValue("");
     }
 
     public void setCurrentSelection(String drawerName){

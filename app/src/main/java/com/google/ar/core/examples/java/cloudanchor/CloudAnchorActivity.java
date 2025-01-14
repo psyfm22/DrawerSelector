@@ -575,7 +575,9 @@ public class CloudAnchorActivity extends AppCompatActivity
     setNewAnchor(null);
     snackbarHelper.hide(this);
     cloudManager.clearListeners();
+
     Intent resultIntent = new Intent();
+    resultIntent.putExtra("ACTIVITY_TYPE", "CLOUD_ANCHOR_ACTIVITY");
     setResult(RESULT_CANCELED, resultIntent);
     finish();
   }
@@ -591,7 +593,9 @@ public class CloudAnchorActivity extends AppCompatActivity
     setNewAnchor(null);
     snackbarHelper.hide(this);
     cloudManager.clearListeners();
+
     Intent resultIntent = new Intent();
+    resultIntent.putExtra("ACTIVITY_TYPE", "CLOUD_ANCHOR_ACTIVITY");
     setResult(RESULT_OK, resultIntent);
     finish();
   }
