@@ -34,9 +34,7 @@ public class SelectActivity extends AppCompatActivity {
 
     private Spinner spinner;
     private List<Hotspot> hotspotList;
-
     private FirebaseManager firebaseManager;
-
     private DisplayRotationHelper displayRotationHelper;
     private AlertDialog alertDialogue;
     private ActivityResultLauncher<Intent> startActivityForResultLauncher;
@@ -47,6 +45,7 @@ public class SelectActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select);
 
