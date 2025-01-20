@@ -92,7 +92,7 @@ public class ResolveLobbyActivity extends AppCompatActivity {
         drawSelectedViewModel = new ViewModelProvider(ResolveLobbyActivity.this).get(DrawSelectedViewModel.class);
 
         drawSelectedViewModel.getDrawerList().observe(this, strings -> {
-            SpinnerAdapter1 adapter = new SpinnerAdapter1(ResolveLobbyActivity.this, strings);
+            SpinnerAdapterNoDelete adapter = new SpinnerAdapterNoDelete(ResolveLobbyActivity.this, strings);
             spinner.setAdapter(adapter);
 
             String selectedItem = drawSelectedViewModel.getCurrentSelection().getValue();

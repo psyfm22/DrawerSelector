@@ -12,12 +12,12 @@ import androidx.annotation.NonNull;
 
 import java.util.List;
 
-public class SpinnerAdapter1 extends ArrayAdapter<String>  {
+public class SpinnerAdapterNoDelete extends ArrayAdapter<String>  {
     private final List<String> items;
     private final LayoutInflater inflater;
 
 
-    public SpinnerAdapter1(@NonNull Context context, List<String> names) {
+    public SpinnerAdapterNoDelete(@NonNull Context context, List<String> names) {
         super(context, R.layout.spinner_item_without_delete, names);
         this.items = names;
         this.inflater = LayoutInflater.from(context);

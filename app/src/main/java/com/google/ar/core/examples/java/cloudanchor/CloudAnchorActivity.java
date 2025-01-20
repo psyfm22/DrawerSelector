@@ -440,7 +440,7 @@ public class CloudAnchorActivity extends AppCompatActivity
 
       // Obtain the current frame from ARSession. When the configuration is set to
       // UpdateMode.BLOCKING (it is by default), this will throttle the rendering to the
-      // camera framerate.
+      // camera frame rate.
 
       Frame frame = session.update();
       Camera camera = frame.getCamera();

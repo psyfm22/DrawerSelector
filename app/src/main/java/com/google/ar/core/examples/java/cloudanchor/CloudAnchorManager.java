@@ -34,8 +34,6 @@ import java.util.Iterator;
  * the existing ARCore API.
  */
 class CloudAnchorManager {
-  private static final String TAG =
-      CloudAnchorActivity.class.getSimpleName() + "." + CloudAnchorManager.class.getSimpleName();
   private static final long DURATION_FOR_NO_RESOLVE_RESULT_MS = 10000;
   private long deadlineForMessageMillis;
 
