@@ -9,17 +9,16 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.ar.core.examples.java.common.helpers.DisplayRotationHelper;
-import com.journeyapps.barcodescanner.CaptureActivity;
 import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanOptions;
 
-public class MenuActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity {
     private DisplayRotationHelper displayRotationHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_menu);
+        setContentView(R.layout.activity_main);
 
         displayRotationHelper = new DisplayRotationHelper(this);
 
@@ -54,13 +53,13 @@ public class MenuActivity extends AppCompatActivity {
 
     ActivityResultLauncher<ScanOptions> launcher = registerForActivityResult(new ScanContract(), result->{
         if(result.getContents() != null){
-            AlertDialog.Builder builder = new AlertDialog.Builder(MenuActivity.this);
+            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
             if(result.getContents().equals("Starting Location wH8f2Bz9pQ")){
                 builder.setTitle("Correct QR Code");
                 builder.setMessage("Press Okay to Start AR activity");
                 builder.setPositiveButton("OK", (dialog, which) -> {
                     dialog.dismiss();
-                    Intent intent = ResolveLobbyActivity.newIntent(MenuActivity.this);
+                    Intent intent = ResolveLobbyActivity.newIntent(MainActivity.this);
                     startActivity(intent);
                 });
                 AlertDialog alertDialog = builder.create();
