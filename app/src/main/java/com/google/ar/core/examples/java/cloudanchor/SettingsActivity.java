@@ -13,6 +13,8 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.view.inputmethod.InputMethodManager;
+
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -105,7 +107,10 @@ public class SettingsActivity extends AppCompatActivity implements SpinnerAdapte
             }
         });
 
-        returnB.setOnClickListener(v -> returnButtonPressed());
+        returnB.setOnClickListener(v -> {
+            closeKeyboard(v);
+            returnButtonPressed();
+        });
 
         changePinB.setOnClickListener(v -> changeAccessPin());
 
@@ -320,5 +325,17 @@ public class SettingsActivity extends AppCompatActivity implements SpinnerAdapte
         int position = savedInstanceState.getInt(SPINNER_POSITION_KEY, 0);
         spinner.setSelection(position);
         Log.d("COMP3018", "In On Save Instance: "+ position);
+    }
+
+    /**
+     * closeKeyboard, closes the keyboard
+     *
+     * @param view currentView
+     */
+    private void closeKeyboard(View view) {
+        InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (inputMethodManager != null) {
+            inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
     }
 }

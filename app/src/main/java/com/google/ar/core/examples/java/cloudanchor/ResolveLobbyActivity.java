@@ -65,8 +65,8 @@ public class ResolveLobbyActivity extends AppCompatActivity {
                 result -> {
                     if (result.getResultCode() == RESULT_OK) {
                         Intent data = result.getData();
-
                         if(data != null){
+                            Log.d("COMP3018","Here is the activity type.");
                             String activityType = data.getStringExtra("ACTIVITY_TYPE");
                             if(activityType != null && activityType.equals("CLOUD_ANCHOR_ACTIVITY")){
                                 Log.d("COMP3018", "Scan QR Code successful");
