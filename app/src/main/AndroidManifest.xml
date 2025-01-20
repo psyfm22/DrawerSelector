@@ -40,7 +40,8 @@
             android:theme="@style/Theme.AppCompat.NoActionBar" />
         <activity
             android:name=".CustomCaptureActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="unspecified"/>
         <activity
             android:name=".MenuActivity"
             android:exported="true"
@@ -54,7 +55,6 @@
             android:name=".CloudAnchorActivity"
             android:configChanges="orientation|screenSize"
             android:exported="true"
-            android:screenOrientation="locked"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
 
         <meta-data

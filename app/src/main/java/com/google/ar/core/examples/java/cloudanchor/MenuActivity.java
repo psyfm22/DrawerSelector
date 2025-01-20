@@ -48,7 +48,7 @@ public class MenuActivity extends AppCompatActivity {
         scanOptions.setPrompt("Scan the QR Code");
         scanOptions.setBeepEnabled(true);
         scanOptions.setOrientationLocked(true);
-        scanOptions.setCaptureActivity(CaptureActivity.class);
+        scanOptions.setCaptureActivity(CustomCaptureActivity.class);
         launcher.launch(scanOptions);
     }
 
