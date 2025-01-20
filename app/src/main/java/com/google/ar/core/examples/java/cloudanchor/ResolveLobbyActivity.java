@@ -19,7 +19,6 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.gridlayout.widget.GridLayout;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.google.ar.core.examples.java.common.helpers.DisplayRotationHelper;
@@ -31,7 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class SelectActivity extends AppCompatActivity {
+public class ResolveLobbyActivity extends AppCompatActivity {
 
     private Spinner spinner;
     private List<Hotspot> hotspotList;
@@ -41,7 +40,7 @@ public class SelectActivity extends AppCompatActivity {
     private ActivityResultLauncher<Intent> startActivityForResultLauncher;
     private String drawName = "";
     static Intent newIntent(Context packageContext) {
-        return new Intent(packageContext, SelectActivity.class);
+        return new Intent(packageContext, ResolveLobbyActivity.class);
     }
     private DrawSelectedViewModel drawSelectedViewModel;
 
@@ -49,7 +48,7 @@ public class SelectActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_select);
+        setContentView(R.layout.activity_resolve_lobby);
 
         //Assign the rotation helper
         displayRotationHelper = new DisplayRotationHelper(this);
@@ -88,10 +87,10 @@ public class SelectActivity extends AppCompatActivity {
                 }
         );
 
-        drawSelectedViewModel = new ViewModelProvider(SelectActivity.this).get(DrawSelectedViewModel.class);
+        drawSelectedViewModel = new ViewModelProvider(ResolveLobbyActivity.this).get(DrawSelectedViewModel.class);
 
         drawSelectedViewModel.getDrawerList().observe(this, strings -> {
-            SpinnerAdapter1 adapter = new SpinnerAdapter1(SelectActivity.this, strings);
+            SpinnerAdapter1 adapter = new SpinnerAdapter1(ResolveLobbyActivity.this, strings);
             spinner.setAdapter(adapter);
 
             String selectedItem = drawSelectedViewModel.getCurrentSelection().getValue();
@@ -125,16 +124,16 @@ public class SelectActivity extends AppCompatActivity {
                 Log.d("COMP3018",selectedHotspot.getName());
                 drawName = selectedHotspot.getName();
 
-                Intent intent = CloudAnchorActivity.newIntent(SelectActivity.this);
+                Intent intent = CloudAnchorActivity.newIntent(ResolveLobbyActivity.this);
                 intent.putExtra("PLACING_ANCHOR", false);
                 intent.putExtra("HOTSPOT_CODE", selectedHotspot.getCode());
                 startActivityForResultLauncher.launch(intent);
             }else{
-                showErrorAlertDialogue();
+                showAlertDialogue("Error","Error resolving Anchor, Please try again", false);
             }
         });
 
-        settingsIV.setOnClickListener(v -> showAlertDialogue());
+        settingsIV.setOnClickListener(v -> showAlertDialogue("Enter Password: ", "", true));
 
         backIB.setOnClickListener(v -> finish());
 
@@ -182,125 +181,100 @@ public class SelectActivity extends AppCompatActivity {
     /**
      * showAlertDialogue, Shows the success of adding the alert dialogue
      */
-    private void showAlertDialogue() {
-        //Initialise the layouts and views
-        View view = LayoutInflater.from(SelectActivity.this).inflate(R.layout.password_alert_dialogue, null, false);
+    private void showAlertDialogue(String title, String description, boolean passwordEnter) {
+        View view;
+        TextView alertTitleTV;
 
-        StringBuilder enteredCode = new StringBuilder();
-        EditText enterPasswordET = view.findViewById(R.id.passwordAlertET);
-        TextView alertTitleTV = view.findViewById(R.id.passwordAlertTitleTV);
+        if(passwordEnter){
+            view = LayoutInflater.from(ResolveLobbyActivity.this).inflate(R.layout.password_alert_dialogue, null, false);
+            StringBuilder enteredCode = new StringBuilder();
 
-        Button[] keyPadButtons = new Button[10];
+            alertTitleTV = view.findViewById(R.id.passwordAlertTitleTV);
 
-        keyPadButtons[0] = view.findViewById(R.id.passwordAlertZeroB);
-        keyPadButtons[1] = view.findViewById(R.id.passwordAlertOneB);
-        keyPadButtons[2] = view.findViewById(R.id.passwordAlertTwoB);
-        keyPadButtons[3] = view.findViewById(R.id.passwordAlertThreeB);
-        keyPadButtons[4] = view.findViewById(R.id.passwordAlertFourB);
-        keyPadButtons[5] = view.findViewById(R.id.passwordAlertFiveB);
-        keyPadButtons[6] = view.findViewById(R.id.passwordAlertSixB);
-        keyPadButtons[7] = view.findViewById(R.id.passwordAlertSevenB);
-        keyPadButtons[8] = view.findViewById(R.id.passwordAlertEightB);
-        keyPadButtons[9] = view.findViewById(R.id.passwordAlertNineB);
+            //Initialise the layouts and views
+            EditText enterPasswordET = view.findViewById(R.id.passwordAlertET);
 
-        Button enterB = view.findViewById(R.id.passwordAlertEnterB);
-        Button deleteB = view.findViewById(R.id.passwordAlertDeleteB);
+            Button[] keyPadButtons = new Button[10];
+            keyPadButtons[0] = view.findViewById(R.id.passwordAlertZeroB);
+            keyPadButtons[1] = view.findViewById(R.id.passwordAlertOneB);
+            keyPadButtons[2] = view.findViewById(R.id.passwordAlertTwoB);
+            keyPadButtons[3] = view.findViewById(R.id.passwordAlertThreeB);
+            keyPadButtons[4] = view.findViewById(R.id.passwordAlertFourB);
+            keyPadButtons[5] = view.findViewById(R.id.passwordAlertFiveB);
+            keyPadButtons[6] = view.findViewById(R.id.passwordAlertSixB);
+            keyPadButtons[7] = view.findViewById(R.id.passwordAlertSevenB);
+            keyPadButtons[8] = view.findViewById(R.id.passwordAlertEightB);
+            keyPadButtons[9] = view.findViewById(R.id.passwordAlertNineB);
 
-        GridLayout gridLayout = view.findViewById(R.id.passwordAlertGL);
-        Button doneB = view.findViewById(R.id.passwordAlertDoneB);
-        TextView descriptionTV = view.findViewById(R.id.passwordAlertDescriptionTV);
-        ImageView logoIV = view.findViewById(R.id.passwordAlertLogoIV);
+            Button enterB = view.findViewById(R.id.passwordAlertEnterB);
+            Button deleteB = view.findViewById(R.id.passwordAlertDeleteB);
 
+            for(int i=0;i<keyPadButtons.length;i++){
+                int finalI = i;
+                keyPadButtons[finalI].setOnClickListener(v -> {
+                    if(enteredCode.length()<4){
+                        String number = String.valueOf(finalI);
+                        enteredCode.append(number);
+                        enterPasswordET.setText(enteredCode.toString());
+                    }
+                });
+            }
 
-        for(int i=0;i<keyPadButtons.length;i++){
-            int finalI = i;
-            keyPadButtons[finalI].setOnClickListener(v -> {
-                if(enteredCode.length()<4){
-                    String number = String.valueOf(finalI);
-                    enteredCode.append(number);
+            deleteB.setOnClickListener(v -> {
+                if(enteredCode.length()>0){
+                    enteredCode.deleteCharAt(enteredCode.length() - 1);
                     enterPasswordET.setText(enteredCode.toString());
                 }
             });
-        }
 
-        deleteB.setOnClickListener(v -> {
-            if(enteredCode.length()>0){
-                enteredCode.deleteCharAt(enteredCode.length() - 1);
-                enterPasswordET.setText(enteredCode.toString());
-            }
-        });
+            enterB.setOnClickListener(view1 -> {
+                enterB.setEnabled(false);
+                String passwordEntered = enterPasswordET.getText().toString();
 
-        //Initialise the builder and the alertDialog
-        AlertDialog.Builder builder = new AlertDialog.Builder(SelectActivity.this);
-        builder.setView(view);
-        alertDialogue = builder.create();
+                firebaseManager.checkPasscode(passwordEntered, new FirebaseManager.PasscodeCallback() {
+                    @Override
+                    public void onSuccess() {
+                        Log.d("COMP3018", "On Success");
+                        alertDialogue.dismiss();
+                        Intent intent = SettingsActivity.newIntent(ResolveLobbyActivity.this);
+                        startActivity(intent);
+                    }
 
-        enterB.setOnClickListener(view1 -> {
-            enterB.setEnabled(false);
-            String passwordEntered = enterPasswordET.getText().toString();
+                    @Override
+                    public void onPasswordUploadFailure(String errorMessage) {
+                        Log.d("COMP3018", "Upload Failed");
+                        showAlertDialogue("Error Uploading", "Please Try Again", false);
+                    }
 
-
-            firebaseManager.checkPasscode(passwordEntered, new FirebaseManager.PasscodeCallback() {
-                @Override
-                public void onSuccess() {
-
-                    Log.d("COMP3018", "On Success");
-                    alertDialogue.dismiss();
-                    Intent intent = SettingsActivity.newIntent(SelectActivity.this);
-                    startActivity(intent);
-                }
-
-                @Override
-                public void onPasswordUploadFailure(String errorMessage) {
-                    Log.d("COMP3018", "Upload Failed");
-
-                    alertTitleTV.setText("Error Uploading");
-                    enterPasswordET.setVisibility(View.GONE);
-                    gridLayout.setVisibility(View.GONE);
-
-                    doneB.setVisibility(View.VISIBLE);
-                    logoIV.setVisibility(View.VISIBLE);
-                    descriptionTV.setVisibility(View.VISIBLE);
-                }
-
-                @Override
-                public void onPasswordsDiffer() {
-
-                    Log.d("COMP3018", "Passwords Differ");
-                    alertTitleTV.setText("Incorrect Password");
-                    enterPasswordET.setVisibility(View.GONE);
-                    gridLayout.setVisibility(View.GONE);
-
-                    doneB.setVisibility(View.VISIBLE);
-                    logoIV.setVisibility(View.VISIBLE);
-                    descriptionTV.setVisibility(View.VISIBLE);
-                }
+                    @Override
+                    public void onPasswordsDiffer() {
+                        Log.d("COMP3018", "Passwords Differ");
+                        alertDialogue.dismiss();
+                        showAlertDialogue("Passwords Differ", "Please Match Passwords", false);
+                    }
+                });
             });
-        });
 
-        doneB.setOnClickListener(view1 -> alertDialogue.dismiss());
+        }else{
+            //Initialise the layouts and views
+            view = LayoutInflater.from(ResolveLobbyActivity.this).inflate(R.layout.alert_dialogue, null, false);
+            alertTitleTV = view.findViewById(R.id.passwordAlertTitleTV);
+            Button okayB = view.findViewById(R.id.alertDoneB);
+            TextView descriptionTV = findViewById(R.id.alertDescriptionTV);
 
-        if (alertDialogue.getWindow() != null) {
-            alertDialogue.getWindow().setBackgroundDrawable(new ColorDrawable(0));
+            descriptionTV.setText(description);
+
+            okayB.setOnClickListener(view2 -> {
+                alertDialogue.dismiss();
+            });
         }
-        //Show the actual alert
-        alertDialogue.show();
-    }
-    /**
-     * showAlertDialogue, Shows the failure of opening resolve
-     */
-    private void showErrorAlertDialogue() {
-        //Initialise the layouts and views
-        View view = LayoutInflater.from(SelectActivity.this).inflate(R.layout.alert_dialogue, null, false);
-        AlertDialog alertDialogue;
-        Button okayB = view.findViewById(R.id.alertDoneB);
+
+        alertTitleTV.setText(title);
 
         //Initialise the builder and the alertDialog
-        AlertDialog.Builder builder = new AlertDialog.Builder(SelectActivity.this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(ResolveLobbyActivity.this);
         builder.setView(view);
         alertDialogue = builder.create();
-
-        okayB.setOnClickListener(view1 -> alertDialogue.dismiss());
 
         if (alertDialogue.getWindow() != null) {
             alertDialogue.getWindow().setBackgroundDrawable(new ColorDrawable(0));
@@ -312,7 +286,7 @@ public class SelectActivity extends AppCompatActivity {
 
     ActivityResultLauncher<ScanOptions> launcher = registerForActivityResult(new ScanContract(), result->{
         if(result.getContents() != null){
-            AlertDialog.Builder builder = new AlertDialog.Builder(SelectActivity.this);
+            AlertDialog.Builder builder = new AlertDialog.Builder(ResolveLobbyActivity.this);
             if(result.getContents().equals(drawName)){
                 Log.d("COMP3018","Correct Name");
                 builder.setTitle("Correct QR Code");

@@ -59,7 +59,7 @@ public class MenuActivity extends AppCompatActivity {
                 builder.setMessage("Press Okay to Start AR activity");
                 builder.setPositiveButton("OK", (dialog, which) -> {
                     dialog.dismiss();
-                    Intent intent = SelectActivity.newIntent(MenuActivity.this);
+                    Intent intent = ResolveLobbyActivity.newIntent(MenuActivity.this);
                     startActivity(intent);
                 });
                 AlertDialog alertDialog = builder.create();
