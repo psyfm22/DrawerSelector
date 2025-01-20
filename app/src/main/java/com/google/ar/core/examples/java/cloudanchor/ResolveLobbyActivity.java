@@ -43,6 +43,7 @@ public class ResolveLobbyActivity extends AppCompatActivity {
         return new Intent(packageContext, ResolveLobbyActivity.class);
     }
     private DrawSelectedViewModel drawSelectedViewModel;
+    private Button viewAnchorB;
 
 
     @Override
@@ -53,7 +54,8 @@ public class ResolveLobbyActivity extends AppCompatActivity {
         //Assign the rotation helper
         displayRotationHelper = new DisplayRotationHelper(this);
 
-        Button viewB = findViewById(R.id.selectBeginViewingB);
+        viewAnchorB = findViewById(R.id.selectBeginViewingB);
+        viewAnchorB.setEnabled(false);
         ImageButton backIB = findViewById(R.id.selectReturnIB);
         ImageView settingsIV = findViewById(R.id.selectSettingsIV);
         spinner = findViewById(R.id.select_anchors_spinner);
@@ -75,7 +77,7 @@ public class ResolveLobbyActivity extends AppCompatActivity {
                                 scanOptions.setCaptureActivity(CustomCaptureActivity.class);
                                 launcher.launch(scanOptions);
                             }else{
-                                viewB.setEnabled(false);
+                                viewAnchorB.setEnabled(false);
                                 drawSelectedViewModel.deleteAllItems();
                                 loadFromFirebase();
                             }
@@ -116,7 +118,7 @@ public class ResolveLobbyActivity extends AppCompatActivity {
             }
         });
 
-        viewB.setOnClickListener(v -> {
+        viewAnchorB.setOnClickListener(v -> {
             int selectedPosition = spinner.getSelectedItemPosition();
 
             if(selectedPosition > -1){
@@ -168,10 +170,12 @@ public class ResolveLobbyActivity extends AppCompatActivity {
                 }
 
                 drawSelectedViewModel.setDrawList(nameList);
+                viewAnchorB.setEnabled(true);
             }
 
             @Override
             public void onError(DatabaseError error) {
+                showAlertDialogue("Error","Failed Loading File", false);
                 Log.d("COMP3018", "Error fetching hotspot list", error.toException());
             }
         });
@@ -250,7 +254,7 @@ public class ResolveLobbyActivity extends AppCompatActivity {
                     public void onPasswordsDiffer() {
                         Log.d("COMP3018", "Passwords Differ");
                         alertDialogue.dismiss();
-                        showAlertDialogue("Passwords Differ", "Please Match Passwords", false);
+                        showAlertDialogue("Error", "Incorrect Password", false);
                     }
                 });
             });
@@ -258,9 +262,9 @@ public class ResolveLobbyActivity extends AppCompatActivity {
         }else{
             //Initialise the layouts and views
             view = LayoutInflater.from(ResolveLobbyActivity.this).inflate(R.layout.alert_dialogue, null, false);
-            alertTitleTV = view.findViewById(R.id.passwordAlertTitleTV);
+            alertTitleTV = view.findViewById(R.id.alertTitleTV);
             Button okayB = view.findViewById(R.id.alertDoneB);
-            TextView descriptionTV = findViewById(R.id.alertDescriptionTV);
+            TextView descriptionTV = view.findViewById(R.id.alertDescriptionTV);
 
             descriptionTV.setText(description);
 
