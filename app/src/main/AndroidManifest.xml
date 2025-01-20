@@ -64,5 +64,4 @@
             android:name="com.google.android.ar.API_KEY"
             android:value="AIzaSyAEcxj-QuWQ9tJm4ArzTw49grA0v4OsnJA" />
     </application>
-
 </manifest>
