@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -15,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
@@ -37,8 +37,8 @@ public class SettingsActivity extends AppCompatActivity implements SpinnerAdapte
     private Spinner spinner;
     private List<Hotspot> hotspotList;
     private ActivityStageViewModel activityStageViewModel;
-    private DrawSelectedViewModel drawSelectedViewModel;
     private final StringBuilder finalPassword = new StringBuilder();
+    private static final String SPINNER_POSITION_KEY = "SPINNER_POSITION_KEY";
 
     static Intent newIntent(Context packageContext) {
         return new Intent(packageContext, SettingsActivity.class);
@@ -74,30 +74,34 @@ public class SettingsActivity extends AppCompatActivity implements SpinnerAdapte
             setCurrentActivity(activityStage);
         });
 
-        drawSelectedViewModel = new ViewModelProvider(SettingsActivity.this).get(DrawSelectedViewModel.class);
+        firebaseManager = new FirebaseManager(this);
+        firebaseManager.getHotspotList(new FirebaseManager.HotspotListListener() {
+            @Override
+            public void onHotspotListFetched(List<Hotspot> hotspots) {
+                hotspotList = hotspots;
+                List<String> nameList = new ArrayList<>();
 
-        drawSelectedViewModel.getDrawerList().observe(this, strings -> {
-            SpinnerAdapterWithDelete adapter = new SpinnerAdapterWithDelete(SettingsActivity.this, strings, SettingsActivity.this);
-            spinner.setAdapter(adapter);
+                for (Hotspot hotspot : hotspotList) {
+                    nameList.add(hotspot.getName());
+                }
 
-            String selectedItem = drawSelectedViewModel.getCurrentSelection().getValue();
-            if (selectedItem != null) {
-                int position = strings.indexOf(selectedItem);
-                if (position != -1) {
+                SpinnerAdapterWithDelete adapter = new SpinnerAdapterWithDelete(SettingsActivity.this, nameList, SettingsActivity.this);
+                spinner.setAdapter(adapter);
+
+                if (savedInstanceState != null) {
+                    int position;
+                    if(nameList.isEmpty()){
+                        position = savedInstanceState.getInt(SPINNER_POSITION_KEY, -1);
+                    }else{
+                        position = savedInstanceState.getInt(SPINNER_POSITION_KEY, 0);
+                    }
                     spinner.setSelection(position);
+                    Log.d("COMP3018", "In the save instance null: "+ position);
                 }
             }
-        });
-
-
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onItemSelected(AdapterView<?> parentView, android.view.View selectedItemView, int position, long id) {
-                String selectedItem = (String) parentView.getItemAtPosition(position);
-                drawSelectedViewModel.setCurrentSelection(selectedItem);
-            }
-            @Override
-            public void onNothingSelected(AdapterView<?> parentView) {
+            public void onError(DatabaseError error) {
+                Log.d("COMP3018", "Error fetching hotspot list", error.toException());
             }
         });
 
@@ -238,7 +242,6 @@ public class SettingsActivity extends AppCompatActivity implements SpinnerAdapte
             @Override
             public void onSuccess() {
                 hotspotList.remove(position);
-                drawSelectedViewModel.deleteItem(position);
                 Log.d("COMP3018", "Here is in the onSuccess: "+ hotspotList.size());
                 Log.d("COMP3018", "Successfully Deleted the firebase item");
             }
@@ -288,34 +291,34 @@ public class SettingsActivity extends AppCompatActivity implements SpinnerAdapte
 
             enterNameET.setVisibility(View.VISIBLE);
         }else{
-            firebaseManager = new FirebaseManager(this);
-            firebaseManager.getHotspotList(new FirebaseManager.HotspotListListener() {
-                @Override
-                public void onHotspotListFetched(List<Hotspot> hotspots) {
-                    hotspotList = hotspots;
-                    List<String> nameList = new ArrayList<>();
-
-                    for (Hotspot hotspot : hotspotList) {
-                        nameList.add(hotspot.getName());
-                    }
-                    drawSelectedViewModel.setDrawList(nameList);
-
-                    spinner.setVisibility(View.VISIBLE);
-                    clearAllB.setVisibility(View.VISIBLE);
-                }
-
-                @Override
-                public void onError(DatabaseError error) {
-                    Log.d("COMP3018", "Error fetching hotspot list", error.toException());
-                }
-            });
-
             changePinTV.setVisibility(View.GONE);
             changePinB.setVisibility(View.GONE);
             addTrayTV.setVisibility(View.GONE);
             addTrayB.setVisibility(View.GONE);
             manageDrawerTV.setVisibility(View.GONE);
             manageDrawerB.setVisibility(View.GONE);
+
+            spinner.setVisibility(View.VISIBLE);
+            clearAllB.setVisibility(View.VISIBLE);
         }
+    }
+
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        int selectedPosition = spinner.getSelectedItemPosition();
+        outState.putInt(SPINNER_POSITION_KEY, selectedPosition);
+        Log.d("COMP3018", "In On Save Instance: "+ selectedPosition);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
+        int position = savedInstanceState.getInt(SPINNER_POSITION_KEY, 0);
+        spinner.setSelection(position);
+        Log.d("COMP3018", "In On Save Instance: "+ position);
     }
 }
