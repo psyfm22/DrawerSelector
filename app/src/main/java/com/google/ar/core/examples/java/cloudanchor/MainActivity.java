@@ -27,8 +27,8 @@ public class MainActivity extends AppCompatActivity {
         Button confirmLocationB = findViewById(R.id.mainConfirmLocationB),
                 closeB = findViewById(R.id.mainCloseB);
 
+        //Add the listeners
         confirmLocationB.setOnClickListener(view -> startQRCodeScan());
-
         closeB.setOnClickListener(view -> finish());
     }
 
@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
     }
     private void startQRCodeScan() {
         ScanOptions scanOptions = new ScanOptions();
-        scanOptions.setPrompt("Scan the QR Code");
+        scanOptions.setPrompt(getString(R.string.scan));
         scanOptions.setBeepEnabled(true);
         scanOptions.setOrientationLocked(true);
         scanOptions.setCaptureActivity(CaptureActivity.class);
@@ -55,10 +55,10 @@ public class MainActivity extends AppCompatActivity {
     ActivityResultLauncher<ScanOptions> launcher = registerForActivityResult(new ScanContract(), result->{
         if(result.getContents() != null){
             AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-            if(result.getContents().equals("Starting Location wH8f2Bz9pQ")){
-                builder.setTitle("Correct QR Code");
-                builder.setMessage("Press Okay to Start AR activity");
-                builder.setPositiveButton("OK", (dialog, which) -> {
+            if(result.getContents().equals(getString(R.string.main_qr_code_value))){
+                builder.setTitle(getString(R.string.main_correct_qr_title));
+                builder.setMessage(getString(R.string.main_correct_qr_description));
+                builder.setPositiveButton(getString(R.string.okay), (dialog, which) -> {
                     dialog.dismiss();
                     Intent intent = ResolveLobbyActivity.newIntent(MainActivity.this);
                     startActivity(intent);
@@ -67,9 +67,9 @@ public class MainActivity extends AppCompatActivity {
                 alertDialog.setCanceledOnTouchOutside(false);
                 alertDialog.show();
             }else{
-                builder.setTitle("Incorrect QR Code");
-                builder.setMessage("Please Scan the Starting QR Code");
-                builder.setPositiveButton("OK", (dialog, which) -> dialog.dismiss());
+                builder.setTitle(getString(R.string.incorrect_qr_title));
+                builder.setMessage(getString(R.string.main_incorrect_qr_description));
+                builder.setPositiveButton(getString(R.string.okay), (dialog, which) -> dialog.dismiss());
                 AlertDialog alertDialog = builder.create();
                 alertDialog.setCanceledOnTouchOutside(false);
                 alertDialog.show();

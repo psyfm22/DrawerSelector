@@ -67,12 +67,11 @@ public class ResolveLobbyActivity extends AppCompatActivity {
                     if (result.getResultCode() == RESULT_OK) {
                         Intent data = result.getData();
                         if(data != null){
-                            Log.d("COMP3018","Here is the activity type.");
                             String activityType = data.getStringExtra("ACTIVITY_TYPE");
+
                             if(activityType != null && activityType.equals("CLOUD_ANCHOR_ACTIVITY")){
-                                Log.d("COMP3018", "Scan QR Code successful");
                                 ScanOptions scanOptions = new ScanOptions();
-                                scanOptions.setPrompt("Scan the QR Code");
+                                scanOptions.setPrompt(getString(R.string.scan));
                                 scanOptions.setBeepEnabled(true);
                                 scanOptions.setOrientationLocked(true);
                                 scanOptions.setCaptureActivity(CaptureActivity.class);
@@ -84,8 +83,6 @@ public class ResolveLobbyActivity extends AppCompatActivity {
                             }
                         }
 
-                    } else if (result.getResultCode() == RESULT_CANCELED) {
-                        Log.d("COMP3018", "Scan QR Code was canceled");
                     }
                 }
         );
@@ -110,7 +107,6 @@ public class ResolveLobbyActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parentView, android.view.View selectedItemView, int position, long id) {
                 String selectedItem = (String) parentView.getItemAtPosition(position);
-                Log.d("COMP3018","Here is Selected: " + selectedItem);
                 drawSelectedViewModel.setCurrentSelection(selectedItem);
             }
 
@@ -124,7 +120,6 @@ public class ResolveLobbyActivity extends AppCompatActivity {
 
             if(selectedPosition > -1){
                 Hotspot selectedHotspot = hotspotList.get(selectedPosition);
-                Log.d("COMP3018",selectedHotspot.getName());
                 drawName = selectedHotspot.getName();
 
                 Intent intent = CloudAnchorActivity.newIntent(ResolveLobbyActivity.this);
@@ -132,11 +127,11 @@ public class ResolveLobbyActivity extends AppCompatActivity {
                 intent.putExtra("HOTSPOT_CODE", selectedHotspot.getCode());
                 startActivityForResultLauncher.launch(intent);
             }else{
-                showAlertDialogue("Error","Error resolving Anchor, Please try again", false);
+                showAlertDialogue(getString(R.string.alert_error_title),getString(R.string.resolve_fail_anchor_description), false);
             }
         });
 
-        settingsIV.setOnClickListener(v -> showAlertDialogue("Enter Password: ", "", true));
+        settingsIV.setOnClickListener(v -> showAlertDialogue(getString(R.string.password_alert_title), "", true));
 
         backIB.setOnClickListener(v -> finish());
 
@@ -176,12 +171,10 @@ public class ResolveLobbyActivity extends AppCompatActivity {
 
             @Override
             public void onError(DatabaseError error) {
-                showAlertDialogue("Error","Failed Loading File", false);
-                Log.d("COMP3018", "Error fetching hotspot list", error.toException());
+                showAlertDialogue(getString(R.string.alert_error_title),getString(R.string.resolve_failed_loading_description), false);
             }
         });
     }
-
 
     /**
      * showAlertDialogue, Shows the success of adding the alert dialogue
@@ -189,7 +182,6 @@ public class ResolveLobbyActivity extends AppCompatActivity {
     private void showAlertDialogue(String title, String description, boolean passwordEnter) {
         View view;
         TextView alertTitleTV;
-
         if(passwordEnter){
             view = LayoutInflater.from(ResolveLobbyActivity.this).inflate(R.layout.password_alert_dialogue, null, false);
             StringBuilder enteredCode = new StringBuilder();
@@ -239,7 +231,6 @@ public class ResolveLobbyActivity extends AppCompatActivity {
                 firebaseManager.checkPasscode(passwordEntered, new FirebaseManager.PasscodeCallback() {
                     @Override
                     public void onSuccess() {
-                        Log.d("COMP3018", "On Success");
                         alertDialogue.dismiss();
                         Intent intent = SettingsActivity.newIntent(ResolveLobbyActivity.this);
                         startActivity(intent);
@@ -247,15 +238,13 @@ public class ResolveLobbyActivity extends AppCompatActivity {
 
                     @Override
                     public void onPasswordUploadFailure(String errorMessage) {
-                        Log.d("COMP3018", "Upload Failed");
-                        showAlertDialogue("Error Uploading", "Please Try Again", false);
+                        showAlertDialogue(getString(R.string.alert_error_title), getString(R.string.resolve_check_connection_description), false);
                     }
 
                     @Override
                     public void onPasswordsDiffer() {
-                        Log.d("COMP3018", "Passwords Differ");
                         alertDialogue.dismiss();
-                        showAlertDialogue("Error", "Incorrect Password", false);
+                        showAlertDialogue(getString(R.string.alert_error_title), getString(R.string.resolve_incorrect_password_description), false);
                     }
                 });
             });
@@ -289,20 +278,19 @@ public class ResolveLobbyActivity extends AppCompatActivity {
         alertDialogue.show();
     }
 
-    ActivityResultLauncher<ScanOptions> launcher = registerForActivityResult(new ScanContract(), result->{
+    ActivityResultLauncher<ScanOptions> launcher = registerForActivityResult(new ScanContract(), result-> {
         if(result.getContents() != null){
             AlertDialog.Builder builder = new AlertDialog.Builder(ResolveLobbyActivity.this);
             if(result.getContents().equals(drawName)){
-                Log.d("COMP3018","Correct Name");
-                builder.setTitle("Correct QR Code");
-                builder.setMessage("Press Okay to return");
-                builder.setPositiveButton("OK", (dialog, which) -> dialog.dismiss());
+                builder.setTitle(getString(R.string.resolve_correct_qr_title));
+                builder.setMessage(getString(R.string.resolve_correct_qr_description));
+                builder.setPositiveButton(getString(R.string.okay), (dialog, which) -> dialog.dismiss());
                 AlertDialog alertDialog = builder.create();
                 alertDialog.show();
             }else{
-                builder.setTitle("Incorrect QR Code");
-                builder.setMessage("Please Try Locating the Draw Again");
-                builder.setPositiveButton("OK", (dialog, which) -> dialog.dismiss());
+                builder.setTitle(getString(R.string.incorrect_qr_title));
+                builder.setMessage(getString(R.string.resolve_incorrect_qr_description));
+                builder.setPositiveButton(getString(R.string.okay), (dialog, which) -> dialog.dismiss());
                 AlertDialog alertDialog = builder.create();
                 alertDialog.show();
             }

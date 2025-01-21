@@ -15,8 +15,8 @@
 -->
 <resources>
     <string name="okay">Okay</string>
-
-
+    <string name="incorrect_qr_title">Incorrect QR Code</string>
+    <string name="alert_error_title">Error</string>
 
     <!-- Strings in the main activity -->
     <string name="app_name">Draw Locator</string>
@@ -25,12 +25,10 @@
     <string name="confirm_location_title">Please Confirm Location</string>
     <string name="main_description">The user firsts needs to confirm they are in the correct room</string>
     <string name="confirm">Confirm</string>
-
-<!--    <string name="host_button_text">Host</string>-->
-<!--    <string name="host_dialog_title">Host an Anchor</string>-->
-<!--    <string name="host_ok">Host</string>-->
-    <string name="initial_room_code">0000</string>
-<!--    <string name="resolve_button_text">Resolve</string>-->
+    <string name="main_qr_code_value">Starting Location wH8f2Bz9pQ</string>
+    <string name="main_correct_qr_title">Correct QR Code</string>
+    <string name="main_correct_qr_description">Press Okay to Progress to Next Stage</string>
+    <string name="main_incorrect_qr_description">Please Scan the Correct Starting Code</string>
 
     <!-- Strings in the Resolve Dialog Box -->
     <string name="resolve_dialog_ok">Resolve</string>
@@ -45,7 +43,6 @@
     <string name="snackbar_arcore_exception">This device does not support ARCore.</string>
     <string name="snackbar_camera_unavailable">Camera unavailable. Try restarting the app.</string>
     <string name="snackbar_cloud_id_shared">The anchor ID was shared via Firebase.</string>
-<!--    <string name="snackbar_dismiss">Dismiss</string>-->
     <string name="snackbar_firebase_error">There was a Firebase Error. Please check Logcat for more details.</string>
     <string name="snackbar_host_error">Hosting Error: %1$s</string>
     <string name="snackbar_initial_message">Please select Host or Resolve to continue.</string>
@@ -62,22 +59,21 @@
     <string name="learn_more">Learn more</string>
     <string name="learn_more_url">https://developers.google.com/ar/data-privacy</string>
 
-
-<!--    <string name="place_title_text">Add New Drawer</string>-->
-    <string name="host_instructions_text">Scan your space to create a new cloud anchor accessible by others</string>
-<!--    <string name="place_button_text">Add</string>-->
-
-
-    <!-- Resolve Lobby String-->
+    <!-- Resolve Lobby-->
     <string name="resolve_lobby_title">Search for Drawer</string>
     <string name="resolve_lobby_description">Select which anchor you would like to resolve</string>
     <string name="search">Search</string>
+    <string name="resolve_correct_qr_title">Correct QR Code</string>
+    <string name="resolve_correct_qr_description">Press Okay to Return</string>
+    <string name="resolve_incorrect_qr_description">Please Try Locating the Draw Again</string>
+    <string name="resolve_incorrect_password_description">Incorrect Password</string>
+    <string name="resolve_check_connection_description">Please Check Connection</string>
+    <string name="resolve_failed_loading_description">Failed Loading File</string>
+    <string name="resolve_fail_anchor_description">Error resolving Anchor, Please try again</string>
 
-
-    <!--    <string name="clear_button_text">Clear</string>-->
-<!--    <string name="select_anchors_text">Select from Drawers previously hosted from this device</string>-->
-<!--    <string name="select_draw">Please Select Which Drawer you Are Searching For</string>-->
-<!--    <string name="resolve_drawer">Resolve Drawer</string>-->
+    <!--Cloud Anchor Activity-->
+    <string name="scan">Scan QR</string>
+    <string name="initial_room_code">0000</string>
 
     <!--Settings-->
     <string name="settings_title">Settings</string>
@@ -90,9 +86,15 @@
     <string name="settings_enter_pin">Enter Pin…</string>
     <string name="settings_enter_name">Enter Name…</string>
     <string name="settings_delete_all">Delete All</string>
+    <string name="settings_host_instruction_description">Scan your space to create a new cloud anchor accessible by others</string>
+    <string name="settings_changed_password_title">Password Changed</string>
+    <string name="settings_changed_password_description">Successfully Changed the Password</string>
+    <string name="settings_password_issue_title">Password Issue</string>
+    <string name="settings_password_issue_description">Please Try Again</string>
+    <string name="settings_empty_name_title">Empty Name</string>
+    <string name="settings_empty_name_description">Please Enter a Name for the Anchor</string>
 
     <!--Alert Dialogue-->
-    <string name="alert_error_title">Error</string>
     <string name="alert_no_anchor_description">No Anchor Description</string>
 
     <!--Password Alert Dialogue-->
@@ -111,8 +113,4 @@
     <string name="password_alert_back_button">X</string>
     <string name="password_alert_enter_button">></string>
 
-
-
-
-    <string name="scan">Scan QR</string>
 </resources>

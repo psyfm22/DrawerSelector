@@ -602,7 +602,6 @@ public class CloudAnchorActivity extends AppCompatActivity
 
   /** Callback function invoked when the user presses the OK button in the Resolve Dialog. */
   private void onRoomCodeEntered(Long roomCode) {
-    Log.d("COMP3018", "In onRoomCodeEntered");
     currentMode = HostResolveMode.RESOLVING;
 
     roomCodeText.setText(String.valueOf(roomCode));
@@ -633,7 +632,6 @@ public class CloudAnchorActivity extends AppCompatActivity
 
     @Override
     public void onNewRoomCode(Long newRoomCode) {
-      Log.d("COMP3018", "In onNewRoomCode");
       Preconditions.checkState(roomCode == null, "The room code cannot have been set before.");
       roomCode = newRoomCode;
       roomCodeText.setText(String.valueOf(roomCode));
@@ -650,7 +648,6 @@ public class CloudAnchorActivity extends AppCompatActivity
 
     @Override
     public void onError(DatabaseError error) {
-      Log.d("COMP3018", "In onError");
       Log.w(TAG, "A Firebase database error happened.", error.toException());
       snackbarHelper.showError(
           CloudAnchorActivity.this, getString(R.string.snackbar_firebase_error));
@@ -658,7 +655,6 @@ public class CloudAnchorActivity extends AppCompatActivity
 
     @Override
     public void onCloudTaskComplete(String cloudId, CloudAnchorState cloudState) {
-      Log.d("COMP3018", "In onCloudTaskComplete");
       if (cloudState.isError()) {
         Log.e(TAG, "Error hosting a cloud anchor, state " + cloudState);
         snackbarHelper.showMessageWithDismiss(
@@ -672,7 +668,6 @@ public class CloudAnchorActivity extends AppCompatActivity
     }
 
     private void checkAndMaybeShare() {
-      Log.d("COMP3018", "In checkAndMaybeShare");
       if (roomCode == null || cloudAnchorId == null) {
         return;
       }
@@ -687,13 +682,11 @@ public class CloudAnchorActivity extends AppCompatActivity
     private final long roomCode;
 
     CloudAnchorResolveStateListener(long roomCode) {
-      Log.d("COMP3018", "In CloudAnchorResolveStateListener");
       this.roomCode = roomCode;
     }
 
     @Override
     public void onCloudTaskComplete(Anchor anchor, CloudAnchorState cloudState) {
-      Log.d("COMP3018", "In onCloudTaskComplete");
       // When the anchor has been resolved, or had a final error state.
       if (cloudState.isError()) {
         Log.w(
@@ -713,7 +706,6 @@ public class CloudAnchorActivity extends AppCompatActivity
 
     @Override
     public void onShowResolveMessage() {
-      Log.d("COMP3018", "In onShowResolveMessage");
       snackbarHelper.setMaxLines(4);
       snackbarHelper.showMessageWithDismiss(
           CloudAnchorActivity.this, getString(R.string.snackbar_resolve_no_result_yet));
@@ -721,14 +713,12 @@ public class CloudAnchorActivity extends AppCompatActivity
   }
 
   public void showNoticeDialog(HostResolveListener listener) {
-    Log.d("COMP3018", "In showNoticeDialog");
     DialogFragment dialog = PrivacyNoticeDialogFragment.createDialog(listener);
     dialog.show(getSupportFragmentManager(), PrivacyNoticeDialogFragment.class.getName());
   }
 
   @Override
   public void onDialogPositiveClick(DialogFragment dialog) {
-    Log.d("COMP3018", "In onDialogPositiveClick");
     if (!sharedPreferences.edit().putBoolean(ALLOW_SHARE_IMAGES_KEY, true).commit()) {
       throw new AssertionError("Could not save the user preference to SharedPreferences!");
     }

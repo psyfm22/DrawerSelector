@@ -71,10 +71,7 @@ public class SettingsActivity extends AppCompatActivity implements SpinnerAdapte
         spinner = findViewById(R.id.settings_anchors_spinner);
 
         activityStageViewModel = new ViewModelProvider(this).get(ActivityStageViewModel.class);
-        activityStageViewModel.getActivityStage().observe(this, activityStage -> {
-            Log.d("COMP3018","Current Stage: "+ activityStage);
-            setCurrentActivity(activityStage);
-        });
+        activityStageViewModel.getActivityStage().observe(this, this::setCurrentActivity);
 
         firebaseManager = new FirebaseManager(this);
         firebaseManager.getHotspotList(new FirebaseManager.HotspotListListener() {
@@ -153,19 +150,18 @@ public class SettingsActivity extends AppCompatActivity implements SpinnerAdapte
                 firebaseManager.changePasscode(hashedPassword, new FirebaseManager.ChangePasscodeCallback() {
                     @Override
                     public void onSuccess() {
-                        showAlertDialogue("Password Changed", "Successfully Changed the Password", true);
+                        showAlertDialogue(getString(R.string.settings_changed_password_title), getString(R.string.settings_changed_password_description), true);
 
                     }
 
                     @Override
                     public void onFailure(String errorMessage) {
-                        showAlertDialogue("Password Issue", "Please Try Again", false);
+                        showAlertDialogue(getString(R.string.settings_password_issue_title), getString(R.string.settings_password_issue_description), false);
 
                     }
                 });
             }else{
-                showAlertDialogue("Password Issue", "Please Try Again", false);
-                Log.d("COMP3018","Password Change Failed");
+                showAlertDialogue(getString(R.string.settings_password_issue_title), getString(R.string.settings_password_issue_description), false);
             }
             finalPassword.setLength(0);
             enterPin1ET.setText("");
@@ -180,7 +176,7 @@ public class SettingsActivity extends AppCompatActivity implements SpinnerAdapte
             String name = enterNameET.getText().toString();
 
             if(name.trim().isEmpty()){
-                showAlertDialogue("Empty Name","Please Enter a Name for the Anchor", false);
+                showAlertDialogue(getString(R.string.settings_empty_name_title),getString(R.string.settings_empty_name_description), false);
                 return;
             }
 
@@ -247,8 +243,6 @@ public class SettingsActivity extends AppCompatActivity implements SpinnerAdapte
             @Override
             public void onSuccess() {
                 hotspotList.remove(position);
-                Log.d("COMP3018", "Here is in the onSuccess: "+ hotspotList.size());
-                Log.d("COMP3018", "Successfully Deleted the firebase item");
             }
 
             @Override
@@ -278,7 +272,7 @@ public class SettingsActivity extends AppCompatActivity implements SpinnerAdapte
             manageDrawerTV.setVisibility(View.VISIBLE);
             manageDrawerB.setVisibility(View.VISIBLE);
 
-            addTrayTV.setText("Add a new Drawer");
+            addTrayTV.setText(R.string.settings_add_drawer_description);
         } else if (activityStage.equals(ActivityStage.CHANGE_PIN)) {
             addTrayTV.setVisibility(View.GONE);
             addTrayB.setVisibility(View.GONE);
@@ -288,7 +282,7 @@ public class SettingsActivity extends AppCompatActivity implements SpinnerAdapte
             enterPin1ET.setVisibility(View.VISIBLE);
             enterPin2ET.setVisibility(View.VISIBLE);
         } else if (activityStage.equals(ActivityStage.ADD_DRAWER)) {
-            addTrayTV.setText(getString(R.string.host_instructions_text));
+            addTrayTV.setText(getString(R.string.settings_host_instruction_description));
             changePinTV.setVisibility(View.GONE);
             changePinB.setVisibility(View.GONE);
             manageDrawerTV.setVisibility(View.GONE);
@@ -315,7 +309,6 @@ public class SettingsActivity extends AppCompatActivity implements SpinnerAdapte
 
         int selectedPosition = spinner.getSelectedItemPosition();
         outState.putInt(SPINNER_POSITION_KEY, selectedPosition);
-        Log.d("COMP3018", "In On Save Instance: "+ selectedPosition);
     }
 
     @Override
@@ -324,7 +317,6 @@ public class SettingsActivity extends AppCompatActivity implements SpinnerAdapte
 
         int position = savedInstanceState.getInt(SPINNER_POSITION_KEY, 0);
         spinner.setSelection(position);
-        Log.d("COMP3018", "In On Save Instance: "+ position);
     }
 
     /**
