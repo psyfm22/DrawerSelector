@@ -74,7 +74,7 @@ public class ResolveLobbyActivity extends AppCompatActivity {
                                 scanOptions.setPrompt(getString(R.string.scan));
                                 scanOptions.setBeepEnabled(true);
                                 scanOptions.setOrientationLocked(true);
-                                scanOptions.setCaptureActivity(CaptureActivity.class);
+                                scanOptions.setCaptureActivity(CustomCaptureActivity.class);
                                 launcher.launch(scanOptions);
                             }else{
                                 viewAnchorB.setEnabled(false);
