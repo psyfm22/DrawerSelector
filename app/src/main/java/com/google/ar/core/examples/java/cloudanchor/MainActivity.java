@@ -47,8 +47,8 @@ public class MainActivity extends AppCompatActivity {
         ScanOptions scanOptions = new ScanOptions();
         scanOptions.setPrompt(getString(R.string.scan));
         scanOptions.setBeepEnabled(true);
-        scanOptions.setOrientationLocked(true);
-        scanOptions.setCaptureActivity(CaptureActivity.class);
+        scanOptions.setOrientationLocked(false);
+        scanOptions.setCaptureActivity(CustomCaptureActivity.class);
         launcher.launch(scanOptions);
     }
 
