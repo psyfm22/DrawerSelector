@@ -96,6 +96,9 @@
     <string name="settings_failure_deleting_description">Failure Deleting Anchor</string>
     <string name="settings_failure_fetching_description">Failure Fetching List</string>
     <string name="settings_failure_deleting_all_description">Failure Deleting All</string>
+    <string name="success">Success</string>
+    <string name="settings_all_deleted_description">All Anchors Deleted</string>
+
 
     <!--Alert Dialogue-->
     <string name="alert_no_anchor_description">No Anchor Description</string>

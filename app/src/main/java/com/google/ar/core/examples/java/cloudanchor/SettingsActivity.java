@@ -124,6 +124,7 @@ public class SettingsActivity extends AppCompatActivity implements SpinnerAdapte
                 public void onSuccess() {
                     clearAllB.setEnabled(true);
                     spinner.setEnabled(true);
+//                    showAlertDialogue(getString(R.string.success), getString(R.string.settings_all_deleted_description), true);
                     recreate();
                 }
 

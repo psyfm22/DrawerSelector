@@ -142,6 +142,7 @@ public class CloudAnchorActivity extends AppCompatActivity
   private String anchorName = "DEFAULT";
   private Long roomCode = 0L;
 
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
