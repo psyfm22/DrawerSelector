@@ -1,6 +1,5 @@
 package com.google.ar.core.examples.java.cloudanchor;
 
-import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 
 import com.journeyapps.barcodescanner.CaptureActivity;

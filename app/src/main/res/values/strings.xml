@@ -14,6 +14,10 @@
    limitations under the License.
 -->
 <resources>
+    <string name="okay">Okay</string>
+
+
+
     <!-- Strings in the main activity -->
     <string name="app_name">Draw Locator</string>
     <string name="close">Close</string>
@@ -22,11 +26,11 @@
     <string name="main_description">The user firsts needs to confirm they are in the correct room</string>
     <string name="confirm">Confirm</string>
 
-    <string name="host_button_text">Host</string>
-    <string name="host_dialog_title">Host an Anchor</string>
-    <string name="host_ok">Host</string>
+<!--    <string name="host_button_text">Host</string>-->
+<!--    <string name="host_dialog_title">Host an Anchor</string>-->
+<!--    <string name="host_ok">Host</string>-->
     <string name="initial_room_code">0000</string>
-    <string name="resolve_button_text">Resolve</string>
+<!--    <string name="resolve_button_text">Resolve</string>-->
 
     <!-- Strings in the Resolve Dialog Box -->
     <string name="resolve_dialog_ok">Resolve</string>
@@ -41,7 +45,7 @@
     <string name="snackbar_arcore_exception">This device does not support ARCore.</string>
     <string name="snackbar_camera_unavailable">Camera unavailable. Try restarting the app.</string>
     <string name="snackbar_cloud_id_shared">The anchor ID was shared via Firebase.</string>
-    <string name="snackbar_dismiss">Dismiss</string>
+<!--    <string name="snackbar_dismiss">Dismiss</string>-->
     <string name="snackbar_firebase_error">There was a Firebase Error. Please check Logcat for more details.</string>
     <string name="snackbar_host_error">Hosting Error: %1$s</string>
     <string name="snackbar_initial_message">Please select Host or Resolve to continue.</string>
@@ -50,35 +54,65 @@
     <string name="snackbar_resolve_error">Resolving Error: %1$s</string>
     <string name="snackbar_resolve_success">The anchor was successfully resolved.</string>
     <string name="snackbar_room_code_available">The room code is now available. Please place an anchor to host.</string>
-    <!-- Resolve anchor has no result yet. [CHAR_LIMIT=NONE] -->
     <string name="snackbar_resolve_no_result_yet">Still resolving the anchor. Please make sure you\'re looking at where the Cloud Anchor was hosted. Or, try to re-join the room.</string>
 
-    <!-- Strings used in privacy notice dialog messages. [CHAR_LIMIT=NONE] -->
     <string name="share_experience_title">Experience it together</string>
-    <!-- Privacy notice message. [CHAR_LIMIT=NONE] -->
     <string name="share_experience_message">To power this session, Google will process visual data from your camera.</string>
-    <!-- Privacy notice accept. [CHAR_LIMIT=NONE] -->
     <string name="agree_to_share">Start now</string>
-    <!-- Privacy notice learn more. [CHAR_LIMIT=NONE] -->
     <string name="learn_more">Learn more</string>
-    <!-- Privacy learn more URL. [CHAR_LIMIT=NONE] -->
     <string name="learn_more_url">https://developers.google.com/ar/data-privacy</string>
 
 
-    <string name="place_title_text">Add New Drawer</string>
-    <!-- [CHAR_LIMIT=NONE] -->
+<!--    <string name="place_title_text">Add New Drawer</string>-->
     <string name="host_instructions_text">Scan your space to create a new cloud anchor accessible by others</string>
-    <!-- [CHAR_LIMIT=NONE] -->
-    <string name="resolve_instructions_text">Localize this device against previously created Cloud Anchor(s)</string>
-    <string name="place_button_text">Add</string>
-    <string name="begin_Viewing_button_text">Search</string>
-    <string name="view_title_text">Search for Draw</string>
+<!--    <string name="place_button_text">Add</string>-->
 
 
-    <string name="clear_button_text">Clear</string>
-    <string name="select_anchors_text">Select from Drawers previously hosted from this device</string>
-    <string name="select_draw">Please Select Which Drawer you Are Searching For</string>
-    <string name="resolve_drawer">Resolve Drawer</string>
+    <!-- Resolve Lobby String-->
+    <string name="resolve_lobby_title">Search for Drawer</string>
+    <string name="resolve_lobby_description">Select which anchor you would like to resolve</string>
+    <string name="search">Search</string>
 
 
+    <!--    <string name="clear_button_text">Clear</string>-->
+<!--    <string name="select_anchors_text">Select from Drawers previously hosted from this device</string>-->
+<!--    <string name="select_draw">Please Select Which Drawer you Are Searching For</string>-->
+<!--    <string name="resolve_drawer">Resolve Drawer</string>-->
+
+    <!--Settings-->
+    <string name="settings_title">Settings</string>
+    <string name="settings_change_pin_description">Change the Access Pin</string>
+    <string name="settings_change_pin_button">Change Pin</string>
+    <string name="settings_manage_drawers_description">Manage Drawer Database</string>
+    <string name="settings_manage_drawers_button">Manage</string>
+    <string name="settings_add_drawer_description">Add a New Drawer</string>
+    <string name="settings_add_drawer_button">Add</string>
+    <string name="settings_enter_pin">Enter Pin…</string>
+    <string name="settings_enter_name">Enter Name…</string>
+    <string name="settings_delete_all">Delete All</string>
+
+    <!--Alert Dialogue-->
+    <string name="alert_error_title">Error</string>
+    <string name="alert_no_anchor_description">No Anchor Description</string>
+
+    <!--Password Alert Dialogue-->
+    <string name="password_alert_title">Enter Password:</string>
+    <string name="password_alert_hint">Password…</string>
+    <string name="password_alert_one_button">1</string>
+    <string name="password_alert_two_button">2</string>
+    <string name="password_alert_three_button">3</string>
+    <string name="password_alert_four_button">4</string>
+    <string name="password_alert_five_button">5</string>
+    <string name="password_alert_six_button">6</string>
+    <string name="password_alert_seven_button">7</string>
+    <string name="password_alert_eight_button">8</string>
+    <string name="password_alert_nine_button">9</string>
+    <string name="password_alert_zero_button">0</string>
+    <string name="password_alert_back_button">X</string>
+    <string name="password_alert_enter_button">></string>
+
+
+
+
+    <string name="scan">Scan QR</string>
 </resources>

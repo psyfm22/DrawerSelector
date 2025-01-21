@@ -9,6 +9,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.ar.core.examples.java.common.helpers.DisplayRotationHelper;
+import com.journeyapps.barcodescanner.CaptureActivity;
 import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanOptions;
 
@@ -47,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
         scanOptions.setPrompt("Scan the QR Code");
         scanOptions.setBeepEnabled(true);
         scanOptions.setOrientationLocked(true);
-        scanOptions.setCaptureActivity(CustomCaptureActivity.class);
+        scanOptions.setCaptureActivity(CaptureActivity.class);
         launcher.launch(scanOptions);
     }
 

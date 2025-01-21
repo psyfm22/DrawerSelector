@@ -31,6 +31,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.GuardedBy;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 import com.google.ar.core.Anchor;
@@ -195,8 +196,7 @@ public class CloudAnchorActivity extends AppCompatActivity
 
     qrCodeButton = findViewById(R.id.scan_qr_button);
     qrCodeButton.setVisibility(View.GONE);
-    qrCodeButton.setOnClickListener((view) -> {resetQRMode();
-    });
+    qrCodeButton.setOnClickListener((view) -> resetQRMode());
 
     roomCodeText = findViewById(R.id.room_code_text);
 
@@ -319,7 +319,7 @@ public class CloudAnchorActivity extends AppCompatActivity
   }
 
   @Override
-  public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] results) {
+  public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] results) {
     super.onRequestPermissionsResult(requestCode, permissions, results);
     if (!CameraPermissionHelper.hasCameraPermission(this)) {
       Toast.makeText(this, "Camera permission is needed to run this application", Toast.LENGTH_LONG)

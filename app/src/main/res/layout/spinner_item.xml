@@ -22,7 +22,8 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="12dp"
         android:layout_marginTop="18dp"
-        android:text="TextView"
+        android:text=""
         app:layout_constraintStart_toEndOf="@+id/itemDeleteIV"
         app:layout_constraintTop_toTopOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

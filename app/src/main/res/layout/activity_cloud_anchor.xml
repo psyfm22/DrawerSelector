@@ -26,7 +26,6 @@
       android:layout_height="fill_parent"
       android:layout_gravity="top"/>
 
-
   <LinearLayout
       android:id="@+id/linearLayout"
       android:layout_width="match_parent"
@@ -37,19 +36,19 @@
         android:id="@+id/cancel_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Cancel" />
+        android:text="@string/cancel" />
 
     <Button
         android:id="@+id/scan_qr_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Scan QR" />
+        android:text="@string/scan" />
 
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:paddingRight="10dp">
+        android:paddingEnd="10dp">
 
       <TextView
           android:id="@+id/room_code_text"
@@ -66,7 +65,5 @@
           android:textStyle="bold" />
 
     </RelativeLayout>
-
   </LinearLayout>
-
 </RelativeLayout>

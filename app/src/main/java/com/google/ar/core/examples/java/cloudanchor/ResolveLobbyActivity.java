@@ -23,6 +23,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.google.ar.core.examples.java.common.helpers.DisplayRotationHelper;
 import com.google.firebase.database.DatabaseError;
+import com.journeyapps.barcodescanner.CaptureActivity;
 import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanOptions;
 
@@ -74,7 +75,7 @@ public class ResolveLobbyActivity extends AppCompatActivity {
                                 scanOptions.setPrompt("Scan the QR Code");
                                 scanOptions.setBeepEnabled(true);
                                 scanOptions.setOrientationLocked(true);
-                                scanOptions.setCaptureActivity(CustomCaptureActivity.class);
+                                scanOptions.setCaptureActivity(CaptureActivity.class);
                                 launcher.launch(scanOptions);
                             }else{
                                 viewAnchorB.setEnabled(false);
