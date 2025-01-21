@@ -198,18 +198,29 @@ class FirebaseManager {
             });
   }
 
-  void removeAllData(){
+  void removeAllData(final DeleteAllCallback deleteAllCallback){
     Preconditions.checkNotNull(app, "Firebase App was null");
 
     //Remove the value
     hotspotListRef.removeValue()
-            .addOnSuccessListener(aVoid -> Log.d(TAG, "All hotspot data removed successfully."))
-            .addOnFailureListener(e -> Log.e(TAG, "Error removing hotspot data: " + e.getMessage()));
+            .addOnSuccessListener(aVoid -> {
+              Log.d(TAG, "All hotspot data removed successfully.");
 
-    // Remove data from the "last_room_code" node
-    roomCodeRef.removeValue()
-            .addOnSuccessListener(aVoid -> Log.d(TAG, "Last room code removed successfully."))
-            .addOnFailureListener(e -> Log.e(TAG, "Error removing last room code: " + e.getMessage()));
+              // Remove data from the "last_room_code" node
+              roomCodeRef.removeValue()
+                      .addOnSuccessListener(aAVoid -> {
+                        deleteAllCallback.onSuccess();
+                        Log.d(TAG, "Last room code removed successfully.");
+                      })
+                      .addOnFailureListener(e -> {
+                        deleteAllCallback.onFailure(e.getMessage());
+                        Log.e(TAG, "Error removing last room code: " + e.getMessage());
+                      });
+            })
+            .addOnFailureListener(e -> {
+              deleteAllCallback.onFailure(e.getMessage());
+              Log.e(TAG, "Error removing hotspot data: " + e.getMessage());
+            });
   }
 
 
@@ -298,6 +309,11 @@ class FirebaseManager {
     void onPasswordsDiffer();
   }
   interface ChangePasscodeCallback {
+    void onSuccess();
+    void onFailure(String errorMessage);
+  }
+
+  interface DeleteAllCallback {
     void onSuccess();
     void onFailure(String errorMessage);
   }

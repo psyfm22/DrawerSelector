@@ -95,11 +95,11 @@ public class SettingsActivity extends AppCompatActivity implements SpinnerAdapte
                         position = savedInstanceState.getInt(SPINNER_POSITION_KEY, 0);
                     }
                     spinner.setSelection(position);
-                    Log.d("COMP3018", "In the save instance null: "+ position);
                 }
             }
             @Override
             public void onError(DatabaseError error) {
+                showAlertDialogue(getString(R.string.alert_error_title), getString(R.string.settings_failure_fetching_description), false);
                 Log.d("COMP3018", "Error fetching hotspot list", error.toException());
             }
         });
@@ -116,8 +116,26 @@ public class SettingsActivity extends AppCompatActivity implements SpinnerAdapte
         manageDrawerB.setOnClickListener(v -> activityStageViewModel.setActivityStage(ActivityStage.MANAGE_DRAWERS));
 
         clearAllB.setOnClickListener(v -> {
-            firebaseManager.removeAllData();
-            recreate();
+            clearAllB.setEnabled(false);
+            spinner.setEnabled(false);
+
+            firebaseManager.removeAllData(new FirebaseManager.DeleteAllCallback() {
+                @Override
+                public void onSuccess() {
+                    clearAllB.setEnabled(true);
+                    spinner.setEnabled(true);
+                    recreate();
+                }
+
+                @Override
+                public void onFailure(String errorMessage) {
+                    showAlertDialogue(getString(R.string.alert_error_title), getString(R.string.settings_failure_deleting_all_description), false);
+                    clearAllB.setEnabled(true);
+                    spinner.setEnabled(true);
+                    recreate();
+
+                }
+            });
         });
 
         displayRotationHelper = new DisplayRotationHelper(this);
@@ -247,6 +265,7 @@ public class SettingsActivity extends AppCompatActivity implements SpinnerAdapte
 
             @Override
             public void onFailure(String errorMessage) {
+                showAlertDialogue(getString(R.string.alert_error_title), getString(R.string.settings_failure_deleting_description), false);
                 Log.d("COMP3018", errorMessage);
             }
         });

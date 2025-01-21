@@ -93,6 +93,9 @@
     <string name="settings_password_issue_description">Please Try Again</string>
     <string name="settings_empty_name_title">Empty Name</string>
     <string name="settings_empty_name_description">Please Enter a Name for the Anchor</string>
+    <string name="settings_failure_deleting_description">Failure Deleting Anchor</string>
+    <string name="settings_failure_fetching_description">Failure Fetching List</string>
+    <string name="settings_failure_deleting_all_description">Failure Deleting All</string>
 
     <!--Alert Dialogue-->
     <string name="alert_no_anchor_description">No Anchor Description</string>
