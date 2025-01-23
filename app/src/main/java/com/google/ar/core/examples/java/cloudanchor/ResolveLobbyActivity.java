@@ -23,7 +23,6 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.google.ar.core.examples.java.common.helpers.DisplayRotationHelper;
 import com.google.firebase.database.DatabaseError;
-import com.journeyapps.barcodescanner.CaptureActivity;
 import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanOptions;
 
@@ -32,7 +31,6 @@ import java.util.List;
 
 
 public class ResolveLobbyActivity extends AppCompatActivity {
-
     private Spinner spinner;
     private List<Hotspot> hotspotList;
     private FirebaseManager firebaseManager;
@@ -64,22 +62,29 @@ public class ResolveLobbyActivity extends AppCompatActivity {
         startActivityForResultLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
+
+                    Log.d("COMP3018","In the return");
                     if (result.getResultCode() == RESULT_OK) {
                         Intent data = result.getData();
+                        Log.d("COMP3018","In result okay");
                         if(data != null){
+                            Log.d("COMP3018","In data not being null");
+
                             String activityType = data.getStringExtra("ACTIVITY_TYPE");
 
                             if(activityType != null && activityType.equals("CLOUD_ANCHOR_ACTIVITY")){
+                                Log.d("COMP3018", "In cloud anchor");
                                 ScanOptions scanOptions = new ScanOptions();
                                 scanOptions.setPrompt(getString(R.string.scan));
                                 scanOptions.setBeepEnabled(true);
                                 scanOptions.setOrientationLocked(true);
                                 scanOptions.setCaptureActivity(CustomCaptureActivity.class);
                                 launcher.launch(scanOptions);
-                            }else{
+                            }else if (activityType != null && activityType.equals("SETTINGS_ACTIVITY")){
                                 viewAnchorB.setEnabled(false);
                                 drawSelectedViewModel.deleteAllItems();
                                 loadFromFirebase();
+                                Log.d("COMP3018", "Resetting the firebase");
                             }
                         }
 
@@ -233,7 +238,7 @@ public class ResolveLobbyActivity extends AppCompatActivity {
                     public void onSuccess() {
                         alertDialogue.dismiss();
                         Intent intent = SettingsActivity.newIntent(ResolveLobbyActivity.this);
-                        startActivity(intent);
+                        startActivityForResultLauncher.launch(intent);
                     }
 
                     @Override
@@ -258,9 +263,7 @@ public class ResolveLobbyActivity extends AppCompatActivity {
 
             descriptionTV.setText(description);
 
-            okayB.setOnClickListener(view2 -> {
-                alertDialogue.dismiss();
-            });
+            okayB.setOnClickListener(view2 -> alertDialogue.dismiss());
         }
 
         alertTitleTV.setText(title);

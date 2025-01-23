@@ -20,16 +20,31 @@
     android:layout_height="match_parent"
     tools:context="com.google.ar.core.examples.java.cloudanchor.CloudAnchorActivity">
 
+  <ImageView
+      android:id="@+id/imageView"
+      android:layout_width="328dp"
+      android:layout_height="320dp"
+      android:layout_alignParentStart="true"
+      android:visibility="gone"
+      android:layout_alignParentTop="true"
+      android:layout_alignParentEnd="true"
+      android:layout_marginStart="34dp"
+      android:layout_marginTop="2dp"
+      android:layout_marginEnd="31dp"
+      tools:srcCompat="@tools:sample/avatars" />
+
   <android.opengl.GLSurfaceView
       android:id="@+id/surfaceview"
       android:layout_width="fill_parent"
       android:layout_height="fill_parent"
+      android:visibility="visible"
       android:layout_gravity="top"/>
 
   <LinearLayout
       android:id="@+id/linearLayout"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
+      android:visibility="visible"
       android:orientation="horizontal">
 
     <Button
@@ -66,4 +81,6 @@
 
     </RelativeLayout>
   </LinearLayout>
+
+
 </RelativeLayout>

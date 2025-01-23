@@ -19,6 +19,10 @@ package com.google.ar.core.examples.java.cloudanchor;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.ImageFormat;
+import android.media.Image;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
@@ -28,6 +32,7 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.GuardedBy;
@@ -67,7 +72,19 @@ import com.google.ar.core.exceptions.UnavailableArcoreNotInstalledException;
 import com.google.ar.core.exceptions.UnavailableSdkTooOldException;
 import com.google.common.base.Preconditions;
 import com.google.firebase.database.DatabaseError;
+import com.google.zxing.BinaryBitmap;
+import com.google.zxing.LuminanceSource;
+import com.google.zxing.MultiFormatReader;
+import com.google.zxing.NotFoundException;
+import com.google.zxing.PlanarYUVLuminanceSource;
+import com.google.zxing.Result;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.common.HybridBinarizer;
+import com.google.zxing.qrcode.QRCodeReader;
+import com.google.zxing.qrcode.encoder.QRCode;
+
 import java.io.IOException;
+import java.nio.ByteBuffer;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -141,6 +158,10 @@ public class CloudAnchorActivity extends AppCompatActivity
   private boolean isHosting;
   private String anchorName = "DEFAULT";
   private Long roomCode = 0L;
+  private Image currentImage;
+  private boolean shouldIScan = false;
+
+  private ImageView imageView;
 
 
   @Override
@@ -197,7 +218,12 @@ public class CloudAnchorActivity extends AppCompatActivity
 
     qrCodeButton = findViewById(R.id.scan_qr_button);
     qrCodeButton.setVisibility(View.GONE);
-    qrCodeButton.setOnClickListener((view) -> resetQRMode());
+    qrCodeButton.setOnClickListener((view) ->{
+      qrCodeButton.setEnabled(false);
+      scanQRMode();
+    });
+
+    imageView = findViewById(R.id.imageView);
 
     roomCodeText = findViewById(R.id.room_code_text);
 
@@ -291,6 +317,7 @@ public class CloudAnchorActivity extends AppCompatActivity
       // Create default config and check if supported.
       Config config = new Config(session);
       config.setCloudAnchorMode(CloudAnchorMode.ENABLED);
+      config.setFocusMode(Config.FocusMode.AUTO);//Just tried adding focus
       session.configure(config);
 
       // Setting the session in the HostManager.
@@ -354,23 +381,23 @@ public class CloudAnchorActivity extends AppCompatActivity
       synchronized (anchorLock) {
         // Only handle a tap if the anchor is currently null, the queued tap is non-null and the
         // camera is currently tracking.
-          if (anchor == null
-                  && queuedSingleTap != null
-                  && cameraTrackingState == TrackingState.TRACKING) {
-            Preconditions.checkState(
-                    currentMode == HostResolveMode.HOSTING,
-                    "We should only be creating an anchor in hosting mode.");
-            for (HitResult hit : frame.hitTest(queuedSingleTap)) {
-              if (shouldCreateAnchorWithHit(hit)) {
-                Anchor newAnchor = hit.createAnchor();
-                Preconditions.checkNotNull(hostListener, "The host listener cannot be null.");
-                cloudManager.hostCloudAnchor(newAnchor, hostListener);
-                setNewAnchor(newAnchor);
-                snackbarHelper.showMessage(this, getString(R.string.snackbar_anchor_placed));
-                break; // Only handle the first valid hit.
-              }
+        if (anchor == null
+                && queuedSingleTap != null
+                && cameraTrackingState == TrackingState.TRACKING) {
+          Preconditions.checkState(
+                  currentMode == HostResolveMode.HOSTING,
+                  "We should only be creating an anchor in hosting mode.");
+          for (HitResult hit : frame.hitTest(queuedSingleTap)) {
+            if (shouldCreateAnchorWithHit(hit)) {
+              Anchor newAnchor = hit.createAnchor();
+              Preconditions.checkNotNull(hostListener, "The host listener cannot be null.");
+              cloudManager.hostCloudAnchor(newAnchor, hostListener);
+              setNewAnchor(newAnchor);
+              snackbarHelper.showMessage(this, getString(R.string.snackbar_anchor_placed));
+              break; // Only handle the first valid hit.
             }
           }
+        }
 
       }
       queuedSingleTap = null;
@@ -446,6 +473,17 @@ public class CloudAnchorActivity extends AppCompatActivity
       Frame frame = session.update();
       Camera camera = frame.getCamera();
       TrackingState cameraTrackingState = camera.getTrackingState();
+
+      if(shouldIScan){
+        try {
+          // Acquire the camera image
+          currentImage = frame.acquireCameraImage(); // Set class member variable
+        } catch (Exception e) {
+          Log.d("COMP3018", "Error acquiring or processing camera image", e);
+        }
+        shouldIScan = false;
+        processImage(currentImage);
+      }
 
       // Notify the cloudManager of all the updates.
       cloudManager.onUpdate();
@@ -583,22 +621,8 @@ public class CloudAnchorActivity extends AppCompatActivity
     finish();
   }
   /** Resets the mode of the app to its initial state and removes the anchors. */
-  private void resetQRMode() {
-
-    roomCodeText.setText(R.string.initial_room_code);
-
-    currentMode = HostResolveMode.NONE;
-
-    firebaseManager.clearRoomListener();
-    hostListener = null;
-    setNewAnchor(null);
-    snackbarHelper.hide(this);
-    cloudManager.clearListeners();
-
-    Intent resultIntent = new Intent();
-    resultIntent.putExtra("ACTIVITY_TYPE", "CLOUD_ANCHOR_ACTIVITY");
-    setResult(RESULT_OK, resultIntent);
-    finish();
+  private void scanQRMode() {
+    shouldIScan = true;
   }
 
   /** Callback function invoked when the user presses the OK button in the Resolve Dialog. */
@@ -726,4 +750,74 @@ public class CloudAnchorActivity extends AppCompatActivity
     createSession();
   }
 
+  private void processImage(Image image) {
+    Log.d("COMP3018","In here");
+    Result result = findQRCodeString(image);
+
+    runOnUiThread(()->{
+    if (result != null && result.getText() != null) {
+      if(result.getText().equals(anchorName)){
+        Log.d("COMP3018","Correct QR Code Scanned: "+ result.getText());
+      }else{
+        Log.d("COMP3018","Wrong QR Code Scanned: "+ result.getText());
+      }
+      qrCodeButton.setEnabled(true);
+    } else {
+      Log.d("COMP3018", "No QR code found or result is null");
+    }
+    qrCodeButton.setEnabled(true);
+    currentImage.close();
+    });
+  }
+
+  private Result findQRCodeString(Image image) {
+    Log.d("COMP3018", "Image format number: "+ image.getFormat());
+
+    //It should be YUV_420_888
+    if (image.getFormat() != ImageFormat.YUV_420_888 ) {
+      Log.d("COMP3018","Sorry Format not accepted");
+      return null;
+    }
+
+    LuminanceSource source = getLuminanceSource(image);
+    BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(source));
+
+    try {
+      return new MultiFormatReader().decode(bitmap);
+    }catch (Exception e){
+      e.printStackTrace();
+      return null;
+    }
+  }
+
+  @NonNull
+  private static LuminanceSource getLuminanceSource(Image image) {
+    //Get the planes from the image
+    Image.Plane[] planes = image.getPlanes();
+
+    //Get the Y, U, and V planes from the YUV_420_888 image
+    ByteBuffer Ybuff = planes[0].getBuffer();
+    ByteBuffer Ubuff = planes[1].getBuffer();
+    ByteBuffer Vbuff = planes[2].getBuffer();
+
+    //Get the width and image of the height
+    int width = image.getWidth();
+    int height = image.getHeight();
+
+    //Get the size of the Y plane and the uv plane
+    int ySize = Ybuff.remaining();
+    int uvSize = Ubuff.remaining();// UV planes are normally half Y
+
+    //initialise the yubBytes array with the size of the buffers
+    byte[] yuvByteArray = new byte[ySize + uvSize * 2];
+
+    //Copy the data into the byte array
+    Ybuff.get(yuvByteArray, 0, ySize);
+    Ubuff.get(yuvByteArray, ySize, uvSize);
+    Vbuff.get(yuvByteArray, ySize + uvSize, uvSize);
+
+    // Return a PlanarYUVLuminanceSource object with the YUV data
+    return new PlanarYUVLuminanceSource(yuvByteArray, image.getWidth(), image.getHeight(), 0,
+            0, image.getWidth(), image.getHeight(), false);
+  }
 }
