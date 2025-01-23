@@ -125,11 +125,11 @@ public class ResolveLobbyActivity extends AppCompatActivity {
 
             if(selectedPosition > -1){
                 Hotspot selectedHotspot = hotspotList.get(selectedPosition);
-                drawName = selectedHotspot.getName();
+                drawName = selectedHotspot.name();
 
                 Intent intent = CloudAnchorActivity.newIntent(ResolveLobbyActivity.this);
                 intent.putExtra("PLACING_ANCHOR", false);
-                intent.putExtra("HOTSPOT_CODE", selectedHotspot.getCode());
+                intent.putExtra("HOTSPOT_CODE", selectedHotspot.code());
                 startActivityForResultLauncher.launch(intent);
             }else{
                 showAlertDialogue(getString(R.string.alert_error_title),getString(R.string.resolve_fail_anchor_description), false);
@@ -167,7 +167,7 @@ public class ResolveLobbyActivity extends AppCompatActivity {
                 List<String> nameList = new ArrayList<>();
 
                 for (Hotspot hotspot : hotspotList) {
-                    nameList.add(hotspot.getName());
+                    nameList.add(hotspot.name());
                 }
 
                 drawSelectedViewModel.setDrawList(nameList);
