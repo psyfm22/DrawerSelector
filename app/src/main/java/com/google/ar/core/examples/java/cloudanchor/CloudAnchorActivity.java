@@ -30,7 +30,6 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.GuardedBy;
@@ -155,7 +154,6 @@ public class CloudAnchorActivity extends AppCompatActivity
   private Image currentImage;
   private boolean shouldIScan = false;
 
-  private ImageView imageView;
 
 
   @Override
@@ -216,8 +214,6 @@ public class CloudAnchorActivity extends AppCompatActivity
       qrCodeButton.setEnabled(false);
       scanQRMode();
     });
-
-    imageView = findViewById(R.id.imageView);
 
     roomCodeText = findViewById(R.id.room_code_text);
 
@@ -590,12 +586,6 @@ public class CloudAnchorActivity extends AppCompatActivity
     }
   }
 
-  private void onPrivacyAcceptedForResolve() {
-    ResolveDialogFragment dialogFragment = new ResolveDialogFragment();
-    dialogFragment.setOkListener(this::onRoomCodeEntered);
-    dialogFragment.show(getSupportFragmentManager(), "ResolveDialog");
-  }
-
   /** Resets the mode of the app to its initial state and removes the anchors. */
   private void resetMode() {
 
@@ -818,9 +808,7 @@ public class CloudAnchorActivity extends AppCompatActivity
     AlertDialog.Builder builder = new AlertDialog.Builder(CloudAnchorActivity.this);
     builder.setTitle(title);
     builder.setMessage(message);
-    builder.setPositiveButton(getString(R.string.okay), (dialog, which) -> {
-      dialog.dismiss();
-    });
+    builder.setPositiveButton(getString(R.string.okay), (dialog, which) -> dialog.dismiss());
     AlertDialog alertDialog = builder.create();
     alertDialog.setCanceledOnTouchOutside(false);
     alertDialog.show();
