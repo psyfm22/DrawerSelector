@@ -736,44 +736,44 @@ public class CloudAnchorActivity extends AppCompatActivity
 
   private void processImage(Image image) {
     Log.d("COMP3018","In here");
-    Result result = findQRCodeString(image);
 
-    runOnUiThread(()->{
-    if (result != null && result.getText() != null) {
-      if(result.getText().equals(anchorName)){
-        Log.d("COMP3018","Correct QR Code Scanned: "+ result.getText());
-        AlertBuilder("Success", "Correct QR Code Scanned");
-
-      }else{
-        AlertBuilder("Error", "Incorrect QR Code Scanned");
-        Log.d("COMP3018","Wrong QR Code Scanned: "+ result.getText());
-      }
+    String[] alertText = findQRCodeString(image);
+    runOnUiThread(()-> {
+      currentImage.close();
+      AlertBuilder(alertText[0], alertText[1]);
       qrCodeButton.setEnabled(true);
-    } else {
-      Log.d("COMP3018", "No QR code found or result is null");
-      AlertBuilder("Error", "QR Code Not Found / Phone Error");
-    }
-    qrCodeButton.setEnabled(true);
-    currentImage.close();
     });
   }
 
-  private Result findQRCodeString(Image image) {
-    Log.d("COMP3018", "Image format number: "+ image.getFormat());
+  private String[] findQRCodeString(Image image) {
+    String[] alertStringArray = new String[2];
 
     //It should be YUV_420_888
     if (image.getFormat() != ImageFormat.YUV_420_888 ) {
-      Log.d("COMP3018","Sorry Format not accepted");
-      return null;
+      alertStringArray[0] = "Error";
+      alertStringArray[1] = "Incorrect Image Format From Camera";
+      return alertStringArray;
     }
+
     LuminanceSource source = getLuminanceSource(image);
     BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(source));
 
     try {
-      return new MultiFormatReader().decode(bitmap);
+      Result result = new MultiFormatReader().decode(bitmap);
+      if(result.getText().equals(anchorName)){
+        alertStringArray[0] = "Success";
+        alertStringArray[1] = "Correct QR Code Scanned";
+      }else{
+        alertStringArray[0] = "Error";
+        alertStringArray[1] = "Incorrect QR code Scanned, Please Try Again";
+      }
+        return alertStringArray;
+
     }catch (Exception e){
       e.printStackTrace();
-      return null;
+      alertStringArray[0] = "Error";
+      alertStringArray[1] = "No QR Code Found. Please Try Again";
+      return alertStringArray;
     }
   }
 
