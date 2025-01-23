@@ -19,8 +19,6 @@ package com.google.ar.core.examples.java.cloudanchor;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.graphics.ImageFormat;
 import android.media.Image;
 import android.opengl.GLES20;
@@ -37,6 +35,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.GuardedBy;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 import com.google.ar.core.Anchor;
@@ -75,14 +74,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.zxing.BinaryBitmap;
 import com.google.zxing.LuminanceSource;
 import com.google.zxing.MultiFormatReader;
-import com.google.zxing.NotFoundException;
 import com.google.zxing.PlanarYUVLuminanceSource;
 import com.google.zxing.Result;
-import com.google.zxing.common.BitMatrix;
 import com.google.zxing.common.HybridBinarizer;
-import com.google.zxing.qrcode.QRCodeReader;
-import com.google.zxing.qrcode.encoder.QRCode;
-
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
@@ -758,12 +752,16 @@ public class CloudAnchorActivity extends AppCompatActivity
     if (result != null && result.getText() != null) {
       if(result.getText().equals(anchorName)){
         Log.d("COMP3018","Correct QR Code Scanned: "+ result.getText());
+        AlertBuilder("Success", "Correct QR Code Scanned");
+
       }else{
+        AlertBuilder("Error", "Incorrect QR Code Scanned");
         Log.d("COMP3018","Wrong QR Code Scanned: "+ result.getText());
       }
       qrCodeButton.setEnabled(true);
     } else {
       Log.d("COMP3018", "No QR code found or result is null");
+      AlertBuilder("Error", "QR Code Not Found / Phone Error");
     }
     qrCodeButton.setEnabled(true);
     currentImage.close();
@@ -778,7 +776,6 @@ public class CloudAnchorActivity extends AppCompatActivity
       Log.d("COMP3018","Sorry Format not accepted");
       return null;
     }
-
     LuminanceSource source = getLuminanceSource(image);
     BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(source));
 
@@ -796,28 +793,36 @@ public class CloudAnchorActivity extends AppCompatActivity
     Image.Plane[] planes = image.getPlanes();
 
     //Get the Y, U, and V planes from the YUV_420_888 image
-    ByteBuffer Ybuff = planes[0].getBuffer();
-    ByteBuffer Ubuff = planes[1].getBuffer();
-    ByteBuffer Vbuff = planes[2].getBuffer();
-
-    //Get the width and image of the height
-    int width = image.getWidth();
-    int height = image.getHeight();
+    ByteBuffer yByteBuffer = planes[0].getBuffer();
+    ByteBuffer uByteBuffer = planes[1].getBuffer();
+    ByteBuffer vByteBuffer = planes[2].getBuffer();
 
     //Get the size of the Y plane and the uv plane
-    int ySize = Ybuff.remaining();
-    int uvSize = Ubuff.remaining();// UV planes are normally half Y
+    int ySize = yByteBuffer.remaining();
+    int uvSize = uByteBuffer.remaining();// UV planes are normally half Y
 
     //initialise the yubBytes array with the size of the buffers
     byte[] yuvByteArray = new byte[ySize + uvSize * 2];
 
     //Copy the data into the byte array
-    Ybuff.get(yuvByteArray, 0, ySize);
-    Ubuff.get(yuvByteArray, ySize, uvSize);
-    Vbuff.get(yuvByteArray, ySize + uvSize, uvSize);
+    yByteBuffer.get(yuvByteArray, 0, ySize);
+    uByteBuffer.get(yuvByteArray, ySize, uvSize);
+    vByteBuffer.get(yuvByteArray, ySize + uvSize, uvSize);
 
     // Return a PlanarYUVLuminanceSource object with the YUV data
     return new PlanarYUVLuminanceSource(yuvByteArray, image.getWidth(), image.getHeight(), 0,
             0, image.getWidth(), image.getHeight(), false);
+  }
+
+  private void AlertBuilder(String title, String message){
+    AlertDialog.Builder builder = new AlertDialog.Builder(CloudAnchorActivity.this);
+    builder.setTitle(title);
+    builder.setMessage(message);
+    builder.setPositiveButton(getString(R.string.okay), (dialog, which) -> {
+      dialog.dismiss();
+    });
+    AlertDialog alertDialog = builder.create();
+    alertDialog.setCanceledOnTouchOutside(false);
+    alertDialog.show();
   }
 }
