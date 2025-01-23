@@ -113,7 +113,7 @@ public class SettingsActivity extends AppCompatActivity implements SpinnerAdapte
 
         addTrayB.setOnClickListener(v -> addNewTray());
 
-        manageDrawerB.setOnClickListener(v -> activityStageViewModel.setActivityStage(ActivityStage.MANAGE_DRAWERS));
+        manageDrawerB.setOnClickListener(v -> activityStageViewModel.setActivityStage(SettingsActivityStage.MANAGE_DRAWERS));
 
         clearAllB.setOnClickListener(v -> {
             clearAllB.setEnabled(false);
@@ -156,7 +156,7 @@ public class SettingsActivity extends AppCompatActivity implements SpinnerAdapte
 
     private void changeAccessPin(){
         if (addTrayTV.getVisibility() == View.VISIBLE){
-            activityStageViewModel.setActivityStage(ActivityStage.CHANGE_PIN);
+            activityStageViewModel.setActivityStage(SettingsActivityStage.CHANGE_PIN);
         }else{
             String password1 = enterPin1ET.getText().toString();
             String password2 = enterPin2ET.getText().toString();
@@ -190,7 +190,7 @@ public class SettingsActivity extends AppCompatActivity implements SpinnerAdapte
 
     private void addNewTray(){
         if(changePinB.getVisibility() == View.VISIBLE){
-            activityStageViewModel.setActivityStage(ActivityStage.ADD_DRAWER);
+            activityStageViewModel.setActivityStage(SettingsActivityStage.ADD_DRAWER);
         }else{
             String name = enterNameET.getText().toString();
 
@@ -210,7 +210,7 @@ public class SettingsActivity extends AppCompatActivity implements SpinnerAdapte
         if(enterPin1ET.getVisibility() == View.VISIBLE ||
                 enterNameET.getVisibility() == View.VISIBLE ||
                 spinner.getVisibility() == View.VISIBLE){
-            activityStageViewModel.setActivityStage(ActivityStage.MENU);
+            activityStageViewModel.setActivityStage(SettingsActivityStage.MENU);
         }else{
             Intent resultIntent = new Intent();
             resultIntent.putExtra("ACTIVITY_TYPE", "SETTINGS_ACTIVITY");
@@ -273,8 +273,8 @@ public class SettingsActivity extends AppCompatActivity implements SpinnerAdapte
     }
 
 
-    private void setCurrentActivity(ActivityStage activityStage){
-        if(activityStage.equals(ActivityStage.MENU)){
+    private void setCurrentActivity(SettingsActivityStage settingsActivityStage){
+        if(settingsActivityStage.equals(SettingsActivityStage.MENU)){
             enterPin1ET.setText("");
             enterPin2ET.setText("");
             enterNameET.setText("");
@@ -293,7 +293,7 @@ public class SettingsActivity extends AppCompatActivity implements SpinnerAdapte
             manageDrawerB.setVisibility(View.VISIBLE);
 
             addTrayTV.setText(R.string.settings_add_drawer_description);
-        } else if (activityStage.equals(ActivityStage.CHANGE_PIN)) {
+        } else if (settingsActivityStage.equals(SettingsActivityStage.CHANGE_PIN)) {
             addTrayTV.setVisibility(View.GONE);
             addTrayB.setVisibility(View.GONE);
             manageDrawerTV.setVisibility(View.GONE);
@@ -301,7 +301,7 @@ public class SettingsActivity extends AppCompatActivity implements SpinnerAdapte
 
             enterPin1ET.setVisibility(View.VISIBLE);
             enterPin2ET.setVisibility(View.VISIBLE);
-        } else if (activityStage.equals(ActivityStage.ADD_DRAWER)) {
+        } else if (settingsActivityStage.equals(SettingsActivityStage.ADD_DRAWER)) {
             addTrayTV.setText(getString(R.string.settings_host_instruction_description));
             changePinTV.setVisibility(View.GONE);
             changePinB.setVisibility(View.GONE);

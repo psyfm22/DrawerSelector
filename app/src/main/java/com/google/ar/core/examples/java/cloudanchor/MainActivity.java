@@ -12,6 +12,11 @@ import com.google.ar.core.examples.java.common.helpers.DisplayRotationHelper;
 import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanOptions;
 
+/**
+ * MainActivity,
+ * Initial Opening Activity for the application. Makes the user scan a qr code to progress to the
+ * next activity
+ */
 public class MainActivity extends AppCompatActivity {
     private DisplayRotationHelper displayRotationHelper;
 
