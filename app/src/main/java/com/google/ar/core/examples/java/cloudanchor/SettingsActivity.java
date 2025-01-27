@@ -81,6 +81,8 @@ public class SettingsActivity extends AppCompatActivity implements SpinnerAdapte
 
         drawPositionViewModel = new ViewModelProvider(this).get(DrawPositionViewModel.class);
 
+        firebaseManager = new FirebaseManager(this);
+
         returnB.setOnClickListener(v -> {
             closeKeyboard(v);
             returnButtonPressed();
@@ -315,8 +317,6 @@ public class SettingsActivity extends AppCompatActivity implements SpinnerAdapte
     }
 
     private void loadFromFirebase(){
-
-        firebaseManager = new FirebaseManager(this);
         firebaseManager.getHotspotList(new FirebaseManager.HotspotListListener() {
             @Override
             public void onHotspotListFetched(List<Hotspot> hotspots) {

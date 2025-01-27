@@ -23,9 +23,6 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.google.ar.core.examples.java.common.helpers.DisplayRotationHelper;
 import com.google.firebase.database.DatabaseError;
-import com.journeyapps.barcodescanner.ScanContract;
-import com.journeyapps.barcodescanner.ScanOptions;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -97,11 +94,14 @@ public class ResolveLobbyActivity extends AppCompatActivity {
         viewAnchorB.setOnClickListener(v -> {
             //Get the current selected position
             int selectedPosition = spinner.getSelectedItemPosition();
-            Log.d("COMP3018","Here is selected Position:"+ selectedPosition);
+
+            //Only Run this code if there is a valid selection from the spinner
             if(selectedPosition > -1){
                 Hotspot selectedHotspot = hotspotList.get(selectedPosition);
                 drawName = selectedHotspot.name();
 
+                //We launch the cloud anchor activity, setting it in resolve mode, passing the anchor
+                //name and the hotspot code
                 Intent intent = CloudAnchorActivity.newIntent(ResolveLobbyActivity.this);
                 intent.putExtra("PLACING_ANCHOR", false);
                 intent.putExtra("ANCHOR_NAME", drawName);
@@ -112,19 +112,31 @@ public class ResolveLobbyActivity extends AppCompatActivity {
             }
         });
 
+        //When the settings button is clicked we need to show the alert dialogue with the password
+        //for the user to enter
         settingsIV.setOnClickListener(v -> showAlertDialogue(getString(R.string.password_alert_title), "", true));
 
+        //Set on click listener to return from this activity
         backIB.setOnClickListener(v -> finish());
 
+        //Call this method to load all the values into the spinner
         loadFromFirebase();
     }
 
+    /**
+     * onResume,
+     * Get the display rotation helper to resume
+     */
     @Override
     protected void onResume() {
         super.onResume();
         displayRotationHelper.onResume();
     }
 
+    /**
+     * onPause,
+     * pause the display rotation helper.
+     */
     @Override
     public void onPause() {
         super.onPause();
@@ -134,31 +146,51 @@ public class ResolveLobbyActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * loadFromFirebase,
+     * Load the list of hotspots from the firebase storage and places this list in the spinner
+     */
     private void loadFromFirebase(){
+
+        //Initialise the firebase manage and call the get hotspot list method passing it this listener
         firebaseManager = new FirebaseManager(this);
         firebaseManager.getHotspotList(new FirebaseManager.HotspotListListener() {
+            /**
+             * onHotspotListFetched,
+             * When the hotspot list is successfully fetched from the firebase database then we need
+             * to load them into the correct values
+             *
+             * @param hotspots list of hotspot containing the anchors details
+             */
             @Override
             public void onHotspotListFetched(List<Hotspot> hotspots) {
+                //Load the hotspots into list
                 hotspotList = hotspots;
-                List<String> nameList = new ArrayList<>();
 
+                //Get the names of all the hotspots
+                List<String> nameList = new ArrayList<>();
                 for (Hotspot hotspot : hotspotList) {
                     nameList.add(hotspot.name());
                 }
 
+                //Initialise the custom spinner adapter passing this activity as the context and
+                //Passing it the name list, set this adapter for the spinner
                 SpinnerAdapter adapter = new SpinnerAdapter(ResolveLobbyActivity.this, nameList);
                 spinner.setAdapter(adapter);
 
 
+                //observe draw position view model and when it changes set the spinner to that
+                //integer value
                 drawPositionViewModel.getPosition().observe(ResolveLobbyActivity.this, integer -> {
                     if(nameList.size()>integer){
                         spinner.setSelection(integer);
                     }else{
                         spinner.setSelection(0);
                     }
-                    Log.d("COMP3018", "Here is "+integer);
                 });
 
+                //When a spinner item is selected we need to make sure we change the draw position
+                //view model
                 spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                     @Override
                     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
@@ -170,11 +202,16 @@ public class ResolveLobbyActivity extends AppCompatActivity {
 
                     }
                 });
-
-
+                //As it has now all loaded we can enable the button
                 viewAnchorB.setEnabled(true);
             }
 
+            /**
+             * onError,
+             * If there is an an error with loading the firebase details then alert the user
+             *
+             * @param error the error that occurred
+             */
             @Override
             public void onError(DatabaseError error) {
                 showAlertDialogue(getString(R.string.alert_error_title),getString(R.string.resolve_failed_loading_description), false);
@@ -183,18 +220,25 @@ public class ResolveLobbyActivity extends AppCompatActivity {
     }
 
     /**
-     * showAlertDialogue, Shows the success of adding the alert dialogue
+     * showAlertDialogue,
+     * Builds the alert dialogue and shows it to the user
+     *
+     * @param title string with the title of the alert
+     * @param description string with the description of the alert
+     * @param passwordEnter boolean value that if true we show the password alert to the user and if
+     *                      not true we show the user a generic alert
      */
     private void showAlertDialogue(String title, String description, boolean passwordEnter) {
         View view;
         TextView alertTitleTV;
+
+        //If passwordEnter is true the user need to use the password enter alert
         if(passwordEnter){
             view = LayoutInflater.from(ResolveLobbyActivity.this).inflate(R.layout.password_alert_dialogue, null, false);
             StringBuilder enteredCode = new StringBuilder();
 
+            //Initialise and fine the UI Elements for the alert
             alertTitleTV = view.findViewById(R.id.passwordAlertTitleTV);
-
-            //Initialise the layouts and views
             EditText enterPasswordET = view.findViewById(R.id.passwordAlertET);
 
             Button[] keyPadButtons = new Button[10];
@@ -212,6 +256,8 @@ public class ResolveLobbyActivity extends AppCompatActivity {
             Button enterB = view.findViewById(R.id.passwordAlertEnterB);
             Button deleteB = view.findViewById(R.id.passwordAlertDeleteB);
 
+            //Add an on click listener for each key pad button, they will add a number to the string
+            //and set that set text into the edittext. Cap the length at 4.
             for(int i=0;i<keyPadButtons.length;i++){
                 int finalI = i;
                 keyPadButtons[finalI].setOnClickListener(v -> {
@@ -223,6 +269,8 @@ public class ResolveLobbyActivity extends AppCompatActivity {
                 });
             }
 
+            //delete click listener, as long as the string isn't empty then delete the last character
+            //in the string
             deleteB.setOnClickListener(v -> {
                 if(enteredCode.length()>0){
                     enteredCode.deleteCharAt(enteredCode.length() - 1);
@@ -230,6 +278,7 @@ public class ResolveLobbyActivity extends AppCompatActivity {
                 }
             });
 
+            //enter b on click listener, first disable the button and then try check the passcode
             enterB.setOnClickListener(view1 -> {
                 enterB.setEnabled(false);
                 String passwordEntered = enterPasswordET.getText().toString();
