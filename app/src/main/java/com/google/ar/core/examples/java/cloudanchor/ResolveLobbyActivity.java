@@ -97,7 +97,7 @@ public class ResolveLobbyActivity extends AppCompatActivity {
         viewAnchorB.setOnClickListener(v -> {
             //Get the current selected position
             int selectedPosition = spinner.getSelectedItemPosition();
-            Log.d("COMP3018","Here is -1");
+            Log.d("COMP3018","Here is selected Position:"+ selectedPosition);
             if(selectedPosition > -1){
                 Hotspot selectedHotspot = hotspotList.get(selectedPosition);
                 drawName = selectedHotspot.name();
@@ -281,23 +281,4 @@ public class ResolveLobbyActivity extends AppCompatActivity {
         //Show the actual alert
         alertDialogue.show();
     }
-
-    ActivityResultLauncher<ScanOptions> launcher = registerForActivityResult(new ScanContract(), result-> {
-        if(result.getContents() != null){
-            AlertDialog.Builder builder = new AlertDialog.Builder(ResolveLobbyActivity.this);
-            if(result.getContents().equals(drawName)){
-                builder.setTitle(getString(R.string.resolve_correct_qr_title));
-                builder.setMessage(getString(R.string.resolve_correct_qr_description));
-                builder.setPositiveButton(getString(R.string.okay), (dialog, which) -> dialog.dismiss());
-                AlertDialog alertDialog = builder.create();
-                alertDialog.show();
-            }else{
-                builder.setTitle(getString(R.string.incorrect_qr_title));
-                builder.setMessage(getString(R.string.resolve_incorrect_qr_description));
-                builder.setPositiveButton(getString(R.string.okay), (dialog, which) -> dialog.dismiss());
-                AlertDialog alertDialog = builder.create();
-                alertDialog.show();
-            }
-        }
-    });
 }
