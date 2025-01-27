@@ -53,7 +53,7 @@ public class ResolveDialogFragment extends DialogFragment {
 
     // Passing null as the root is fine, because the view is for a dialog.
     View dialogView = activity.getLayoutInflater().inflate(R.layout.resolve_dialog, null);
-    roomCodeField = dialogView.findViewById(R.id.room_code_input);
+    roomCodeField = dialogView.findViewById(R.id.resolveDialogRoomCodeET);
     builder
         .setView(dialogView)
         .setTitle(R.string.resolve_dialog_title)

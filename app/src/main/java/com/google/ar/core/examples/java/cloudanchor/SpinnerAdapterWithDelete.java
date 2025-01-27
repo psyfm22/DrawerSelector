@@ -30,7 +30,7 @@ public class SpinnerAdapterWithDelete extends ArrayAdapter<String> {
      * @param itemDeletedListener listener for when the item is deleted
      */
     public SpinnerAdapterWithDelete(Context context, List<String> items, ItemDeletedListener itemDeletedListener) {
-        super(context, R.layout.spinner_item, items);
+        super(context, R.layout.spinner_item_with_delete, items);
         this.items = items;
         this.inflater = LayoutInflater.from(context);
         this.listener = itemDeletedListener;
@@ -54,12 +54,12 @@ public class SpinnerAdapterWithDelete extends ArrayAdapter<String> {
     @Override
     public View getView(int position, View view, @NonNull ViewGroup parent) {
         if (view == null) {
-            view = inflater.inflate(R.layout.spinner_item, parent, false);
+            view = inflater.inflate(R.layout.spinner_item_with_delete, parent, false);
         }
 
         //Initialise and set the textview, don't need to add the delete here
-        TextView itemText = view.findViewById(R.id.itemNameTV);
-        itemText.setText(items.get(position));
+        TextView nameTV = view.findViewById(R.id.deleteSpinnerNameTV);
+        nameTV.setText(items.get(position));
 
         return view;
     }
@@ -76,18 +76,18 @@ public class SpinnerAdapterWithDelete extends ArrayAdapter<String> {
     @Override
     public View getDropDownView(int position, View view, @NonNull ViewGroup parent) {
         if (view == null) {
-            view = inflater.inflate(R.layout.spinner_item, parent, false);
+            view = inflater.inflate(R.layout.spinner_item_with_delete, parent, false);
         }
 
         //Initialise the textview and the delete Button
-        TextView itemText = view.findViewById(R.id.itemNameTV);
-        ImageView deleteButton = view.findViewById(R.id.itemDeleteIV);
+        TextView nameTV = view.findViewById(R.id.deleteSpinnerNameTV);
+        ImageView deleteIV = view.findViewById(R.id.deleteSpinnerDeleteIV);
 
         //Set the item text
-        itemText.setText(items.get(position));
+        nameTV.setText(items.get(position));
 
         //What to do when the delete button is pressed
-        deleteButton.setOnClickListener(v -> {
+        deleteIV.setOnClickListener(v -> {
 
             //Remove the item from the list and notify there has been a change in dataset
             items.remove(position);

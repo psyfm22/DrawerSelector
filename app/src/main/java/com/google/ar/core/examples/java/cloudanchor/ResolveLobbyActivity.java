@@ -53,11 +53,11 @@ public class ResolveLobbyActivity extends AppCompatActivity {
         //Assign the rotation helper
         displayRotationHelper = new DisplayRotationHelper(this);
 
-        viewAnchorB = findViewById(R.id.selectBeginViewingB);
+        viewAnchorB = findViewById(R.id.lobbyViewB);
         viewAnchorB.setEnabled(false);
-        ImageButton backIB = findViewById(R.id.selectReturnIB);
-        ImageView settingsIV = findViewById(R.id.selectSettingsIV);
-        spinner = findViewById(R.id.select_anchors_spinner);
+        ImageButton backIB = findViewById(R.id.lobbyReturnIB);
+        ImageView settingsIV = findViewById(R.id.lobbySettingsIV);
+        spinner = findViewById(R.id.lobbyAnchorsS);
 
         startActivityForResultLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
@@ -95,7 +95,7 @@ public class ResolveLobbyActivity extends AppCompatActivity {
         drawSelectedViewModel = new ViewModelProvider(ResolveLobbyActivity.this).get(DrawSelectedViewModel.class);
 
         drawSelectedViewModel.getDrawerList().observe(this, strings -> {
-            SpinnerAdapterNoDelete adapter = new SpinnerAdapterNoDelete(ResolveLobbyActivity.this, strings);
+            SpinnerAdapter adapter = new SpinnerAdapter(ResolveLobbyActivity.this, strings);
             spinner.setAdapter(adapter);
 
             String selectedItem = drawSelectedViewModel.getCurrentSelection().getValue();

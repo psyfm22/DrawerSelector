@@ -3,29 +3,26 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/border"
-    android:padding="8dp">
+    android:padding="10dp">
 
     <ImageView
-        android:id="@+id/viewDeleteIV"
-        android:layout_width="56dp"
-        android:layout_height="37dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
+        android:id="@+id/deleteSpinnerDeleteIV"
+        android:layout_width="52dp"
+        android:layout_height="35dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/close_app_cross" />
 
     <TextView
-        android:id="@+id/viewMessageTV"
-        android:layout_width="88dp"
-        android:layout_height="28dp"
+        android:id="@+id/deleteSpinnerNameTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginStart="12dp"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="18dp"
         android:text=""
-        android:textColor="@color/black"
-        android:textSize="20sp"
-        app:layout_constraintStart_toEndOf="@+id/viewDeleteIV"
+        app:layout_constraintStart_toEndOf="@+id/deleteSpinnerDeleteIV"
         app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

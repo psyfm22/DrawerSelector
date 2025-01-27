@@ -72,7 +72,7 @@ public class SettingsActivity extends AppCompatActivity implements SpinnerAdapte
         enterNameET = findViewById(R.id.settingsEnterNameET);
 
         clearAllB = findViewById(R.id.settingsClearAllB);
-        spinner = findViewById(R.id.settings_anchors_spinner);
+        spinner = findViewById(R.id.settingsAnchorsS);
 
         activityStageViewModel = new ViewModelProvider(this).get(ActivityStageViewModel.class);
         activityStageViewModel.getActivityStage().observe(this, this::setCurrentActivity);

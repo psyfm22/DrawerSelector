@@ -165,7 +165,7 @@
         app:layout_constraintTop_toBottomOf="@+id/settingsTitleTV" />
 
     <Spinner
-        android:id="@+id/settings_anchors_spinner"
+        android:id="@+id/settingAnchorsS"
         style="@style/Widget.AppCompat.Spinner.Underlined"
         android:layout_width="340dp"
         android:layout_height="107dp"
@@ -188,6 +188,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/settings_anchors_spinner" />
+        app:layout_constraintTop_toBottomOf="@+id/settingsAnchorsS" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

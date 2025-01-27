@@ -11,10 +11,10 @@ import androidx.annotation.NonNull;
 
 import java.util.List;
 /**
- * SpinnerAdapterNoDelete,,
+ * SpinnerAdapter,,
  * Define the spinner adapter for when allowing the user with allowing for deleting items
  */
-public class SpinnerAdapterNoDelete extends ArrayAdapter<String>  {
+public class SpinnerAdapter extends ArrayAdapter<String>  {
     private final List<String> items;
     private final LayoutInflater inflater;
 
@@ -25,8 +25,8 @@ public class SpinnerAdapterNoDelete extends ArrayAdapter<String>  {
      * @param context context adapter is being used in (so activity)
      * @param names the names of the anchors in the list
      */
-    public SpinnerAdapterNoDelete(@NonNull Context context, List<String> names) {
-        super(context, R.layout.spinner_item_without_delete, names);
+    public SpinnerAdapter(@NonNull Context context, List<String> names) {
+        super(context, R.layout.spinner_item, names);
         this.items = names;
         this.inflater = LayoutInflater.from(context);
     }
@@ -44,12 +44,12 @@ public class SpinnerAdapterNoDelete extends ArrayAdapter<String>  {
     @Override
     public View getView(int position, View view, @NonNull ViewGroup parent) {
         if (view == null) {
-            view = inflater.inflate(R.layout.spinner_item_without_delete, parent, false);
+            view = inflater.inflate(R.layout.spinner_item, parent, false);
         }
 
         //Initialise and set the item Text
-        TextView itemText = view.findViewById(R.id.itemNameWDTV);
-        itemText.setText(items.get(position));
+        TextView nameTV = view.findViewById(R.id.spinnerNameTV);
+        nameTV.setText(items.get(position));
 
         //Return the view
         return view;
@@ -67,11 +67,11 @@ public class SpinnerAdapterNoDelete extends ArrayAdapter<String>  {
     @Override
     public View getDropDownView(int position, View view, @NonNull ViewGroup parent) {
         if (view == null) {
-            view = inflater.inflate(R.layout.spinner_item_without_delete, parent, false);
+            view = inflater.inflate(R.layout.spinner_item, parent, false);
         }
         //Initialise and set the item Text
-        TextView itemText = view.findViewById(R.id.itemNameWDTV);
-        itemText.setText(items.get(position));
+        TextView nameTV = view.findViewById(R.id.spinnerNameTV);
+        nameTV.setText(items.get(position));
 
         //Return the view
         return view;
