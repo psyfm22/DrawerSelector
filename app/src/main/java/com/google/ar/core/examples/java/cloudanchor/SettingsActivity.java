@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -16,9 +17,9 @@ import android.widget.TextView;
 import android.view.inputmethod.InputMethodManager;
 
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.google.ar.core.examples.java.common.helpers.DisplayRotationHelper;
@@ -33,7 +34,7 @@ import java.util.List;
  * SettingsActivity,
  *
  */
-public class SettingsActivity extends AppCompatActivity implements SpinnerAdapterWithDelete.ItemDeletedListener{
+public class SettingsActivity extends AppCompatActivity implements SpinnerAdapterWithDelete.DeleteSpinnerListener {
 
     private DisplayRotationHelper displayRotationHelper;
     private TextView changePinTV, addTrayTV, manageDrawerTV;
@@ -43,6 +44,7 @@ public class SettingsActivity extends AppCompatActivity implements SpinnerAdapte
     private Spinner spinner;
     private List<Hotspot> hotspotList;
     private ActivityStageViewModel activityStageViewModel;
+    private DrawPositionViewModel drawPositionViewModel;
     private final StringBuilder finalPassword = new StringBuilder();
     private static final String SPINNER_POSITION_KEY = "SPINNER_POSITION_KEY";
 
@@ -77,36 +79,7 @@ public class SettingsActivity extends AppCompatActivity implements SpinnerAdapte
         activityStageViewModel = new ViewModelProvider(this).get(ActivityStageViewModel.class);
         activityStageViewModel.getActivityStage().observe(this, this::setCurrentActivity);
 
-        firebaseManager = new FirebaseManager(this);
-        firebaseManager.getHotspotList(new FirebaseManager.HotspotListListener() {
-            @Override
-            public void onHotspotListFetched(List<Hotspot> hotspots) {
-                hotspotList = hotspots;
-                List<String> nameList = new ArrayList<>();
-
-                for (Hotspot hotspot : hotspotList) {
-                    nameList.add(hotspot.name());
-                }
-
-                SpinnerAdapterWithDelete adapter = new SpinnerAdapterWithDelete(SettingsActivity.this, nameList, SettingsActivity.this);
-                spinner.setAdapter(adapter);
-
-                if (savedInstanceState != null) {
-                    int position;
-                    if(nameList.isEmpty()){
-                        position = savedInstanceState.getInt(SPINNER_POSITION_KEY, -1);
-                    }else{
-                        position = savedInstanceState.getInt(SPINNER_POSITION_KEY, 0);
-                    }
-                    spinner.setSelection(position);
-                }
-            }
-            @Override
-            public void onError(DatabaseError error) {
-                showAlertDialogue(getString(R.string.alert_error_title), getString(R.string.settings_failure_fetching_description), false);
-                Log.d("COMP3018", "Error fetching hotspot list", error.toException());
-            }
-        });
+        drawPositionViewModel = new ViewModelProvider(this).get(DrawPositionViewModel.class);
 
         returnB.setOnClickListener(v -> {
             closeKeyboard(v);
@@ -117,7 +90,9 @@ public class SettingsActivity extends AppCompatActivity implements SpinnerAdapte
 
         addTrayB.setOnClickListener(v -> addNewTray());
 
-        manageDrawerB.setOnClickListener(v -> activityStageViewModel.setActivityStage(SettingsActivityStage.MANAGE_DRAWERS));
+        manageDrawerB.setOnClickListener(v -> {
+            activityStageViewModel.setActivityStage(SettingsActivityStage.MANAGE_DRAWERS);
+        });
 
         clearAllB.setOnClickListener(v -> {
             clearAllB.setEnabled(false);
@@ -128,7 +103,7 @@ public class SettingsActivity extends AppCompatActivity implements SpinnerAdapte
                 public void onSuccess() {
                     clearAllB.setEnabled(true);
                     spinner.setEnabled(true);
-//                    showAlertDialogue(getString(R.string.success), getString(R.string.settings_all_deleted_description), true);
+                    showAlertDialogue(getString(R.string.success), getString(R.string.settings_all_deleted_description), true);
                     recreate();
                 }
 
@@ -321,30 +296,13 @@ public class SettingsActivity extends AppCompatActivity implements SpinnerAdapte
             manageDrawerTV.setVisibility(View.GONE);
             manageDrawerB.setVisibility(View.GONE);
 
-            spinner.setVisibility(View.VISIBLE);
-            clearAllB.setVisibility(View.VISIBLE);
+            loadFromFirebase();
         }
     }
 
-
-    @Override
-    protected void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-
-        int selectedPosition = spinner.getSelectedItemPosition();
-        outState.putInt(SPINNER_POSITION_KEY, selectedPosition);
-    }
-
-    @Override
-    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-
-        int position = savedInstanceState.getInt(SPINNER_POSITION_KEY, 0);
-        spinner.setSelection(position);
-    }
-
     /**
-     * closeKeyboard, closes the keyboard
+     * closeKeyboard,
+     * Closes the keyboard
      *
      * @param view currentView
      */
@@ -353,5 +311,50 @@ public class SettingsActivity extends AppCompatActivity implements SpinnerAdapte
         if (inputMethodManager != null) {
             inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
+    }
+
+    private void loadFromFirebase(){
+
+        firebaseManager = new FirebaseManager(this);
+        firebaseManager.getHotspotList(new FirebaseManager.HotspotListListener() {
+            @Override
+            public void onHotspotListFetched(List<Hotspot> hotspots) {
+                hotspotList = hotspots;
+                List<String> nameList = new ArrayList<>();
+
+                for (Hotspot hotspot : hotspotList) {
+                    nameList.add(hotspot.name());
+                }
+
+                SpinnerAdapterWithDelete adapter = new SpinnerAdapterWithDelete(SettingsActivity.this, nameList, SettingsActivity.this);
+                spinner.setAdapter(adapter);
+
+                drawPositionViewModel.getPosition().observe(SettingsActivity.this, integer -> {
+                    Log.d("COMP3018","In on Changed: "+integer);
+                    spinner.setSelection(integer);
+                    Log.d("COMP3018", "Here is "+integer);
+                });
+
+                spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                        drawPositionViewModel.setPosition(i);
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> adapterView) {
+
+                    }
+                });
+
+                spinner.setVisibility(View.VISIBLE);
+                clearAllB.setVisibility(View.VISIBLE);
+            }
+            @Override
+            public void onError(DatabaseError error) {
+                showAlertDialogue(getString(R.string.alert_error_title), getString(R.string.settings_failure_fetching_description), false);
+                Log.d("COMP3018", "Error fetching hotspot list", error.toException());
+            }
+        });
     }
 }

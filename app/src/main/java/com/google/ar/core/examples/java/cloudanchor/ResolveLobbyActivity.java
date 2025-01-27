@@ -41,7 +41,7 @@ public class ResolveLobbyActivity extends AppCompatActivity {
     static Intent newIntent(Context packageContext) {
         return new Intent(packageContext, ResolveLobbyActivity.class);
     }
-    private DrawSelectedViewModel drawSelectedViewModel;
+    private DrawPositionViewModel drawPositionViewModel;
     private Button viewAnchorB;
 
 
@@ -82,7 +82,6 @@ public class ResolveLobbyActivity extends AppCompatActivity {
                                 launcher.launch(scanOptions);
                             }else if (activityType != null && activityType.equals("SETTINGS_ACTIVITY")){
                                 viewAnchorB.setEnabled(false);
-                                drawSelectedViewModel.deleteAllItems();
                                 loadFromFirebase();
                                 Log.d("COMP3018", "Resetting the firebase");
                             }
@@ -92,27 +91,14 @@ public class ResolveLobbyActivity extends AppCompatActivity {
                 }
         );
 
-        drawSelectedViewModel = new ViewModelProvider(ResolveLobbyActivity.this).get(DrawSelectedViewModel.class);
 
-        drawSelectedViewModel.getDrawerList().observe(this, strings -> {
-            SpinnerAdapter adapter = new SpinnerAdapter(ResolveLobbyActivity.this, strings);
-            spinner.setAdapter(adapter);
-
-            String selectedItem = drawSelectedViewModel.getCurrentSelection().getValue();
-            if (selectedItem != null) {
-                int position = strings.indexOf(selectedItem);
-                if (position != -1) {
-                    spinner.setSelection(position);
-                }
-            }
-        });
 
 
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parentView, android.view.View selectedItemView, int position, long id) {
-                String selectedItem = (String) parentView.getItemAtPosition(position);
-                drawSelectedViewModel.setCurrentSelection(selectedItem);
+
+
             }
 
             @Override
@@ -171,7 +157,8 @@ public class ResolveLobbyActivity extends AppCompatActivity {
                     nameList.add(hotspot.name());
                 }
 
-                drawSelectedViewModel.setDrawList(nameList);
+                SpinnerAdapter adapter = new SpinnerAdapter(ResolveLobbyActivity.this, nameList);
+                spinner.setAdapter(adapter);
                 viewAnchorB.setEnabled(true);
             }
 

@@ -19,7 +19,7 @@ import java.util.List;
 public class SpinnerAdapterWithDelete extends ArrayAdapter<String> {
     private final List<String> items;
     private final LayoutInflater inflater;
-    private final ItemDeletedListener listener;
+    private final DeleteSpinnerListener listener;
 
     /**
      * constructor,
@@ -27,17 +27,17 @@ public class SpinnerAdapterWithDelete extends ArrayAdapter<String> {
      *
      * @param context context adapter is being used in (so activity)
      * @param items the names of the anchors in the list
-     * @param itemDeletedListener listener for when the item is deleted
+     * @param deleteSpinnerListener listener for when the item is deleted
      */
-    public SpinnerAdapterWithDelete(Context context, List<String> items, ItemDeletedListener itemDeletedListener) {
+    public SpinnerAdapterWithDelete(Context context, List<String> items, DeleteSpinnerListener deleteSpinnerListener) {
         super(context, R.layout.spinner_item_with_delete, items);
         this.items = items;
         this.inflater = LayoutInflater.from(context);
-        this.listener = itemDeletedListener;
+        this.listener = deleteSpinnerListener;
     }
 
     //Interface definition for when an item is deleted
-    public interface ItemDeletedListener {
+    public interface DeleteSpinnerListener {
         void onItemDeleted(int position);
     }
 
