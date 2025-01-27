@@ -129,6 +129,7 @@ public class ResolveLobbyActivity extends AppCompatActivity {
 
                 Intent intent = CloudAnchorActivity.newIntent(ResolveLobbyActivity.this);
                 intent.putExtra("PLACING_ANCHOR", false);
+                intent.putExtra("ANCHOR_NAME", drawName);
                 intent.putExtra("HOTSPOT_CODE", selectedHotspot.code());
                 startActivityForResultLauncher.launch(intent);
             }else{

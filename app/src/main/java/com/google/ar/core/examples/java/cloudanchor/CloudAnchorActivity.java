@@ -167,6 +167,7 @@ public class CloudAnchorActivity extends AppCompatActivity
     Intent intent = getIntent();
     isHosting = intent.getBooleanExtra("PLACING_ANCHOR", true);
     anchorName = intent.getStringExtra("ANCHOR_NAME");
+    Log.d("COMP3018","Here is anchor name: "+ anchorName);
     roomCode = intent.getLongExtra("HOTSPOT_CODE", 1);
 
 
@@ -760,6 +761,8 @@ public class CloudAnchorActivity extends AppCompatActivity
 
     try {
       Result result = new MultiFormatReader().decode(bitmap);
+      Log.d("COMP3018", "Here is anchor: "+ anchorName);
+      Log.d("COMP3018", "Here is the qr: "+ result.getText());
       if(result.getText().equals(anchorName)){
         alertStringArray[0] = "Success";
         alertStringArray[1] = "Correct QR Code Scanned";
