@@ -29,7 +29,11 @@ import com.journeyapps.barcodescanner.ScanOptions;
 import java.util.ArrayList;
 import java.util.List;
 
-
+/**
+ * ResolveLobbyActivity,
+ * Lobby where users can select which anchor they would like to resolve. They can also navigate to
+ * the settings page from here
+ */
 public class ResolveLobbyActivity extends AppCompatActivity {
     private Spinner spinner;
     private List<Hotspot> hotspotList;
@@ -44,7 +48,12 @@ public class ResolveLobbyActivity extends AppCompatActivity {
     private DrawPositionViewModel drawPositionViewModel;
     private Button viewAnchorB;
 
-
+    /**
+     * onCreate,
+     * Initialise the UI elements and setup the activity from the start
+     *
+     * @param savedInstanceState N/A
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,40 +62,30 @@ public class ResolveLobbyActivity extends AppCompatActivity {
         //Assign the rotation helper
         displayRotationHelper = new DisplayRotationHelper(this);
 
+        //Initialise the UI Elements
         viewAnchorB = findViewById(R.id.lobbyViewB);
-        viewAnchorB.setEnabled(false);
         ImageButton backIB = findViewById(R.id.lobbyReturnIB);
         ImageView settingsIV = findViewById(R.id.lobbySettingsIV);
         spinner = findViewById(R.id.lobbyAnchorsS);
 
+        //Disable the button
+        viewAnchorB.setEnabled(false);
+
+        //Initialise the draw position view model to keep track of the user selection
         drawPositionViewModel = new ViewModelProvider(this).get(DrawPositionViewModel.class);
 
-
+        //We want to get data returned from the activity as it will allow us to reset the spinner if
+        //there have been deletions in the firebase storage
         startActivityForResultLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
-
-                    Log.d("COMP3018","In the return");
                     if (result.getResultCode() == RESULT_OK) {
                         Intent data = result.getData();
-                        Log.d("COMP3018","In result okay");
                         if(data != null){
-                            Log.d("COMP3018","In data not being null");
-
                             String activityType = data.getStringExtra("ACTIVITY_TYPE");
-
-                            if(activityType != null && activityType.equals("CLOUD_ANCHOR_ACTIVITY")){
-                                Log.d("COMP3018", "In cloud anchor");
-                                ScanOptions scanOptions = new ScanOptions();
-                                scanOptions.setPrompt(getString(R.string.scan));
-                                scanOptions.setBeepEnabled(true);
-                                scanOptions.setOrientationLocked(true);
-                                scanOptions.setCaptureActivity(CustomCaptureActivity.class);
-                                launcher.launch(scanOptions);
-                            }else if (activityType != null && activityType.equals("SETTINGS_ACTIVITY")){
+                            if (activityType != null && activityType.equals("SETTINGS_ACTIVITY")){
                                 viewAnchorB.setEnabled(false);
                                 loadFromFirebase();
-                                Log.d("COMP3018", "Resetting the firebase");
                             }
                         }
 
@@ -94,9 +93,11 @@ public class ResolveLobbyActivity extends AppCompatActivity {
                 }
         );
 
+        //Set the listener when viewing and anchor button
         viewAnchorB.setOnClickListener(v -> {
+            //Get the current selected position
             int selectedPosition = spinner.getSelectedItemPosition();
-
+            Log.d("COMP3018","Here is -1");
             if(selectedPosition > -1){
                 Hotspot selectedHotspot = hotspotList.get(selectedPosition);
                 drawName = selectedHotspot.name();
