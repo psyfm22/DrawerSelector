@@ -29,6 +29,10 @@ import org.mindrot.jbcrypt.BCrypt;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * SettingsActivity,
+ *
+ */
 public class SettingsActivity extends AppCompatActivity implements SpinnerAdapterWithDelete.ItemDeletedListener{
 
     private DisplayRotationHelper displayRotationHelper;

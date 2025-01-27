@@ -21,27 +21,27 @@
     tools:context="com.google.ar.core.examples.java.cloudanchor.CloudAnchorActivity">
 
   <android.opengl.GLSurfaceView
-      android:id="@+id/surfaceview"
+      android:id="@+id/cloudAnchorSV"
       android:layout_width="fill_parent"
       android:layout_height="fill_parent"
       android:visibility="visible"
       android:layout_gravity="top"/>
 
   <LinearLayout
-      android:id="@+id/linearLayout"
+      android:id="@+id/cloudAnchorLL"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:visibility="visible"
       android:orientation="horizontal">
 
     <Button
-        android:id="@+id/cancel_button"
+        android:id="@+id/cloudAnchorCancelB"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/cancel" />
 
     <Button
-        android:id="@+id/scan_qr_button"
+        android:id="@+id/cloudAnchorScanB"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/scan" />
@@ -53,7 +53,7 @@
         android:paddingEnd="10dp">
 
       <TextView
-          android:id="@+id/room_code_text"
+          android:id="@+id/cloudAnchorCodeTV"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:layout_alignParentEnd="true"

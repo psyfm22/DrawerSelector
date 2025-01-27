@@ -161,7 +161,7 @@ public class CloudAnchorActivity extends AppCompatActivity
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_cloud_anchor);
 
-    surfaceView = findViewById(R.id.surfaceview);
+    surfaceView = findViewById(R.id.cloudAnchorSV);
     displayRotationHelper = new DisplayRotationHelper(this);
 
     Intent intent = getIntent();
@@ -205,18 +205,18 @@ public class CloudAnchorActivity extends AppCompatActivity
 
     // Initialize UI components.
 
-    cancelButton = findViewById(R.id.cancel_button);
+    cancelButton = findViewById(R.id.cloudAnchorCancelB);
     cancelButton.setVisibility(View.GONE);
     cancelButton.setOnClickListener((view) -> resetMode());
 
-    qrCodeButton = findViewById(R.id.scan_qr_button);
+    qrCodeButton = findViewById(R.id.cloudAnchorScanB);
     qrCodeButton.setVisibility(View.GONE);
     qrCodeButton.setOnClickListener((view) ->{
       qrCodeButton.setEnabled(false);
       scanQRMode();
     });
 
-    roomCodeText = findViewById(R.id.room_code_text);
+    roomCodeText = findViewById(R.id.cloudAnchorCodeTV);
 
 
     // Initialize Cloud Anchor variables.
