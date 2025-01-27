@@ -103,7 +103,7 @@ public class SettingsActivity extends AppCompatActivity implements SpinnerAdapte
                 public void onSuccess() {
                     clearAllB.setEnabled(true);
                     spinner.setEnabled(true);
-                    showAlertDialogue(getString(R.string.success), getString(R.string.settings_all_deleted_description), true);
+//                    showAlertDialogue(getString(R.string.success), getString(R.string.settings_all_deleted_description), true);
                     recreate();
                 }
 
@@ -162,6 +162,7 @@ public class SettingsActivity extends AppCompatActivity implements SpinnerAdapte
                 showAlertDialogue(getString(R.string.settings_password_issue_title), getString(R.string.settings_password_issue_description), false);
             }
             finalPassword.setLength(0);
+
             enterPin1ET.setText("");
             enterPin2ET.setText("");
         }

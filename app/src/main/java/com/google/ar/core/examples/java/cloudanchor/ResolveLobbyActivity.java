@@ -59,6 +59,9 @@ public class ResolveLobbyActivity extends AppCompatActivity {
         ImageView settingsIV = findViewById(R.id.lobbySettingsIV);
         spinner = findViewById(R.id.lobbyAnchorsS);
 
+        drawPositionViewModel = new ViewModelProvider(this).get(DrawPositionViewModel.class);
+
+
         startActivityForResultLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
@@ -90,21 +93,6 @@ public class ResolveLobbyActivity extends AppCompatActivity {
                     }
                 }
         );
-
-
-
-
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parentView, android.view.View selectedItemView, int position, long id) {
-
-
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parentView) {
-            }
-        });
 
         viewAnchorB.setOnClickListener(v -> {
             int selectedPosition = spinner.getSelectedItemPosition();
@@ -159,6 +147,30 @@ public class ResolveLobbyActivity extends AppCompatActivity {
 
                 SpinnerAdapter adapter = new SpinnerAdapter(ResolveLobbyActivity.this, nameList);
                 spinner.setAdapter(adapter);
+
+
+                drawPositionViewModel.getPosition().observe(ResolveLobbyActivity.this, integer -> {
+                    if(nameList.size()>integer){
+                        spinner.setSelection(integer);
+                    }else{
+                        spinner.setSelection(0);
+                    }
+                    Log.d("COMP3018", "Here is "+integer);
+                });
+
+                spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                        drawPositionViewModel.setPosition(i);
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> adapterView) {
+
+                    }
+                });
+
+
                 viewAnchorB.setEnabled(true);
             }
 
