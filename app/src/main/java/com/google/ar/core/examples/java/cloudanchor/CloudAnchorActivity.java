@@ -73,11 +73,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.zxing.BinaryBitmap;
 import com.google.zxing.LuminanceSource;
 import com.google.zxing.MultiFormatReader;
-import com.google.zxing.NotFoundException;
 import com.google.zxing.PlanarYUVLuminanceSource;
 import com.google.zxing.Result;
-import com.google.zxing.common.BitMatrix;
-import com.google.zxing.common.GlobalHistogramBinarizer;
 import com.google.zxing.common.HybridBinarizer;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -739,13 +736,10 @@ public class CloudAnchorActivity extends AppCompatActivity
   }
 
   private void processImage(Image image) {
-    Log.d("COMP3018","In here");
-
     String[] alertText = findQRCodeString(image);
     runOnUiThread(()-> {
       currentImage.close();
       AlertBuilder(alertText[0], alertText[1]);
-      qrCodeButton.setEnabled(true);
     });
   }
 
@@ -759,21 +753,16 @@ public class CloudAnchorActivity extends AppCompatActivity
       return alertStringArray;
     }
 
-    LuminanceSource source = getLuminanceSource(image);
-    BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(source));
+    LuminanceSource[] source = getLuminanceSource(image);
+    BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(source[0]));
+    BinaryBitmap rotatedBitmap = new BinaryBitmap(new HybridBinarizer(source[1]));
 
-
-
-    MultiFormatReader reader = new MultiFormatReader();;
+    MultiFormatReader reader = new MultiFormatReader();
     try{
-      Log.d("COMP3018", "Do i get here");
-
       Result result = reader.decode(bitmap);
-
-    Log.d("COMP3018", "Here is anchor: "+ anchorName);
       if(result.getText().equals(anchorName)){
         alertStringArray[0] = "Success";
-        alertStringArray[1] = "Correct QR Code Scanned";
+        alertStringArray[1] = "Correct Barcode Scanned";
       }else{
         alertStringArray[0] = "Error";
         alertStringArray[1] = "Incorrect QR code Scanned, Please Try Again";
@@ -781,25 +770,45 @@ public class CloudAnchorActivity extends AppCompatActivity
         return alertStringArray;
 
     } catch (Exception e) {
-      Log.d("COMP3018", "Original decode failed, trying rotated version");
+      try{
+        Result result = reader.decode(rotatedBitmap);
+        if(result.getText().equals(anchorName)){
+          alertStringArray[0] = "Success";
+          alertStringArray[1] = "Correct Barcode Scanned";
+        }else{
+          alertStringArray[0] = "Error";
+          alertStringArray[1] = "Incorrect Barcode Scanned, Please Try Again";
+        }
+        return alertStringArray;
+      } catch (Exception e2) {
+        // If neither decode succeeded
+        alertStringArray[0] = "Error";
+        alertStringArray[1] = "No Barcode Found, Please Try Again";
 
-      // If neither decode succeeded
-      alertStringArray[0] = "Error";
-      alertStringArray[1] = "No Barcode Found, Please hold the phone landscape";
-      return alertStringArray;
+        return alertStringArray;
+      }
     }
-
   }
 
-  @NonNull
-  private static LuminanceSource getLuminanceSource(Image image) {
+  private LuminanceSource[] getLuminanceSource(Image image) {
+    LuminanceSource[] sources = new LuminanceSource[2];
+
+    int width = image.getWidth();
+    int height = image.getHeight();
+
     //Get the planes from the image
     Image.Plane[] planes = image.getPlanes();
 
     //Get the Y, U, and V planes from the YUV_420_888 image
+    //Brightness information, UV planes are chrominance
     ByteBuffer yByteBuffer = planes[0].getBuffer();
     ByteBuffer uByteBuffer = planes[1].getBuffer();
     ByteBuffer vByteBuffer = planes[2].getBuffer();
+
+    ByteBuffer yByteBufferCopy = planes[0].getBuffer();
+    ByteBuffer uByteBufferCopy = planes[1].getBuffer();
+    ByteBuffer vByteBufferCopy = planes[2].getBuffer();
+
 
     //Get the size of the Y plane and the uv plane
     int ySize = yByteBuffer.remaining();
@@ -808,24 +817,83 @@ public class CloudAnchorActivity extends AppCompatActivity
     //initialise the yubBytes array with the size of the buffers
     byte[] yuvByteArray = new byte[ySize + uvSize * 2];
 
-    //Copy the data into the byte array
     yByteBuffer.get(yuvByteArray, 0, ySize);
     uByteBuffer.get(yuvByteArray, ySize, uvSize);
     vByteBuffer.get(yuvByteArray, ySize + uvSize, uvSize);
 
-    // Return a PlanarYUVLuminanceSource object with the YUV data
-    return new PlanarYUVLuminanceSource(yuvByteArray, image.getWidth(), image.getHeight(), 0,
-            0, image.getWidth(), image.getHeight(), false);
+    //Place the normal Luminance source into the sources array
+    sources[0] = new PlanarYUVLuminanceSource(yuvByteArray, width, height, 0,0, width, height, false);
+
+    //Initialise the byte arrays
+    byte[] yData = new byte[ySize];
+    byte[] uData = new byte[uvSize];
+    byte[] vData = new byte[uvSize];
+
+    //Load the data into the byte arrays
+    yByteBufferCopy.get(yData);
+    uByteBufferCopy.get(uData);
+    vByteBufferCopy.get(vData);
+
+
+    // Rotate Y array by 90 degrees
+    byte[] rotatedY = rotatePlane90(yData, width, height);
+
+    // Rotate the U and V planes by 90 degrees (half the size of the Y plane)
+    int uvWidth = width / 2;
+    int uvHeight = height / 2;
+
+    //Rotate U and Y respectively by 90 degrees
+    byte[] rotatedU = rotatePlane90(uData, uvWidth, uvHeight);
+    byte[] rotatedV = rotatePlane90(vData, uvWidth, uvHeight);
+
+    //Initialise the array we are going to copy all the bytes into
+    byte[] rotatedYuvByteArray = new byte[rotatedY.length + rotatedU.length + rotatedV.length];
+
+    //Copy all the data into rotatedYUV Byte array
+    System.arraycopy(rotatedY, 0, rotatedYuvByteArray, 0, rotatedY.length);
+    System.arraycopy(rotatedU, 0, rotatedYuvByteArray, rotatedY.length, rotatedU.length);
+    System.arraycopy(rotatedV, 0, rotatedYuvByteArray, rotatedY.length + rotatedU.length, rotatedV.length);
+
+    //We place the new rotated image in the array. height and width swap as we have rotate the image
+    sources[1] = new PlanarYUVLuminanceSource(rotatedYuvByteArray, height, width, 0, 0, height, width, false);
+
+    return sources;
   }
+
+  /**
+   * rotatePlane90,
+   * Rotate the plane by 90 degrees clockwise.
+   *
+   * @param data Actual plane data
+   * @param width width of plane
+   * @param height height of plane
+   * @return the rotated plane
+   */
+  private byte[] rotatePlane90(byte[] data, int width, int height) {
+    byte[] rotatedData = new byte[data.length];
+
+    for (int y = 0; y < height; y++) {
+      for (int x = 0; x < width; x++) {
+        int originalIndex = y * width + x;
+        int rotatedIndex = x * height + (height - 1 - y);
+        rotatedData[rotatedIndex] = data[originalIndex];
+      }
+    }
+
+    return rotatedData;
+  }
+
 
   private void AlertBuilder(String title, String message){
     AlertDialog.Builder builder = new AlertDialog.Builder(CloudAnchorActivity.this);
     builder.setTitle(title);
     builder.setMessage(message);
-    builder.setPositiveButton(getString(R.string.okay), (dialog, which) -> dialog.dismiss());
+    builder.setPositiveButton(getString(R.string.okay), (dialog, which) ->{
+      dialog.dismiss();
+      qrCodeButton.setEnabled(true);
+    });
     AlertDialog alertDialog = builder.create();
     alertDialog.setCanceledOnTouchOutside(false);
     alertDialog.show();
   }
-
 }
