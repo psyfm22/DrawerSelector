@@ -2,6 +2,7 @@ package com.google.ar.core.examples.java.cloudanchor;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -86,6 +87,8 @@ public class MainActivity extends AppCompatActivity {
 
             //Initialise the alert dialog builder
             AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+
+            Log.d("COMP3018", "Here is: "+ result.getContents());
 
             //If the ar code scanned equals the string for the starting qr then we know the user is
             //in the correct location

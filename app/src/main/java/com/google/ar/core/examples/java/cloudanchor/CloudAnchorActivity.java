@@ -73,8 +73,11 @@ import com.google.firebase.database.DatabaseError;
 import com.google.zxing.BinaryBitmap;
 import com.google.zxing.LuminanceSource;
 import com.google.zxing.MultiFormatReader;
+import com.google.zxing.NotFoundException;
 import com.google.zxing.PlanarYUVLuminanceSource;
 import com.google.zxing.Result;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.common.GlobalHistogramBinarizer;
 import com.google.zxing.common.HybridBinarizer;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -759,10 +762,15 @@ public class CloudAnchorActivity extends AppCompatActivity
     LuminanceSource source = getLuminanceSource(image);
     BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(source));
 
-    try {
-      Result result = new MultiFormatReader().decode(bitmap);
-      Log.d("COMP3018", "Here is anchor: "+ anchorName);
-      Log.d("COMP3018", "Here is the qr: "+ result.getText());
+
+
+    MultiFormatReader reader = new MultiFormatReader();;
+    try{
+      Log.d("COMP3018", "Do i get here");
+
+      Result result = reader.decode(bitmap);
+
+    Log.d("COMP3018", "Here is anchor: "+ anchorName);
       if(result.getText().equals(anchorName)){
         alertStringArray[0] = "Success";
         alertStringArray[1] = "Correct QR Code Scanned";
@@ -772,12 +780,15 @@ public class CloudAnchorActivity extends AppCompatActivity
       }
         return alertStringArray;
 
-    }catch (Exception e){
-      e.printStackTrace();
+    } catch (Exception e) {
+      Log.d("COMP3018", "Original decode failed, trying rotated version");
+
+      // If neither decode succeeded
       alertStringArray[0] = "Error";
-      alertStringArray[1] = "No QR Code Found. Please Try Again";
+      alertStringArray[1] = "No Barcode Found, Please hold the phone landscape";
       return alertStringArray;
     }
+
   }
 
   @NonNull
@@ -816,4 +827,5 @@ public class CloudAnchorActivity extends AppCompatActivity
     alertDialog.setCanceledOnTouchOutside(false);
     alertDialog.show();
   }
+
 }
