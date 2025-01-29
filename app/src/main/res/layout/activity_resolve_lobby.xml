@@ -33,7 +33,7 @@
         android:layout_height="wrap_content"
         android:paddingTop="70dp"
         android:text="@string/resolve_lobby_title"
-        android:textSize="40sp"
+        android:textSize="30sp"
         android:textStyle="bold"
         android:visibility="visible"
         app:layout_constraintLeft_toLeftOf="parent"

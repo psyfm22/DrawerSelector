@@ -19,7 +19,7 @@
     <string name="alert_error_title">Error</string>
 
     <!-- Strings in the main activity -->
-    <string name="app_name">Draw Locator</string>
+    <string name="app_name">Draw Selector</string>
     <string name="close">Close</string>
     <string name="cancel">Cancel</string>
     <string name="confirm_location_title">Please Confirm Location</string>
