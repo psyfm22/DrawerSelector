@@ -40,9 +40,7 @@ import java.util.List;
 
 /** A helper class to manage all communications with Firebase. */
 class FirebaseManager {
-  private static final String TAG =
-      CloudAnchorActivity.class.getSimpleName() + "." + FirebaseManager.class.getSimpleName();
-
+  private static final String TAG = "COMP3018";
   /** Listener for a new room code. */
   interface RoomCodeListener {
 
@@ -62,9 +60,10 @@ class FirebaseManager {
 
   // Names of the nodes used in the Firebase Database
   private static final String ROOT_FIREBASE_HOTSPOTS = "hotspot_list",
-          ROOT_LAST_ROOM_CODE = "last_room_code", KEY_DISPLAY_NAME = "display_name",
+          ROOT_LAST_ROOM_CODE = "last_room_code", KEY_LOCATION_NAME = "location_name",
           KEY_ANCHOR_ID = "hosted_anchor_id", KEY_TIMESTAMP = "updated_at_timestamp",
-          ROOT_PASSCODE = "password_code";
+          KEY_CURRENT_STORAGE = "current_storage", KEY_MAX_STORAGE = "max_storage",
+          KEY_CATEGORY = "category_name", ROOT_PASSCODE = "password_code";
   private final FirebaseApp app;
   private final DatabaseReference hotspotListRef, roomCodeRef, passcodeRef;
   private DatabaseReference currentRoomRef = null;
@@ -133,9 +132,12 @@ class FirebaseManager {
   void storeAnchorIdInRoom(Long roomCode, String cloudAnchorId, String displayName) {
     Preconditions.checkNotNull(app, "Firebase App was null");
     DatabaseReference roomRef = hotspotListRef.child(String.valueOf(roomCode));
-    roomRef.child(KEY_DISPLAY_NAME).setValue(displayName);
+    roomRef.child(KEY_LOCATION_NAME).setValue(displayName);
     roomRef.child(KEY_ANCHOR_ID).setValue(cloudAnchorId);
     roomRef.child(KEY_TIMESTAMP).setValue(System.currentTimeMillis());
+    roomRef.child(KEY_CURRENT_STORAGE).setValue(0);
+    roomRef.child(KEY_MAX_STORAGE).setValue(0);
+    roomRef.child(KEY_CATEGORY).setValue("");
   }
 
   /**
