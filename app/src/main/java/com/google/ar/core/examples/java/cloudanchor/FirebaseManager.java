@@ -17,7 +17,6 @@
 package com.google.ar.core.examples.java.cloudanchor;
 
 import android.content.Context;
-import android.content.Intent;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -37,7 +36,9 @@ import com.google.firebase.database.ValueEventListener;
 import org.mindrot.jbcrypt.BCrypt;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /** A helper class to manage all communications with Firebase. */
@@ -307,92 +308,31 @@ class FirebaseManager {
 
   void inputComponent(int currentStorage, int maxStorage, String category) {
     Preconditions.checkNotNull(app, "Firebase App was null");
-    List<Hotspot> hotspotList = new ArrayList<>();
 
     ValueEventListener valueEventListener = new ValueEventListener() {
       @Override
       public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+        long keyLong = 0;
         for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
 
           String keyString = snapshot.getKey();
 
-          long keyLong = 0;
           if(keyString != null){
             keyLong = Long.parseLong(keyString);
+            Log.d("COMP3018", "  "+ keyLong);
           }
-
-          String locationName = snapshot.child(KEY_LOCATION_NAME).getValue(String.class);
           String categoryName = snapshot.child(KEY_CATEGORY).getValue(String.class);
-          Integer currentStorage = snapshot.child(KEY_CURRENT_STORAGE).getValue(int.class);
-          Integer maxStorage = snapshot.child(KEY_MAX_STORAGE).getValue(int.class);
 
-          int finalCurrentStorage = Objects.requireNonNullElse(currentStorage, 0);
-          int finalMaxStorage = Objects.requireNonNullElse(maxStorage, 0);
+          if(categoryName != null){
+            if(categoryName.isEmpty()){
+              uploadComponent(keyLong,currentStorage,maxStorage,category);
+              hotspotListRef.removeEventListener(this);
+              return;
 
-          Hotspot hotspot = new Hotspot(keyLong, locationName, categoryName, finalCurrentStorage,finalMaxStorage);
-          hotspotList.add(hotspot);
-        }
-
-        if (hotspotList != null) {
-          Log.d("COMP3018", "Here: " + hotspotList.size());
-        } else {
-          Log.d("COMP3018", "hotspotList is null");
-        }
-        Log.d("COMP3018", "Hotspot size: "+ hotspotList.size());
-
-        Log.d("COMP3018", hotspotList.get(0).getCategory());
-
-        boolean isCategoryWithSpace = false;
-
-        for (int i=0; i<hotspotList.size();i++){
-          Log.d("COMP3018",""+ i);
-          Hotspot hotspot = hotspotList.get(i);
-          if(hotspot.getCategory().equals(category)){
-            if(hotspot.getCurrentStorage() != hotspot.getMaxStorage()){
-              isCategoryWithSpace = true;
-              Hotspot updatedHotspot = new Hotspot(hotspot.getCode(), hotspot.getName(), hotspot.getCategory(),
-                      hotspot.getCurrentStorage()+1, hotspot.getMaxStorage());
-              hotspotList.set(i, updatedHotspot);
             }
           }
-        }
-        Log.d("COMP3018","boolean is category with space: "+ isCategoryWithSpace);
-        if(isCategoryWithSpace){
-          if (hotspotListRef != null) {
-            hotspotListRef.setValue(hotspotList)
-                    .addOnSuccessListener(aVoid -> {
-                      Log.d("COMP3018", "On Success of Changing");
-                    })
-                    .addOnFailureListener(e -> {
-                      Log.d("COMP3018", "On Failure");
-                    });
-          }
-        }
 
-
-        boolean successUpload = false;
-        if(!isCategoryWithSpace ){
-
-          for (int i=0; i<hotspotList.size();i++) {
-            Hotspot hotspot = hotspotList.get(i);
-            if(hotspot.getCategory().isEmpty()){
-              Log.d("COMP3018","Do I get here in the hotspot category is empty ");
-              Hotspot updatedHotspot = new Hotspot(hotspot.getCode(), hotspot.getName(), category, currentStorage, maxStorage);
-              hotspotList.set(i, updatedHotspot);
-              successUpload = true;
-            }
-          }
-          if(successUpload){
-            if (hotspotListRef != null) {
-              hotspotListRef.setValue(hotspotList)
-                      .addOnSuccessListener(aVoid -> {
-                        Log.d("COMP3018", "On Success of Changing");
-                      })
-                      .addOnFailureListener(e -> {
-                        Log.d("COMP3018", "On Failure");
-                      });
-            }
-          }
         }
       }
 
@@ -403,6 +343,27 @@ class FirebaseManager {
     };
 
     hotspotListRef.addValueEventListener(valueEventListener);
+  }
+
+  void uploadComponent(long key, int currentStorage, int maxStorage, String category){
+    Map<String, Object> updates = new HashMap<>();
+    updates.put(KEY_CATEGORY, category);
+    updates.put(KEY_CURRENT_STORAGE, currentStorage);
+    updates.put(KEY_MAX_STORAGE, maxStorage);
+
+    if (hotspotListRef == null) {
+      Log.d(TAG, "Firebase reference for hotspot list is null!");
+      return;
+    }
+
+    DatabaseReference hotspotRef = hotspotListRef.child(String.valueOf(key));
+
+    hotspotRef.updateChildren(updates).addOnSuccessListener(aVoid -> {
+              Log.d(TAG, "Hotspot updated successfully.");
+            })
+            .addOnFailureListener(e -> {
+              Log.e(TAG, "Error updating hotspot "+ e.getMessage());
+            });
   }
 
   interface HotspotListListener {

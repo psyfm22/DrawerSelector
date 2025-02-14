@@ -151,6 +151,9 @@ public class NexarClient {
                     }
 
                     int index = 0;
+                    if(categoryCounters.isEmpty()){
+                        return;
+                    }
                     int maxCounter = categoryCounters.get(0).getCounter();
 
                     for(int i=0;i<categoryCounters.size();i++){

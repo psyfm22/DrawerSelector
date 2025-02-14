@@ -21,13 +21,11 @@ public class ComponentAssignActivity extends AppCompatActivity {
     private EditText loadedComponentET;
     private Button assignDrawerB;
     private static final int MAX_HOLDER = 30;
-
     private FirebaseManager firebaseManager;
 
     static Intent newIntent(Context packageContext) {
         return new Intent(packageContext, ComponentAssignActivity.class);
     }
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +37,11 @@ public class ComponentAssignActivity extends AppCompatActivity {
         EditText inputComponentET = findViewById(R.id.assignEnterComponentET);
         loadedComponentET = findViewById(R.id.assignLoadedComponentET);
         assignDrawerB = findViewById(R.id.assignDrawerB);
+        Button closeB = findViewById(R.id.assignCloseB);
+
+        closeB.setOnClickListener(v ->{
+            finish();
+        });
 
         nexarClient = getNexarClient(loadComponentQueryB);
 
@@ -52,6 +55,7 @@ public class ComponentAssignActivity extends AppCompatActivity {
 
         assignDrawerB.setOnClickListener(v -> {
             assignDrawerB.setEnabled(false);
+            Log.d("COMP3018", "Button has been called");
 
             String inputComponent = loadedComponentET.getText().toString().trim();
 
@@ -64,9 +68,7 @@ public class ComponentAssignActivity extends AppCompatActivity {
             String capitalisedInput = toUppercase(inputComponent);
 
 
-            firebaseManager.inputComponent(0, 30, inputComponent);
-
-
+            firebaseManager.inputComponent(0, 30, capitalisedInput);
         });
 
     }
