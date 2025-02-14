@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -98,14 +97,14 @@ public class ResolveLobbyActivity extends AppCompatActivity {
             //Only Run this code if there is a valid selection from the spinner
             if(selectedPosition > -1){
                 Hotspot selectedHotspot = hotspotList.get(selectedPosition);
-                drawName = selectedHotspot.name();
+                drawName = selectedHotspot.getName();
 
                 //We launch the cloud anchor activity, setting it in resolve mode, passing the anchor
                 //name and the hotspot code
                 Intent intent = CloudAnchorActivity.newIntent(ResolveLobbyActivity.this);
                 intent.putExtra("PLACING_ANCHOR", false);
                 intent.putExtra("ANCHOR_NAME", drawName);
-                intent.putExtra("HOTSPOT_CODE", selectedHotspot.code());
+                intent.putExtra("HOTSPOT_CODE", selectedHotspot.getCode());
                 startActivityForResultLauncher.launch(intent);
             }else{
                 showAlertDialogue(getString(R.string.alert_error_title),getString(R.string.resolve_fail_anchor_description), false);
@@ -170,7 +169,7 @@ public class ResolveLobbyActivity extends AppCompatActivity {
                 //Get the names of all the hotspots
                 List<String> nameList = new ArrayList<>();
                 for (Hotspot hotspot : hotspotList) {
-                    nameList.add(hotspot.name());
+                    nameList.add(hotspot.getName());
                 }
 
                 //Initialise the custom spinner adapter passing this activity as the context and

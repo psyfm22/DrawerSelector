@@ -17,6 +17,7 @@
 package com.google.ar.core.examples.java.cloudanchor;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -37,6 +38,7 @@ import org.mindrot.jbcrypt.BCrypt;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /** A helper class to manage all communications with Firebase. */
 class FirebaseManager {
@@ -236,12 +238,21 @@ class FirebaseManager {
       public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
         for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
           String keyString = snapshot.getKey();
-          long keyLong = 1;
+
+          long keyLong = 0;
           if(keyString != null){
             keyLong = Long.parseLong(keyString);
           }
-          String displayName = snapshot.child("display_name").getValue(String.class);
-          Hotspot hotspot = new Hotspot(displayName, keyLong);
+
+          String locationName = snapshot.child(KEY_LOCATION_NAME).getValue(String.class);
+          String categoryName = snapshot.child(KEY_CATEGORY).getValue(String.class);
+          Integer currentStorage = snapshot.child(KEY_CURRENT_STORAGE).getValue(int.class);
+          Integer maxStorage = snapshot.child(KEY_MAX_STORAGE).getValue(int.class);
+
+          int finalCurrentStorage = Objects.requireNonNullElse(currentStorage, 0);
+          int finalMaxStorage = Objects.requireNonNullElse(maxStorage, 0);
+
+          Hotspot hotspot = new Hotspot(keyLong, locationName, categoryName, finalCurrentStorage,finalMaxStorage);
           hotspotList.add(hotspot);
         }
         listener.onHotspotListFetched(hotspotList);
@@ -292,6 +303,106 @@ class FirebaseManager {
             .addOnSuccessListener(aVoid -> callback.onSuccess())
             .addOnFailureListener(e -> callback.onFailure(e.getMessage()));
 
+  }
+
+  void inputComponent(int currentStorage, int maxStorage, String category) {
+    Preconditions.checkNotNull(app, "Firebase App was null");
+    List<Hotspot> hotspotList = new ArrayList<>();
+
+    ValueEventListener valueEventListener = new ValueEventListener() {
+      @Override
+      public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+
+          String keyString = snapshot.getKey();
+
+          long keyLong = 0;
+          if(keyString != null){
+            keyLong = Long.parseLong(keyString);
+          }
+
+          String locationName = snapshot.child(KEY_LOCATION_NAME).getValue(String.class);
+          String categoryName = snapshot.child(KEY_CATEGORY).getValue(String.class);
+          Integer currentStorage = snapshot.child(KEY_CURRENT_STORAGE).getValue(int.class);
+          Integer maxStorage = snapshot.child(KEY_MAX_STORAGE).getValue(int.class);
+
+          int finalCurrentStorage = Objects.requireNonNullElse(currentStorage, 0);
+          int finalMaxStorage = Objects.requireNonNullElse(maxStorage, 0);
+
+          Hotspot hotspot = new Hotspot(keyLong, locationName, categoryName, finalCurrentStorage,finalMaxStorage);
+          hotspotList.add(hotspot);
+        }
+
+        if (hotspotList != null) {
+          Log.d("COMP3018", "Here: " + hotspotList.size());
+        } else {
+          Log.d("COMP3018", "hotspotList is null");
+        }
+        Log.d("COMP3018", "Hotspot size: "+ hotspotList.size());
+
+        Log.d("COMP3018", hotspotList.get(0).getCategory());
+
+        boolean isCategoryWithSpace = false;
+
+        for (int i=0; i<hotspotList.size();i++){
+          Log.d("COMP3018",""+ i);
+          Hotspot hotspot = hotspotList.get(i);
+          if(hotspot.getCategory().equals(category)){
+            if(hotspot.getCurrentStorage() != hotspot.getMaxStorage()){
+              isCategoryWithSpace = true;
+              Hotspot updatedHotspot = new Hotspot(hotspot.getCode(), hotspot.getName(), hotspot.getCategory(),
+                      hotspot.getCurrentStorage()+1, hotspot.getMaxStorage());
+              hotspotList.set(i, updatedHotspot);
+            }
+          }
+        }
+        Log.d("COMP3018","boolean is category with space: "+ isCategoryWithSpace);
+        if(isCategoryWithSpace){
+          if (hotspotListRef != null) {
+            hotspotListRef.setValue(hotspotList)
+                    .addOnSuccessListener(aVoid -> {
+                      Log.d("COMP3018", "On Success of Changing");
+                    })
+                    .addOnFailureListener(e -> {
+                      Log.d("COMP3018", "On Failure");
+                    });
+          }
+        }
+
+
+        boolean successUpload = false;
+        if(!isCategoryWithSpace ){
+
+          for (int i=0; i<hotspotList.size();i++) {
+            Hotspot hotspot = hotspotList.get(i);
+            if(hotspot.getCategory().isEmpty()){
+              Log.d("COMP3018","Do I get here in the hotspot category is empty ");
+              Hotspot updatedHotspot = new Hotspot(hotspot.getCode(), hotspot.getName(), category, currentStorage, maxStorage);
+              hotspotList.set(i, updatedHotspot);
+              successUpload = true;
+            }
+          }
+          if(successUpload){
+            if (hotspotListRef != null) {
+              hotspotListRef.setValue(hotspotList)
+                      .addOnSuccessListener(aVoid -> {
+                        Log.d("COMP3018", "On Success of Changing");
+                      })
+                      .addOnFailureListener(e -> {
+                        Log.d("COMP3018", "On Failure");
+                      });
+            }
+          }
+        }
+      }
+
+      @Override
+      public void onCancelled(@NonNull DatabaseError error) {
+        Log.d("Hotspot", "Failed to read value.", error.toException());
+      }
+    };
+
+    hotspotListRef.addValueEventListener(valueEventListener);
   }
 
   interface HotspotListListener {

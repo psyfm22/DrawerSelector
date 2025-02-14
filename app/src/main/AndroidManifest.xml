@@ -30,7 +30,10 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="false"
         tools:ignore="GoogleAppIndexingWarning">
-
+        <activity
+            android:name=".ComponentAssignActivity"
+            android:exported="false"
+            android:theme="@style/Theme.AppCompat" />
         <activity
             android:name=".CustomCaptureActivity"
             android:exported="false" />
@@ -48,16 +51,16 @@
         <activity
             android:name=".SettingsActivity"
             android:exported="false"
-            android:theme="@style/Theme.AppCompat"/>
+            android:theme="@style/Theme.AppCompat" />
         <activity
             android:name=".ResolveLobbyActivity"
             android:exported="false"
-            android:theme="@style/Theme.AppCompat"/>
+            android:theme="@style/Theme.AppCompat" />
         <activity
             android:name=".CloudAnchorActivity"
             android:configChanges="orientation|screenSize"
             android:exported="true"
-            android:theme="@style/Theme.AppCompat.NoActionBar"/>
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
 
         <meta-data
             android:name="com.google.ar.core"
@@ -66,4 +69,5 @@
             android:name="com.google.android.ar.API_KEY"
             android:value="AIzaSyAEcxj-QuWQ9tJm4ArzTw49grA0v4OsnJA" />
     </application>
+
 </manifest>

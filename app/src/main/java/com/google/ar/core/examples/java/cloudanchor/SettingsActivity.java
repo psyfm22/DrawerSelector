@@ -240,7 +240,7 @@ public class SettingsActivity extends AppCompatActivity implements SpinnerAdapte
     public void onItemDeleted(int position) {
         Hotspot hotspot = hotspotList.get(position);
 
-        firebaseManager.removeHotspot(hotspot.code(), new FirebaseManager.DeleteCallback() {
+        firebaseManager.removeHotspot(hotspot.getCode(), new FirebaseManager.DeleteCallback() {
             @Override
             public void onSuccess() {
                 hotspotList.remove(position);
@@ -324,7 +324,7 @@ public class SettingsActivity extends AppCompatActivity implements SpinnerAdapte
                 List<String> nameList = new ArrayList<>();
 
                 for (Hotspot hotspot : hotspotList) {
-                    nameList.add(hotspot.name());
+                    nameList.add(hotspot.getName());
                 }
 
                 SpinnerAdapterWithDelete adapter = new SpinnerAdapterWithDelete(SettingsActivity.this, nameList, SettingsActivity.this);

@@ -31,11 +31,17 @@ public class MainActivity extends AppCompatActivity {
 
         //Assign and initialise the buttons
         Button confirmLocationB = findViewById(R.id.mainConfirmLocationB),
-                closeB = findViewById(R.id.mainCloseB);
+                closeB = findViewById(R.id.mainCloseB),
+                openAssignB = findViewById(R.id.mainFindComponentB);
 
         //Add the listeners
         confirmLocationB.setOnClickListener(view -> startQRCodeScan());
         closeB.setOnClickListener(view -> finish());
+
+        openAssignB.setOnClickListener(view -> {
+            Intent intent = ComponentAssignActivity.newIntent(MainActivity.this);
+            startActivity(intent);
+        });
     }
 
     /**

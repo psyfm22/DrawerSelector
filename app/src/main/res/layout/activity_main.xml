@@ -58,12 +58,21 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/mainDescriptionTV" />
 
+    <Button
+        android:id="@+id/mainFindComponentB"
+        android:layout_width="130dp"
+        android:layout_height="55dp"
+        android:layout_marginTop="25dp"
+        android:text="Component Finder"
+        android:theme="@style/AppButtonTheme"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/mainConfirmLocationB" />
+
     <android.widget.TextSwitcher
         android:id="@+id/textSwitcher"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        />
-
+        android:layout_height="wrap_content" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
