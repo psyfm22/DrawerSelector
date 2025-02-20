@@ -60,8 +60,6 @@ public class ComponentAssignActivity extends AppCompatActivity {
             queryNexarClient(component, loadComponentQueryB);
         });
 
-        //We want to get data returned from the activity as it will allow us to reset the spinner if
-        //there have been deletions in the firebase storage
         startActivityForResultLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
@@ -98,6 +96,7 @@ public class ComponentAssignActivity extends AppCompatActivity {
                     intent.putExtra("PLACING_ANCHOR", false);
                     intent.putExtra("ANCHOR_NAME", finalCategory);
                     intent.putExtra("HOTSPOT_CODE", key);
+                    intent.putExtra("DECREASING_CODE", false);
                     startActivityForResultLauncher.launch(intent);
                 }
 

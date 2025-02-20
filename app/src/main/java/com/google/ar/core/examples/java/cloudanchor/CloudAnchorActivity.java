@@ -153,6 +153,7 @@ public class CloudAnchorActivity extends AppCompatActivity
   private Long roomCode = 0L;
   private Image currentImage;
   private boolean shouldIScan = false;
+  private boolean isDecreasing = false;
 
 
 
@@ -167,9 +168,8 @@ public class CloudAnchorActivity extends AppCompatActivity
     Intent intent = getIntent();
     isHosting = intent.getBooleanExtra("PLACING_ANCHOR", true);
     anchorName = intent.getStringExtra("ANCHOR_NAME");
-    Log.d("COMP3018","Here is anchor name: "+ anchorName);
     roomCode = intent.getLongExtra("HOTSPOT_CODE", 1);
-
+    isDecreasing = intent.getBooleanExtra("DECREASING_CODE", false);
 
     // Set up touch listener.
     gestureDetector =
@@ -602,7 +602,7 @@ public class CloudAnchorActivity extends AppCompatActivity
 
     Intent resultIntent = new Intent();
     resultIntent.putExtra("ACTIVITY_TYPE", "CLOUD_ANCHOR_ACTIVITY");
-    setResult(RESULT_CANCELED, resultIntent);
+    setResult(RESULT_OK, resultIntent);
     finish();
   }
   /** Resets the mode of the app to its initial state and removes the anchors. */
@@ -627,7 +627,7 @@ public class CloudAnchorActivity extends AppCompatActivity
           Preconditions.checkNotNull(resolveListener, "The resolve listener cannot be null.");
           cloudManager.resolveCloudAnchor(
               cloudAnchorId, resolveListener, SystemClock.uptimeMillis());
-        });
+        }, isDecreasing);
   }
 
   /**

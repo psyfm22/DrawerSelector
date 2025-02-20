@@ -147,42 +147,61 @@ class FirebaseManager {
    * Registers a new listener for the given room code. The listener is invoked whenever the data for
    * the room code is changed.
    */
-  void registerNewListenerForRoom(Long roomCode, CloudAnchorIdListener listener) {
+  void registerNewListenerForRoom(Long roomCode, CloudAnchorIdListener listener, boolean isDecreasing) {
     Preconditions.checkNotNull(app, "Firebase App was null");
     clearRoomListener();
     currentRoomRef = hotspotListRef.child(String.valueOf(roomCode));
 
     currentRoomListener = new ValueEventListener() {
-              @Override
-              public void onDataChange(DataSnapshot dataSnapshot) {
-                Object valObj = dataSnapshot.child(KEY_ANCHOR_ID).getValue();
-                if (valObj != null) {
-                  String anchorId = String.valueOf(valObj);
-                  if (!anchorId.isEmpty()) {
-                    listener.onNewCloudAnchorId(anchorId);
-                    Object currentStorageObj = dataSnapshot.child(KEY_CURRENT_STORAGE).getValue();
-                    if (currentStorageObj != null) {
-                      Long currentStorage = (Long) currentStorageObj;
-                      currentStorage--;
-                      Map<String, Object> updates = new HashMap<>();
-                      updates.put(KEY_CURRENT_STORAGE, currentStorage);
-                      currentRoomRef.removeEventListener(currentRoomListener);
-                      currentRoomRef.updateChildren(updates).addOnSuccessListener(aVoid -> {
-                                Log.d(TAG, "Hotspot updated successfully.");
-                              })
-                              .addOnFailureListener(e -> {
-                                Log.e(TAG, "Error updating hotspot "+ e.getMessage());
-                              });
-                    }
-                  }
+      @Override
+      public void onDataChange(DataSnapshot dataSnapshot) {
+        Object valObj = dataSnapshot.child(KEY_ANCHOR_ID).getValue();
+        if (valObj != null) {
+          String anchorId = String.valueOf(valObj);
+          if (!anchorId.isEmpty()) {
+            listener.onNewCloudAnchorId(anchorId);
+
+
+            if (isDecreasing) {
+              Object currentStorageObj = dataSnapshot.child(KEY_CURRENT_STORAGE).getValue();
+              if (currentStorageObj != null) {
+                Long currentStorage = (Long) currentStorageObj;
+                currentStorage--;
+
+                if (currentStorage == 0) {
+                  Map<String, Object> updates = new HashMap<>();
+                  updates.put(KEY_CURRENT_STORAGE, 0);
+                  updates.put(KEY_MAX_STORAGE, 0);
+                  updates.put(KEY_CATEGORY, "");
+                  currentRoomRef.removeEventListener(currentRoomListener);
+                  currentRoomRef.updateChildren(updates).addOnSuccessListener(aVoid -> {
+                            Log.d(TAG, "Hotspot updated successfully.");
+                          })
+                          .addOnFailureListener(e -> {
+                            Log.e(TAG, "Error updating hotspot " + e.getMessage());
+                          });
+                } else {
+                  Map<String, Object> updates = new HashMap<>();
+                  updates.put(KEY_CURRENT_STORAGE, currentStorage);
+                  currentRoomRef.removeEventListener(currentRoomListener);
+                  currentRoomRef.updateChildren(updates).addOnSuccessListener(aVoid -> {
+                            Log.d(TAG, "Hotspot updated successfully.");
+                          })
+                          .addOnFailureListener(e -> {
+                            Log.e(TAG, "Error updating hotspot " + e.getMessage());
+                          });
                 }
               }
+            }
+          }
+        }
+      }
 
-              @Override
-              public void onCancelled(DatabaseError databaseError) {
-                Log.w(TAG, "The Firebase operation was cancelled.", databaseError.toException());
-              }
-            };
+      @Override
+      public void onCancelled(DatabaseError databaseError) {
+        Log.w(TAG, "The Firebase operation was cancelled.", databaseError.toException());
+      }
+    };
     currentRoomRef.addValueEventListener(currentRoomListener);
   }
 

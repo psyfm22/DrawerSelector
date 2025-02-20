@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -12,6 +13,8 @@ import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
@@ -32,6 +35,7 @@ public class ResolveLobbyActivity extends AppCompatActivity {
     private DisplayRotationHelper displayRotationHelper;
     private AlertDialog alertDialogue;
     private String drawName = "";
+    private ActivityResultLauncher<Intent> startActivityForResultLauncher;
 
     static Intent newIntent(Context packageContext) {
         return new Intent(packageContext, ResolveLobbyActivity.class);
@@ -65,8 +69,23 @@ public class ResolveLobbyActivity extends AppCompatActivity {
         //Initialise the draw position view model to keep track of the user selection
         drawPositionViewModel = new ViewModelProvider(this).get(DrawPositionViewModel.class);
 
+
+        startActivityForResultLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == RESULT_OK) {
+                        List<String> emptyList = new ArrayList<>();
+
+                        SpinnerAdapter adapter = new SpinnerAdapter(ResolveLobbyActivity.this, emptyList);
+                        spinner.setAdapter(adapter);
+                        loadFromFirebase();
+                    }
+                }
+        );
+
         //Set the listener when viewing and anchor button
         viewAnchorB.setOnClickListener(v -> {
+            viewAnchorB.setEnabled(false);
             //Get the current selected position
             int selectedPosition = spinner.getSelectedItemPosition();
 
@@ -81,8 +100,10 @@ public class ResolveLobbyActivity extends AppCompatActivity {
                 intent.putExtra("PLACING_ANCHOR", false);
                 intent.putExtra("ANCHOR_NAME", drawName);
                 intent.putExtra("HOTSPOT_CODE", selectedHotspot.getCode());
-                startActivity(intent);
+                intent.putExtra("DECREASING_CODE", true);
+                startActivityForResultLauncher.launch(intent);
             } else {
+                viewAnchorB.setEnabled(true);
                 showAlertDialogue(getString(R.string.alert_error_title), getString(R.string.resolve_fail_anchor_description));
             }
         });
@@ -210,7 +231,6 @@ public class ResolveLobbyActivity extends AppCompatActivity {
         descriptionTV.setText(description);
 
         okayB.setOnClickListener(view2 -> alertDialogue.dismiss());
-
 
         alertTitleTV.setText(title);
 
