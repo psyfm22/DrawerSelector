@@ -2,15 +2,20 @@ package com.google.ar.core.examples.java.cloudanchor;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.ar.core.examples.java.cloudanchor.nexusapi.NexarClient;
@@ -70,11 +75,10 @@ public class ComponentAssignActivity extends AppCompatActivity {
 
         assignDrawerB.setOnClickListener(v -> {
             assignDrawerB.setEnabled(false);
-            Log.d("COMP3018", "Button has been called");
 
             String inputComponent = loadedComponentET.getText().toString().trim();
 
-            if(inputComponent.isEmpty()){
+            if (inputComponent.isEmpty()) {
                 assignDrawerB.setEnabled(true);
                 return;
             }
@@ -98,20 +102,19 @@ public class ComponentAssignActivity extends AppCompatActivity {
 
                 @Override
                 public void onNoDrawers() {
-                    Log.d("COMP3018", "No Drawers Found");
+                    showAlertDialogue("No Available Drawers");
                     assignDrawerB.setEnabled(true);
                 }
 
                 @Override
                 public void onFailure(String errorMessage) {
-                    Log.d("COMP3018", "Here is the error message");
+                    showAlertDialogue(errorMessage);
                     assignDrawerB.setEnabled(true);
                 }
             });
         });
 
     }
-
 
     @NonNull
     private NexarClient getNexarClient(Button button) {
@@ -135,7 +138,7 @@ public class ComponentAssignActivity extends AppCompatActivity {
         return nexarClient;
     }
 
-    private void queryNexarClient(String component, Button loadComponentQueryB){
+    private void queryNexarClient(String component, Button loadComponentQueryB) {
         nexarClient.Query(component, new NexarClient.QueryCallback() {
             @Override
             public void QueryFound(String categoryName) {
@@ -154,12 +157,12 @@ public class ComponentAssignActivity extends AppCompatActivity {
         });
     }
 
-    private String toUppercase(String input){
+    private String toUppercase(String input) {
         //This is the array of words
         String[] words = input.split("\\s+");
         StringBuilder capitalisedName = new StringBuilder();
 
-        for(int i=0;i<words.length;i++){
+        for (int i = 0; i < words.length; i++) {
             if (i > 0) {
                 capitalisedName.append(" ");
             }
@@ -167,5 +170,39 @@ public class ComponentAssignActivity extends AppCompatActivity {
             capitalisedName.append(cap);
         }
         return capitalisedName.toString();
+    }
+
+    /**
+     * showAlertDialogue,
+     * Builds the alert dialogue and shows it to the user
+     *
+     * @param description string with the description of the alert
+     */
+    private void showAlertDialogue(String description) {
+        View view = LayoutInflater.from(ComponentAssignActivity
+                .this).inflate(R.layout.alert_dialogue, null, false);
+
+        TextView alertTitleTV = view.findViewById(R.id.alertTitleTV);
+        Button okayB = view.findViewById(R.id.alertDoneB);
+        TextView descriptionTV = view.findViewById(R.id.alertDescriptionTV);
+
+        descriptionTV.setText(description);
+
+        alertTitleTV.setText("Error");
+
+        //Initialise the builder and the alertDialog
+        AlertDialog.Builder builder = new AlertDialog.Builder(ComponentAssignActivity.this);
+        builder.setView(view);
+        AlertDialog alertDialogue = builder.create();
+
+        okayB.setOnClickListener(view2 -> alertDialogue.dismiss());
+
+        if (alertDialogue.getWindow() != null) {
+            alertDialogue.getWindow().setBackgroundDrawable(new ColorDrawable(0));
+        }
+
+        //Show the actual alert
+        alertDialogue.show();
+
     }
 }
