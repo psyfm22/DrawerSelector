@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -45,7 +46,7 @@ public class ComponentAssignActivity extends AppCompatActivity {
         EditText inputComponentET = findViewById(R.id.assignEnterComponentET);
         loadedComponentET = findViewById(R.id.assignLoadedComponentET);
         assignDrawerB = findViewById(R.id.assignDrawerB);
-        Button closeB = findViewById(R.id.assignCloseB);
+        ImageButton closeB = findViewById(R.id.assignReturnIB);
 
         closeB.setOnClickListener(v -> finish());
 
