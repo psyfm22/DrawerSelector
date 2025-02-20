@@ -68,7 +68,7 @@ public class ComponentAssignActivity extends AppCompatActivity {
             String capitalisedInput = toUppercase(inputComponent);
 
 
-            firebaseManager.inputComponent(0, 30, capitalisedInput);
+//            firebaseManager.inputComponent(30, capitalisedInput);
         });
 
     }

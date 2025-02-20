@@ -306,33 +306,58 @@ class FirebaseManager {
 
   }
 
-  void inputComponent(int currentStorage, int maxStorage, String category) {
+  void inputComponent(int inputMaxStorage , String category, final NewComponentCallback newComponentCallback) {
     Preconditions.checkNotNull(app, "Firebase App was null");
+
+    final long[] key = {0};
+    final int[] foundStorage = {0};
+    final boolean[] categoryFound = {false};
 
     ValueEventListener valueEventListener = new ValueEventListener() {
       @Override
       public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-        long keyLong = 0;
         for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-
           String keyString = snapshot.getKey();
 
+          long currentKey = 0;
+          
           if(keyString != null){
-            keyLong = Long.parseLong(keyString);
-            Log.d("COMP3018", "  "+ keyLong);
+            currentKey = Long.parseLong(keyString);
           }
+
           String categoryName = snapshot.child(KEY_CATEGORY).getValue(String.class);
+          Integer currentStorage = snapshot.child(KEY_CURRENT_STORAGE).getValue(int.class);
+
+          if(currentStorage == null){
+            Log.d("COMP3018", "Current Storage was Null");
+            newComponentCallback.onFailure("Current Storage Was Null!");
+            return;
+          }
+          Integer maxStorage = snapshot.child(KEY_MAX_STORAGE).getValue(int.class);
+          if(maxStorage == null){
+            newComponentCallback.onFailure("Max Storage Was Null!");
+            return;
+          }
 
           if(categoryName != null){
-            if(categoryName.isEmpty()){
-              uploadComponent(keyLong,currentStorage,maxStorage,category);
+            if(categoryName.equals(category) && currentStorage < maxStorage){
+              categoryFound[0] = true;
+              key[0] = currentKey;
+              foundStorage[0] = currentStorage;
               hotspotListRef.removeEventListener(this);
               return;
-
+            }else if(key[0] != 0 &&  categoryName.isEmpty()){
+              key[0] = currentKey;
             }
           }
+        }
 
+
+        if(categoryFound[0]){
+          //Add one to the value
+          incrementDrawerCounter(key[0], foundStorage[0], newComponentCallback);
+        }else{
+          uploadComponent(key[0], 0, inputMaxStorage, category, newComponentCallback);
         }
       }
 
@@ -345,14 +370,17 @@ class FirebaseManager {
     hotspotListRef.addValueEventListener(valueEventListener);
   }
 
-  void uploadComponent(long key, int currentStorage, int maxStorage, String category){
+  void uploadComponent(long key, int currentStorage, int maxStorage, String category,
+                       NewComponentCallback newComponentCallback){
     Map<String, Object> updates = new HashMap<>();
+
     updates.put(KEY_CATEGORY, category);
     updates.put(KEY_CURRENT_STORAGE, currentStorage);
     updates.put(KEY_MAX_STORAGE, maxStorage);
 
     if (hotspotListRef == null) {
       Log.d(TAG, "Firebase reference for hotspot list is null!");
+      newComponentCallback.onFailure("Firebase reference for hotspot list is null!");
       return;
     }
 
@@ -360,13 +388,37 @@ class FirebaseManager {
 
     hotspotRef.updateChildren(updates).addOnSuccessListener(aVoid -> {
               Log.d(TAG, "Hotspot updated successfully.");
+              newComponentCallback.onSuccess(key);
             })
             .addOnFailureListener(e -> {
               Log.e(TAG, "Error updating hotspot "+ e.getMessage());
+              newComponentCallback.onFailure(e.getMessage());
             });
   }
 
-  interface HotspotListListener {
+  void incrementDrawerCounter(long key, int currentStorage, NewComponentCallback newComponentCallback) {
+    Map<String, Object> updates = new HashMap<>();
+    updates.put(KEY_CURRENT_STORAGE, currentStorage+1);
+
+    if (hotspotListRef == null) {
+      Log.d(TAG, "Firebase reference for hotspot list is null!");
+      newComponentCallback.onFailure("Firebase reference for hotspot list is null!");
+      return;
+    }
+
+    DatabaseReference hotspotRef = hotspotListRef.child(String.valueOf(key));
+
+    hotspotRef.updateChildren(updates).addOnSuccessListener(aVoid -> {
+              Log.d(TAG, "Hotspot updated successfully.");
+              newComponentCallback.onSuccess(key);
+            })
+            .addOnFailureListener(e -> {
+              Log.e(TAG, "Error updating hotspot "+ e.getMessage());
+              newComponentCallback.onFailure(e.getMessage());
+            });
+  }
+
+    interface HotspotListListener {
     void onHotspotListFetched(List<Hotspot> displayNames);
 
     void onError(DatabaseError error);
@@ -389,6 +441,11 @@ class FirebaseManager {
 
   interface DeleteAllCallback {
     void onSuccess();
+    void onFailure(String errorMessage);
+  }
+
+  interface NewComponentCallback{
+    void onSuccess(long key);
     void onFailure(String errorMessage);
   }
 }
