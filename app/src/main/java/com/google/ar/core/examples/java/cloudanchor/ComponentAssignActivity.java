@@ -39,9 +39,7 @@ public class ComponentAssignActivity extends AppCompatActivity {
         assignDrawerB = findViewById(R.id.assignDrawerB);
         Button closeB = findViewById(R.id.assignCloseB);
 
-        closeB.setOnClickListener(v ->{
-            finish();
-        });
+        closeB.setOnClickListener(v -> finish());
 
         nexarClient = getNexarClient(loadComponentQueryB);
 

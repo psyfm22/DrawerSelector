@@ -6,7 +6,7 @@
     tools:context="com.google.ar.core.examples.java.persistentcloudanchor.SelectActivity">
 
     <ImageButton
-        android:id="@+id/lobbyReturnIB"
+        android:id="@+id/resolveLobbyReturnIB"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_marginStart="6dp"
@@ -17,18 +17,8 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/arrow" />
 
-    <ImageView
-        android:id="@+id/lobbySettingsIV"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="6dp"
-        app:layout_constraintStart_toEndOf="@+id/lobbyReturnIB"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/settings" />
-
-
     <TextView
-        android:id="@+id/lobbyTitleTV"
+        android:id="@+id/resolveLobbyTitleTV"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingTop="70dp"
@@ -41,7 +31,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/lobbyDescriptionTV"
+        android:id="@+id/resolveLobbyDescriptionTV"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
@@ -52,10 +42,10 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/lobbyAnchorsS" />
+        app:layout_constraintTop_toBottomOf="@+id/resolveLobbyAnchorsS" />
 
     <Button
-        android:id="@+id/lobbyViewB"
+        android:id="@+id/resolveLobbyViewB"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/search"
@@ -64,10 +54,10 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/lobbyDescriptionTV" />
+        app:layout_constraintTop_toBottomOf="@+id/resolveLobbyDescriptionTV" />
 
     <Spinner
-        android:id="@+id/lobbyAnchorsS"
+        android:id="@+id/resolveLobbyAnchorsS"
         style="@style/Widget.AppCompat.Spinner.Underlined"
         android:layout_width="340dp"
         android:layout_height="107dp"
@@ -75,7 +65,7 @@
         android:spinnerMode="dialog"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/lobbyTitleTV" />
+        app:layout_constraintTop_toBottomOf="@+id/resolveLobbyTitleTV" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

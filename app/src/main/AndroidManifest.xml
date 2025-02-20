@@ -31,6 +31,10 @@
         android:usesCleartextTraffic="false"
         tools:ignore="GoogleAppIndexingWarning">
         <activity
+            android:name=".MainLobbyActivity"
+            android:exported="false"
+            android:theme="@style/Theme.AppCompat"  />
+        <activity
             android:name=".ComponentAssignActivity"
             android:exported="false"
             android:theme="@style/Theme.AppCompat" />

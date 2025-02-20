@@ -8,9 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -33,14 +31,15 @@ import java.util.List;
 public class ResolveLobbyActivity extends AppCompatActivity {
     private Spinner spinner;
     private List<Hotspot> hotspotList;
-    private FirebaseManager firebaseManager;
     private DisplayRotationHelper displayRotationHelper;
     private AlertDialog alertDialogue;
     private ActivityResultLauncher<Intent> startActivityForResultLauncher;
     private String drawName = "";
+
     static Intent newIntent(Context packageContext) {
         return new Intent(packageContext, ResolveLobbyActivity.class);
     }
+
     private DrawPositionViewModel drawPositionViewModel;
     private Button viewAnchorB;
 
@@ -59,10 +58,9 @@ public class ResolveLobbyActivity extends AppCompatActivity {
         displayRotationHelper = new DisplayRotationHelper(this);
 
         //Initialise the UI Elements
-        viewAnchorB = findViewById(R.id.lobbyViewB);
-        ImageButton backIB = findViewById(R.id.lobbyReturnIB);
-        ImageView settingsIV = findViewById(R.id.lobbySettingsIV);
-        spinner = findViewById(R.id.lobbyAnchorsS);
+        viewAnchorB = findViewById(R.id.resolveLobbyViewB);
+        ImageButton backIB = findViewById(R.id.resolveLobbyReturnIB);
+        spinner = findViewById(R.id.resolveLobbyAnchorsS);
 
         //Disable the button
         viewAnchorB.setEnabled(false);
@@ -77,13 +75,6 @@ public class ResolveLobbyActivity extends AppCompatActivity {
                 result -> {
                     if (result.getResultCode() == RESULT_OK) {
                         Intent data = result.getData();
-                        if(data != null){
-                            String activityType = data.getStringExtra("ACTIVITY_TYPE");
-                            if (activityType != null && activityType.equals("SETTINGS_ACTIVITY")){
-                                viewAnchorB.setEnabled(false);
-                                loadFromFirebase();
-                            }
-                        }
 
                     }
                 }
@@ -95,7 +86,7 @@ public class ResolveLobbyActivity extends AppCompatActivity {
             int selectedPosition = spinner.getSelectedItemPosition();
 
             //Only Run this code if there is a valid selection from the spinner
-            if(selectedPosition > -1){
+            if (selectedPosition > -1) {
                 Hotspot selectedHotspot = hotspotList.get(selectedPosition);
                 drawName = selectedHotspot.getName();
 
@@ -106,14 +97,11 @@ public class ResolveLobbyActivity extends AppCompatActivity {
                 intent.putExtra("ANCHOR_NAME", drawName);
                 intent.putExtra("HOTSPOT_CODE", selectedHotspot.getCode());
                 startActivityForResultLauncher.launch(intent);
-            }else{
-                showAlertDialogue(getString(R.string.alert_error_title),getString(R.string.resolve_fail_anchor_description), false);
+            } else {
+                showAlertDialogue(getString(R.string.alert_error_title), getString(R.string.resolve_fail_anchor_description));
             }
         });
 
-        //When the settings button is clicked we need to show the alert dialogue with the password
-        //for the user to enter
-        settingsIV.setOnClickListener(v -> showAlertDialogue(getString(R.string.password_alert_title), "", true));
 
         //Set on click listener to return from this activity
         backIB.setOnClickListener(v -> finish());
@@ -140,19 +128,16 @@ public class ResolveLobbyActivity extends AppCompatActivity {
     public void onPause() {
         super.onPause();
         displayRotationHelper.onPause();
-        if(alertDialogue != null){
-            alertDialogue.dismiss();
-        }
     }
 
     /**
      * loadFromFirebase,
      * Load the list of hotspots from the firebase storage and places this list in the spinner
      */
-    private void loadFromFirebase(){
+    private void loadFromFirebase() {
 
         //Initialise the firebase manage and call the get hotspot list method passing it this listener
-        firebaseManager = new FirebaseManager(this);
+        FirebaseManager firebaseManager = new FirebaseManager(this);
         firebaseManager.getHotspotList(new FirebaseManager.HotspotListListener() {
             /**
              * onHotspotListFetched,
@@ -181,9 +166,9 @@ public class ResolveLobbyActivity extends AppCompatActivity {
                 //observe draw position view model and when it changes set the spinner to that
                 //integer value
                 drawPositionViewModel.getPosition().observe(ResolveLobbyActivity.this, integer -> {
-                    if(nameList.size()>integer){
+                    if (nameList.size() > integer) {
                         spinner.setSelection(integer);
-                    }else{
+                    } else {
                         spinner.setSelection(0);
                     }
                 });
@@ -213,7 +198,7 @@ public class ResolveLobbyActivity extends AppCompatActivity {
              */
             @Override
             public void onError(DatabaseError error) {
-                showAlertDialogue(getString(R.string.alert_error_title),getString(R.string.resolve_failed_loading_description), false);
+                showAlertDialogue(getString(R.string.alert_error_title), getString(R.string.resolve_failed_loading_description));
             }
         });
     }
@@ -222,98 +207,25 @@ public class ResolveLobbyActivity extends AppCompatActivity {
      * showAlertDialogue,
      * Builds the alert dialogue and shows it to the user
      *
-     * @param title string with the title of the alert
-     * @param description string with the description of the alert
-     * @param passwordEnter boolean value that if true we show the password alert to the user and if
-     *                      not true we show the user a generic alert
+     * @param title         string with the title of the alert
+     * @param description   string with the description of the alert
      */
-    private void showAlertDialogue(String title, String description, boolean passwordEnter) {
+    private void showAlertDialogue(String title, String description) {
         View view;
         TextView alertTitleTV;
 
         //If passwordEnter is true the user need to use the password enter alert
-        if(passwordEnter){
-            view = LayoutInflater.from(ResolveLobbyActivity.this).inflate(R.layout.password_alert_dialogue, null, false);
-            StringBuilder enteredCode = new StringBuilder();
 
-            //Initialise and fine the UI Elements for the alert
-            alertTitleTV = view.findViewById(R.id.passwordAlertTitleTV);
-            EditText enterPasswordET = view.findViewById(R.id.passwordAlertET);
+        //Initialise the layouts and views
+        view = LayoutInflater.from(ResolveLobbyActivity.this).inflate(R.layout.alert_dialogue, null, false);
+        alertTitleTV = view.findViewById(R.id.alertTitleTV);
+        Button okayB = view.findViewById(R.id.alertDoneB);
+        TextView descriptionTV = view.findViewById(R.id.alertDescriptionTV);
 
-            Button[] keyPadButtons = new Button[10];
-            keyPadButtons[0] = view.findViewById(R.id.passwordAlertZeroB);
-            keyPadButtons[1] = view.findViewById(R.id.passwordAlertOneB);
-            keyPadButtons[2] = view.findViewById(R.id.passwordAlertTwoB);
-            keyPadButtons[3] = view.findViewById(R.id.passwordAlertThreeB);
-            keyPadButtons[4] = view.findViewById(R.id.passwordAlertFourB);
-            keyPadButtons[5] = view.findViewById(R.id.passwordAlertFiveB);
-            keyPadButtons[6] = view.findViewById(R.id.passwordAlertSixB);
-            keyPadButtons[7] = view.findViewById(R.id.passwordAlertSevenB);
-            keyPadButtons[8] = view.findViewById(R.id.passwordAlertEightB);
-            keyPadButtons[9] = view.findViewById(R.id.passwordAlertNineB);
+        descriptionTV.setText(description);
 
-            Button enterB = view.findViewById(R.id.passwordAlertEnterB);
-            Button deleteB = view.findViewById(R.id.passwordAlertDeleteB);
+        okayB.setOnClickListener(view2 -> alertDialogue.dismiss());
 
-            //Add an on click listener for each key pad button, they will add a number to the string
-            //and set that set text into the edittext. Cap the length at 4.
-            for(int i=0;i<keyPadButtons.length;i++){
-                int finalI = i;
-                keyPadButtons[finalI].setOnClickListener(v -> {
-                    if(enteredCode.length()<4){
-                        String number = String.valueOf(finalI);
-                        enteredCode.append(number);
-                        enterPasswordET.setText(enteredCode.toString());
-                    }
-                });
-            }
-
-            //delete click listener, as long as the string isn't empty then delete the last character
-            //in the string
-            deleteB.setOnClickListener(v -> {
-                if(enteredCode.length()>0){
-                    enteredCode.deleteCharAt(enteredCode.length() - 1);
-                    enterPasswordET.setText(enteredCode.toString());
-                }
-            });
-
-            //enter b on click listener, first disable the button and then try check the passcode
-            enterB.setOnClickListener(view1 -> {
-                enterB.setEnabled(false);
-                String passwordEntered = enterPasswordET.getText().toString();
-
-                firebaseManager.checkPasscode(passwordEntered, new FirebaseManager.PasscodeCallback() {
-                    @Override
-                    public void onSuccess() {
-                        alertDialogue.dismiss();
-                        Intent intent = SettingsActivity.newIntent(ResolveLobbyActivity.this);
-                        startActivityForResultLauncher.launch(intent);
-                    }
-
-                    @Override
-                    public void onPasswordUploadFailure(String errorMessage) {
-                        showAlertDialogue(getString(R.string.alert_error_title), getString(R.string.resolve_check_connection_description), false);
-                    }
-
-                    @Override
-                    public void onPasswordsDiffer() {
-                        alertDialogue.dismiss();
-                        showAlertDialogue(getString(R.string.alert_error_title), getString(R.string.resolve_incorrect_password_description), false);
-                    }
-                });
-            });
-
-        }else{
-            //Initialise the layouts and views
-            view = LayoutInflater.from(ResolveLobbyActivity.this).inflate(R.layout.alert_dialogue, null, false);
-            alertTitleTV = view.findViewById(R.id.alertTitleTV);
-            Button okayB = view.findViewById(R.id.alertDoneB);
-            TextView descriptionTV = view.findViewById(R.id.alertDescriptionTV);
-
-            descriptionTV.setText(description);
-
-            okayB.setOnClickListener(view2 -> alertDialogue.dismiss());
-        }
 
         alertTitleTV.setText(title);
 
@@ -329,4 +241,6 @@ public class ResolveLobbyActivity extends AppCompatActivity {
         //Show the actual alert
         alertDialogue.show();
     }
+
+
 }

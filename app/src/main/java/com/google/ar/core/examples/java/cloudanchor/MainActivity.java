@@ -31,17 +31,11 @@ public class MainActivity extends AppCompatActivity {
 
         //Assign and initialise the buttons
         Button confirmLocationB = findViewById(R.id.mainConfirmLocationB),
-                closeB = findViewById(R.id.mainCloseB),
-                openAssignB = findViewById(R.id.mainFindComponentB);
-
+                closeB = findViewById(R.id.mainCloseB);
         //Add the listeners
         confirmLocationB.setOnClickListener(view -> startQRCodeScan());
         closeB.setOnClickListener(view -> finish());
 
-        openAssignB.setOnClickListener(view -> {
-            Intent intent = ComponentAssignActivity.newIntent(MainActivity.this);
-            startActivity(intent);
-        });
     }
 
     /**
@@ -106,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
                 builder.setPositiveButton(getString(R.string.okay), (dialog, which) -> {
                     //When the dialogue is dismissed the the intent is launched
                     dialog.dismiss();
-                    Intent intent = ResolveLobbyActivity.newIntent(MainActivity.this);
+                    Intent intent = MainLobbyActivity.newIntent(MainActivity.this);
                     startActivity(intent);
                 });
                 //Create the alert dialog and show it. We set canceled on the outside false so that
