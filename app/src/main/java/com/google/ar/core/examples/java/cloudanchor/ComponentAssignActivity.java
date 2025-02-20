@@ -8,6 +8,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -20,8 +22,9 @@ public class ComponentAssignActivity extends AppCompatActivity {
     private NexarClient nexarClient;
     private EditText loadedComponentET;
     private Button assignDrawerB;
-    private static final int MAX_HOLDER = 30;
     private FirebaseManager firebaseManager;
+    private ActivityResultLauncher<Intent> startActivityForResultLauncher;
+
 
     static Intent newIntent(Context packageContext) {
         return new Intent(packageContext, ComponentAssignActivity.class);
@@ -51,6 +54,19 @@ public class ComponentAssignActivity extends AppCompatActivity {
             queryNexarClient(component, loadComponentQueryB);
         });
 
+        //We want to get data returned from the activity as it will allow us to reset the spinner if
+        //there have been deletions in the firebase storage
+        startActivityForResultLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == RESULT_OK) {
+                        Intent data = result.getData();
+
+                    }
+                }
+        );
+
+
         assignDrawerB.setOnClickListener(v -> {
             assignDrawerB.setEnabled(false);
             Log.d("COMP3018", "Button has been called");
@@ -66,7 +82,24 @@ public class ComponentAssignActivity extends AppCompatActivity {
             String capitalisedInput = toUppercase(inputComponent);
 
 
-//            firebaseManager.inputComponent(30, capitalisedInput);
+            String finalCategory = inputComponent;
+            firebaseManager.inputComponent(30, capitalisedInput, new FirebaseManager.NewComponentCallback() {
+                @Override
+                public void onSuccess(long key) {
+                    //We launch the cloud anchor activity, setting it in resolve mode, passing the anchor
+                    //name and the hotspot code
+                    Intent intent = CloudAnchorActivity.newIntent(ComponentAssignActivity.this);
+                    intent.putExtra("PLACING_ANCHOR", false);
+                    intent.putExtra("ANCHOR_NAME", finalCategory);
+                    intent.putExtra("HOTSPOT_CODE", key);
+                    startActivityForResultLauncher.launch(intent);
+                }
+
+                @Override
+                public void onFailure(String errorMessage) {
+                    Log.d("COMP3018", "Here is the error message");
+                }
+            });
         });
 
     }
