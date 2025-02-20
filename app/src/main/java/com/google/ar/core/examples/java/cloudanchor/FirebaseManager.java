@@ -341,12 +341,13 @@ class FirebaseManager {
 
           if(categoryName != null){
             if(categoryName.equals(category) && currentStorage < maxStorage){
+
               categoryFound[0] = true;
               key[0] = currentKey;
               foundStorage[0] = currentStorage;
               hotspotListRef.removeEventListener(this);
-              return;
-            }else if(key[0] != 0 &&  categoryName.isEmpty()){
+            }else if(key[0] == 0 &&  categoryName.isEmpty()){
+              Log.d("COMP3018", "In the key feature");
               key[0] = currentKey;
             }
           }
@@ -372,6 +373,7 @@ class FirebaseManager {
 
   void uploadComponent(long key, int currentStorage, int maxStorage, String category,
                        NewComponentCallback newComponentCallback){
+    Log.d("COMP3018","In Upload Component");
     Map<String, Object> updates = new HashMap<>();
 
     updates.put(KEY_CATEGORY, category);
@@ -397,6 +399,7 @@ class FirebaseManager {
   }
 
   void incrementDrawerCounter(long key, int currentStorage, NewComponentCallback newComponentCallback) {
+    Log.d("COMP3018","In Increment Counter");
     Map<String, Object> updates = new HashMap<>();
     updates.put(KEY_CURRENT_STORAGE, currentStorage+1);
 

@@ -154,7 +154,9 @@ public class ResolveLobbyActivity extends AppCompatActivity {
                 //Get the names of all the hotspots
                 List<String> nameList = new ArrayList<>();
                 for (Hotspot hotspot : hotspotList) {
-                    nameList.add(hotspot.getName());
+                    if(!hotspot.getCategory().isEmpty()){
+                        nameList.add(hotspot.getCategory());
+                    }
                 }
 
                 //Initialise the custom spinner adapter passing this activity as the context and
@@ -213,9 +215,7 @@ public class ResolveLobbyActivity extends AppCompatActivity {
     private void showAlertDialogue(String title, String description) {
         View view;
         TextView alertTitleTV;
-
-        //If passwordEnter is true the user need to use the password enter alert
-
+        
         //Initialise the layouts and views
         view = LayoutInflater.from(ResolveLobbyActivity.this).inflate(R.layout.alert_dialogue, null, false);
         alertTitleTV = view.findViewById(R.id.alertTitleTV);
