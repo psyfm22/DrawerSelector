@@ -12,8 +12,6 @@ import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
@@ -33,7 +31,6 @@ public class ResolveLobbyActivity extends AppCompatActivity {
     private List<Hotspot> hotspotList;
     private DisplayRotationHelper displayRotationHelper;
     private AlertDialog alertDialogue;
-    private ActivityResultLauncher<Intent> startActivityForResultLauncher;
     private String drawName = "";
 
     static Intent newIntent(Context packageContext) {
@@ -68,18 +65,6 @@ public class ResolveLobbyActivity extends AppCompatActivity {
         //Initialise the draw position view model to keep track of the user selection
         drawPositionViewModel = new ViewModelProvider(this).get(DrawPositionViewModel.class);
 
-        //We want to get data returned from the activity as it will allow us to reset the spinner if
-        //there have been deletions in the firebase storage
-        startActivityForResultLauncher = registerForActivityResult(
-                new ActivityResultContracts.StartActivityForResult(),
-                result -> {
-                    if (result.getResultCode() == RESULT_OK) {
-                        Intent data = result.getData();
-
-                    }
-                }
-        );
-
         //Set the listener when viewing and anchor button
         viewAnchorB.setOnClickListener(v -> {
             //Get the current selected position
@@ -96,7 +81,7 @@ public class ResolveLobbyActivity extends AppCompatActivity {
                 intent.putExtra("PLACING_ANCHOR", false);
                 intent.putExtra("ANCHOR_NAME", drawName);
                 intent.putExtra("HOTSPOT_CODE", selectedHotspot.getCode());
-                startActivityForResultLauncher.launch(intent);
+                startActivity(intent);
             } else {
                 showAlertDialogue(getString(R.string.alert_error_title), getString(R.string.resolve_fail_anchor_description));
             }
@@ -215,7 +200,7 @@ public class ResolveLobbyActivity extends AppCompatActivity {
     private void showAlertDialogue(String title, String description) {
         View view;
         TextView alertTitleTV;
-        
+
         //Initialise the layouts and views
         view = LayoutInflater.from(ResolveLobbyActivity.this).inflate(R.layout.alert_dialogue, null, false);
         alertTitleTV = view.findViewById(R.id.alertTitleTV);

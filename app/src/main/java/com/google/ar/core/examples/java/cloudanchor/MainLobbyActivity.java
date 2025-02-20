@@ -12,8 +12,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -27,7 +25,6 @@ public class MainLobbyActivity extends AppCompatActivity {
     private AlertDialog alertDialogue;
     private DisplayRotationHelper displayRotationHelper;
     private FirebaseManager firebaseManager;
-    private ActivityResultLauncher<Intent> startActivityForResultLauncher;
 
 
     @Override
@@ -63,21 +60,6 @@ public class MainLobbyActivity extends AppCompatActivity {
         //Set on click listener to return from this activity
         returnIB.setOnClickListener(v -> finish());
 
-        startActivityForResultLauncher = registerForActivityResult(
-                new ActivityResultContracts.StartActivityForResult(),
-                result -> {
-                    if (result.getResultCode() == RESULT_OK) {
-                        Intent data = result.getData();
-                        if(data != null){
-                            String activityType = data.getStringExtra("ACTIVITY_TYPE");
-                            if (activityType != null && activityType.equals("SETTINGS_ACTIVITY")){
-
-                            }
-                        }
-
-                    }
-                }
-        );
     }
 
     /**
@@ -172,7 +154,7 @@ public class MainLobbyActivity extends AppCompatActivity {
                     public void onSuccess() {
                         alertDialogue.dismiss();
                         Intent intent = SettingsActivity.newIntent(MainLobbyActivity.this);
-                        startActivityForResultLauncher.launch(intent);
+                        startActivity(intent);
                     }
 
                     @Override
