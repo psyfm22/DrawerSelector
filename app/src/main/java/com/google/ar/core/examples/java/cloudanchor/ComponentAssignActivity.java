@@ -60,8 +60,9 @@ public class ComponentAssignActivity extends AppCompatActivity {
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
                     if (result.getResultCode() == RESULT_OK) {
-                        Intent data = result.getData();
-
+                        loadedComponentET.setText("");
+                        inputComponentET.setText("");
+                        assignDrawerB.setEnabled(true);
                     }
                 }
         );
@@ -96,8 +97,15 @@ public class ComponentAssignActivity extends AppCompatActivity {
                 }
 
                 @Override
+                public void onNoDrawers() {
+                    Log.d("COMP3018", "No Drawers Found");
+                    assignDrawerB.setEnabled(true);
+                }
+
+                @Override
                 public void onFailure(String errorMessage) {
                     Log.d("COMP3018", "Here is the error message");
+                    assignDrawerB.setEnabled(true);
                 }
             });
         });
@@ -152,13 +160,9 @@ public class ComponentAssignActivity extends AppCompatActivity {
         StringBuilder capitalisedName = new StringBuilder();
 
         for(int i=0;i<words.length;i++){
-            Log.d("COMP3018", "I: "+ i+" word: "+ words[i]);
-
             if (i > 0) {
                 capitalisedName.append(" ");
             }
-
-
             String cap = words[i].substring(0, 1).toUpperCase() + words[i].substring(1);
             capitalisedName.append(cap);
         }

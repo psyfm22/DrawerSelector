@@ -312,6 +312,7 @@ class FirebaseManager {
     final long[] key = {0};
     final int[] foundStorage = {0};
     final boolean[] categoryFound = {false};
+    final boolean[] availableDrawer = {false};
 
     ValueEventListener valueEventListener = new ValueEventListener() {
       @Override
@@ -329,32 +330,32 @@ class FirebaseManager {
           Integer currentStorage = snapshot.child(KEY_CURRENT_STORAGE).getValue(int.class);
 
           if(currentStorage == null){
-            Log.d("COMP3018", "Current Storage was Null");
             newComponentCallback.onFailure("Current Storage Was Null!");
             return;
           }
+
           Integer maxStorage = snapshot.child(KEY_MAX_STORAGE).getValue(int.class);
           if(maxStorage == null){
-            newComponentCallback.onFailure("Max Storage Was Null!");
             return;
           }
 
           if(categoryName != null){
             if(categoryName.equals(category) && currentStorage < maxStorage){
-
+              availableDrawer[0] = true;
               categoryFound[0] = true;
               key[0] = currentKey;
               foundStorage[0] = currentStorage;
               hotspotListRef.removeEventListener(this);
             }else if(key[0] == 0 &&  categoryName.isEmpty()){
-              Log.d("COMP3018", "In the key feature");
+              availableDrawer[0] = true;
               key[0] = currentKey;
             }
           }
         }
 
-
-        if(categoryFound[0]){
+        if(!availableDrawer[0]){
+          newComponentCallback.onNoDrawers();
+        }else if(categoryFound[0]){
           //Add one to the value
           incrementDrawerCounter(key[0], foundStorage[0], newComponentCallback);
         }else{
@@ -449,6 +450,7 @@ class FirebaseManager {
 
   interface NewComponentCallback{
     void onSuccess(long key);
+    void onNoDrawers();
     void onFailure(String errorMessage);
   }
 }
